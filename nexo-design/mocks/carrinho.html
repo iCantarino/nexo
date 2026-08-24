@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Carrinho de Compras - Nexo Livraria Virtual</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --primary: #FF9500;
+            --dark: #0F1419;
+            --light-gray: #F5F5F5;
+            --medium-gray: #999;
+            --text-dark: #333;
+            --border-light: #E5E5E5;
+            --success: #22C55E
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #fff;
+            color: var(--text-dark)
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 100
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .logo::after {
+            content: ".";
+            color: var(--primary)
+        }
+
+        .nav-section {
+            display: flex;
+            gap: 3rem;
+            align-items: center
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--medium-gray);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: color 0.3s
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: var(--dark)
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            flex: 1;
+            max-width: 400px
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 0.875rem;
+            color: var(--text-dark)
+        }
+
+        .search-bar input::placeholder {
+            color: var(--medium-gray)
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem
+        }
+
+        .profile-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: var(--text-dark);
+            font-weight: 500
+        }
+
+        .toggle-btn {
+            width: 40px;
+            height: 24px;
+            background: var(--dark);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 0 3px
+        }
+
+        .toggle-btn::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            transition: right 0.3s;
+            right: 2px
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem
+        }
+
+        .cart-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 2rem
+        }
+
+        .cart-content {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem
+        }
+
+        @media(max-width:768px) {
+            .cart-content {
+                grid-template-columns: 1fr;
+                gap: 2rem
+            }
+        }
+
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 1.5rem;
+            align-items: center;
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            background: #fff;
+            transition: box-shadow 0.3s
+        }
+
+        .cart-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08)
+        }
+
+        .item-image {
+            width: 80px;
+            height: 120px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #ddd, #eee);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: var(--medium-gray);
+            text-align: center;
+            overflow: hidden
+        }
+
+        .item-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem
+        }
+
+        .item-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-dark)
+        }
+
+        .item-author {
+            font-size: 0.875rem;
+            color: var(--medium-gray)
+        }
+
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 0.5rem
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            overflow: hidden
+        }
+
+        .quantity-control button {
+            background: none;
+            border: none;
+            padding: 0.4rem 0.6rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--medium-gray);
+            transition: background 0.3s
+        }
+
+        .quantity-control button:hover {
+            background: var(--light-gray)
+        }
+
+        .quantity-control input {
+            border: none;
+            text-align: center;
+            width: 35px;
+            outline: none;
+            padding: 0.4rem 0;
+            font-weight: 600;
+            font-size: 0.9rem
+        }
+
+        .item-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-direction: column;
+            text-align: right
+        }
+
+        .item-price {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--dark)
+        }
+
+        .item-unit-price {
+            font-size: 0.75rem;
+            color: var(--medium-gray)
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #E74C3C;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+            padding: 0
+        }
+
+        .remove-btn:hover {
+            color: #C0392B
+        }
+
+        .continue-shopping {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: color 0.3s
+        }
+
+        .continue-shopping:hover {
+            color: var(--primary)
+        }
+
+        .order-summary {
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 2rem;
+            background: #fff;
+            height: fit-content;
+            position: sticky;
+            top: 100px
+        }
+
+        .summary-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.95rem
+        }
+
+        .summary-row:last-of-type {
+            border-bottom: none
+        }
+
+        .summary-label {
+            color: var(--text-dark)
+        }
+
+        .summary-value {
+            font-weight: 600;
+            color: var(--text-dark)
+        }
+
+        .summary-value.discount {
+            color: var(--success);
+            font-weight: 700
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--border-light);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .promo-section {
+            margin: 1.5rem 0;
+            padding: 1.5rem 0;
+            border-top: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light)
+        }
+
+        .promo-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--medium-gray);
+            text-transform: uppercase;
+            margin-bottom: 1rem
+        }
+
+        .promo-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem
+        }
+
+        .promo-input-group input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            outline: none;
+            font-size: 0.9rem
+        }
+
+        .promo-input-group input:focus {
+            border-color: var(--primary)
+        }
+
+        .promo-input-group button {
+            padding: 0.75rem 1.5rem;
+            background: var(--dark);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.3s
+        }
+
+        .promo-input-group button:hover {
+            background: #1a2130
+        }
+
+        .shipping-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            outline: none;
+            font-size: 0.9rem;
+            background: #fff;
+            color: var(--text-dark);
+            cursor: pointer
+        }
+
+        .shipping-select:focus {
+            border-color: var(--primary)
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            transition: background 0.3s;
+            margin-top: 1rem
+        }
+
+        .checkout-btn:hover {
+            background: #E68A00
+        }
+
+        footer {
+            background: var(--dark);
+            color: #fff;
+            padding: 3rem 2rem 2rem;
+            margin-top: 4rem
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem
+        }
+
+        .footer-section h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary)
+        }
+
+        .footer-section a {
+            display: block;
+            color: #ccc;
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+            transition: color 0.3s
+        }
+
+        .footer-section a:hover {
+            color: #fff
+        }
+
+        .footer-section p {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #ccc
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #ccc
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem
+        }
+
+        .social-icons a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s
+        }
+
+        .social-icons a:hover {
+            color: var(--primary)
+        }
+
+        @media(max-width:768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem
+            }
+
+            .nav-section {
+                flex-direction: column;
+                gap: 1.5rem;
+                width: 100%
+            }
+
+            .search-bar {
+                max-width: 100%
+            }
+
+            .order-summary {
+                position: static;
+                margin-top: 2rem
+            }
+
+            .cart-item {
+                grid-template-columns: 70px 1fr;
+                gap: 1rem
+            }
+
+            .item-actions {
+                flex-direction: row;
+                text-align: left;
+                gap: 1rem
+            }
+
+            .remove-btn {
+                margin-left: auto
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">Nexo</div>
+        <div class="nav-section">
+            <nav><a href="#">CATÁLOGO</a><a href="#">FILOSOFIA</a><a href="#">CIÊNCIA</a><a href="#">ARTE</a><a
+                    href="#">HISTÓRIA</a></nav>
+            <div class="search-bar"><input type="text" placeholder="Buscar títulos, autores, editoras..."></div>
+            <div class="user-section"><button class="profile-btn">Arthur S.</button><button class="toggle-btn"></button>
+            </div>
+        </div>
+    </header>
+    <div class="main-container">
+        <h1 class="cart-title">Seu Carrinho de Compras</h1>
+        <div class="cart-content">
+            <div class="cart-items">
+                <div class="cart-item">
+                    <div class="item-image"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 120">
+                            <rect fill="#333" width="80" height="120" /><text x="40" y="60" font-family="Arial"
+                                font-size="8" fill="#999" text-anchor="middle" dominant-baseline="middle">A
+                                Ordem</text><text x="40" y="72" font-family="Arial" font-size="8" fill="#999"
+                                text-anchor="middle" dominant-baseline="middle">do Tempo</text>
+                        </svg></div>
+                    <div class="item-details">
+                        <h3 class="item-title">A Ordem do Tempo</h3>
+                        <p class="item-author">por Carlo Rovelli</p>
+                        <div class="item-controls">
+                            <div class="quantity-control"><button type="button">−</button><input type="number" value="1"
+                                    min="1"><button type="button">+</button></div>
+                        </div>
+                    </div>
+                    <div class="item-actions"><span class="item-price">R$ 94,90</span><button class="remove-btn"
+                            title="Remover do carrinho">🗑️</button></div>
+                </div>
+                <div class="cart-item">
+                    <div class="item-image"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 120">
+                            <rect fill="#ddd" width="80" height="120" /><text x="40" y="60" font-family="Arial"
+                                font-size="8" fill="#666" text-anchor="middle" dominant-baseline="middle">A
+                                República</text>
+                        </svg></div>
+                    <div class="item-details">
+                        <h3 class="item-title">A República</h3>
+                        <p class="item-author">por Platão</p>
+                        <div class="item-controls">
+                            <div class="quantity-control"><button type="button">−</button><input type="number" value="2"
+                                    min="1"><button type="button">+</button></div>
+                        </div>
+                    </div>
+                    <div class="item-actions"><span class="item-price">R$ 119,80</span><span class="item-unit-price">(R$
+                            59,90 cada)</span><button class="remove-btn" title="Remover do carrinho">🗑️</button></div>
+                </div><a href="#" class="continue-shopping">← Continuar Comprando</a>
+            </div>
+            <div class="order-summary">
+                <h2 class="summary-title">Resumo do Pedido</h2>
+                <div class="summary-row"><span class="summary-label">Subtotal</span><span class="summary-value">R$
+                        214,70</span></div>
+                <div class="summary-row"><span class="summary-label">Descontos Aplicados</span><span
+                        class="summary-value discount">-R$ 25,00</span></div>
+                <div class="summary-row"><span class="summary-label">Frete Estimado</span><span class="summary-value">R$
+                        22,50</span></div>
+                <div class="summary-total"><span>Total</span><span>R$ 212,20</span></div>
+                <div class="promo-section">
+                    <div class="promo-title">Cupom Promocional</div>
+                    <div class="promo-input-group"><input type="text" placeholder="WELCOME5"><button
+                            type="button">Aplicar</button></div>
+                </div><select class="shipping-select">
+                    <option>Cupom de Troca: Nenhum Selecionado</option>
+                    <option>Cupom de Troca: Disponível</option>
+                </select><button class="checkout-btn">Finalizar Compra</button>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Nexo</h4>
+                <p>Nexo é uma livraria virtual curada dedicada a obras culturais da alta qualidade, filosofia clássica,
+                    ciência de vanguarda e edições raras de arte.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Atendimento</h4><a href="#">Fale Conosco</a><a href="#">Entregas & Devoluções</a><a
+                    href="#">Perguntas Frequentes</a><a href="#">Encontre uma Loja</a>
+            </div>
+            <div class="footer-section">
+                <h4>Jurídico</h4><a href="#">Política de Privacidade</a><a href="#">Termos de Uso</a><a href="#">Aviso
+                    de Direitos Autorais</a><a href="#">Mapa do Site</a>
+            </div>
+        </div>
+        <div class="footer-bottom">© 2026 Nexo Inc. Conhecimento curado para mentes curiosas.<div class="social-icons">
+                <a href="#" title="Instagram">📷</a><a href="#" title="Twitter">𝕏</a><a href="#"
+                    title="LinkedIn">in</a></div>
+        </div>
+    </footer>
+</body>
+
+</html>

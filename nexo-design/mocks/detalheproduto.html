@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>A Ordem do Tempo - Nexo Livraria Virtual</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --primary: #FF9500;
+            --dark: #0F1419;
+            --light-gray: #F5F5F5;
+            --medium-gray: #999;
+            --text-dark: #333;
+            --border-light: #E5E5E5
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #fff;
+            color: var(--text-dark)
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 100
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--medium-gray);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: color 0.3s
+        }
+
+        nav a:hover {
+            color: var(--dark)
+        }
+
+        nav a.active {
+            color: var(--primary)
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            flex: 1;
+            max-width: 400px
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 0.875rem
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem
+        }
+
+        .profile-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: var(--text-dark)
+        }
+
+        .toggle-btn {
+            width: 40px;
+            height: 24px;
+            background: var(--dark);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative
+        }
+
+        .toggle-btn::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            top: 2px;
+            right: 2px;
+            transition: right 0.3s
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem
+        }
+
+        .breadcrumb {
+            font-size: 0.875rem;
+            color: var(--medium-gray);
+            margin-bottom: 2rem
+        }
+
+        .product-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem
+        }
+
+        @media(max-width:768px) {
+            .product-detail {
+                grid-template-columns: 1fr;
+                gap: 2rem
+            }
+        }
+
+        .product-image-section {
+            display: flex;
+            align-items: flex-start
+        }
+
+        .product-image {
+            width: 100%;
+            max-width: 350px;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 12px;
+            background: var(--dark)
+        }
+
+        .product-info-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem
+        }
+
+        .category-tag {
+            display: inline-flex;
+            width: fit-content;
+            background: var(--primary);
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem
+        }
+
+        .product-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            line-height: 1.2
+        }
+
+        .product-author {
+            color: var(--medium-gray);
+            font-size: 0.95rem
+        }
+
+        .rating-section {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem
+        }
+
+        .stars {
+            display: flex;
+            color: var(--primary)
+        }
+
+        .stars span {
+            font-size: 1rem
+        }
+
+        .rating-text {
+            color: var(--medium-gray);
+            font-size: 0.875rem
+        }
+
+        .price-label {
+            font-size: 0.75rem;
+            color: var(--medium-gray);
+            text-transform: uppercase;
+            font-weight: 600
+        }
+
+        .price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .quantity-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            overflow: hidden
+        }
+
+        .quantity-control button {
+            background: none;
+            border: none;
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--medium-gray);
+            transition: background 0.3s
+        }
+
+        .quantity-control button:hover {
+            background: var(--light-gray)
+        }
+
+        .quantity-control input {
+            border: none;
+            text-align: center;
+            width: 40px;
+            outline: none;
+            padding: 0.5rem;
+            font-weight: 600
+        }
+
+        .add-cart-btn {
+            background: var(--dark);
+            color: #fff;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem
+        }
+
+        .add-cart-btn:hover {
+            background: #1a2130
+        }
+
+        .synopsis-section {
+            border-top: 1px solid var(--border-light);
+            padding-top: 2rem
+        }
+
+        .synopsis-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1rem
+        }
+
+        .synopsis-text {
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem
+        }
+
+        .synopsis-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            font-size: 0.875rem
+        }
+
+        @media(max-width:768px) {
+            .synopsis-details {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .detail-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem
+        }
+
+        .detail-label {
+            color: var(--medium-gray);
+            font-weight: 600;
+            text-transform: uppercase
+        }
+
+        .detail-value {
+            color: var(--text-dark);
+            font-weight: 500
+        }
+
+        .recommended-section {
+            margin: 3rem 0
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .rec-badge {
+            background: var(--dark);
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase
+        }
+
+        .view-profile {
+            color: var(--dark);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500
+        }
+
+        .view-profile:hover {
+            text-decoration: underline
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem
+        }
+
+        @media(max-width:1024px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+        }
+
+        @media(max-width:768px) {
+            .products-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .product-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: transform 0.3s
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px)
+        }
+
+        .product-card-image {
+            width: 100%;
+            aspect-ratio: 0.75;
+            object-fit: cover;
+            border-radius: 8px;
+            background: var(--light-gray)
+        }
+
+        .product-card-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem
+        }
+
+        .product-card-rating .stars {
+            color: var(--primary)
+        }
+
+        .product-card-rating .stars span {
+            font-size: 0.875rem
+        }
+
+        .product-card-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--dark);
+            line-height: 1.3
+        }
+
+        .product-card-author {
+            color: var(--medium-gray);
+            font-size: 0.85rem
+        }
+
+        .product-card-price {
+            font-weight: 700;
+            color: var(--dark);
+            font-size: 1.1rem
+        }
+
+        .add-btn {
+            background: var(--dark);
+            color: #fff;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: background 0.3s
+        }
+
+        .add-btn:hover {
+            background: #1a2130
+        }
+
+        .reviews-section {
+            margin: 3rem 0;
+            border-top: 1px solid var(--border-light);
+            padding-top: 2rem
+        }
+
+        .reviews-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 2rem
+        }
+
+        .review-card {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-light)
+        }
+
+        .review-card:last-child {
+            border-bottom: none
+        }
+
+        .reviewer-name {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95rem
+        }
+
+        .review-date {
+            color: var(--medium-gray);
+            font-size: 0.85rem;
+            display: block;
+            margin-top: 0.25rem
+        }
+
+        .review-rating {
+            display: flex;
+            gap: 0.25rem;
+            margin: 0.75rem 0;
+            color: var(--primary)
+        }
+
+        .review-rating span {
+            font-size: 0.9rem
+        }
+
+        .review-text {
+            color: var(--text-dark);
+            line-height: 1.6;
+            font-size: 0.95rem
+        }
+
+        footer {
+            background: var(--dark);
+            color: #fff;
+            padding: 3rem 2rem;
+            margin-top: 3rem
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem
+        }
+
+        @media(max-width:768px) {
+            .footer-content {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .footer-section h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            color: var(--primary)
+        }
+
+        .footer-section p {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-bottom: 0.5rem
+        }
+
+        .footer-section a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s
+        }
+
+        .footer-section a:hover {
+            color: var(--primary)
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 2rem;
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem
+        }
+
+        @media(max-width:768px) {
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center
+            }
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem
+        }
+
+        .social-icons a {
+            display: inline-flex;
+            width: 32px;
+            height: 32px;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: background 0.3s
+        }
+
+        .social-icons a:hover {
+            background: var(--primary)
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display:flex;align-items:center;gap:0.5rem;cursor:pointer"><span class="logo">Nexo</span><span
+                style="font-size:0.75rem;color:var(--medium-gray)">▼</span></div>
+        <nav><a href="#" class="active">CATÁLOGO</a><a href="#">FILOSOFIA</a><a href="#">CIÊNCIA</a><a
+                href="#">ARTE</a><a href="#">HISTÓRIA</a></nav>
+        <div class="search-bar"><span style="color:var(--medium-gray)">🔍</span><input type="text"
+                placeholder="Buscar títulos, autores, editoras..."></div>
+        <div class="user-section"><button class="profile-btn">👤 Arthur S.</button><button class="toggle-btn"></button>
+        </div>
+    </header>
+    <div class="main-container">
+        <div class="breadcrumb"><a href="#" style="text-decoration:none;color:var(--medium-gray)">Catálogo</a> / <a
+                href="#" style="text-decoration:none;color:var(--medium-gray)">Ciência</a> / A Ordem do Tempo</div>
+        <div class="product-detail">
+            <div class="product-image-section"><img
+                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 350 350'%3E%3Crect fill='%230F1419' width='350' height='350'/%3E%3Ctext x='175' y='175' font-family='Arial' font-size='24' fill='%23666' text-anchor='middle' dominant-baseline='middle'%3EThe Order Time%3C/text%3E%3C/svg%3E"
+                    alt="A Ordem do Tempo" class="product-image"></div>
+            <div class="product-info-section">
+                <div class="category-tag">Ciência & Filosofia da Física</div>
+                <h1 class="product-title">A Ordem do Tempo</h1>
+                <p class="product-author">por Carlo Rovelli</p>
+                <div class="rating-section">
+                    <div class="stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>☆</span></div><span
+                        class="rating-text">4.0 (128 avaliações de leitores)</span>
+                </div>
+                <div
+                    style="border-top:1px solid var(--border-light);padding-top:1.5rem;border-bottom:1px solid var(--border-light);padding-bottom:1.5rem">
+                    <p class="price-label">Preço</p>
+                    <p class="price">R$ 94,90</p>
+                </div>
+                <div class="quantity-section">
+                    <div class="quantity-control"><button>−</button><input type="number" value="1"
+                            min="1"><button>+</button></div><button class="add-cart-btn">🛒 Adicionar ao
+                        Carrinho</button>
+                </div>
+            </div>
+        </div>
+        <div class="synopsis-section">
+            <h2 class="synopsis-title">Sinopse</h2>
+            <p class="synopsis-text">Por que lembramos do passado e não do futuro? O que significa a velocidade de luz
+                no coração teórico de tudo? Combinando física com bela literatura, ele nos mostra que, no nível mais
+                fundamental, o tempo pode o conhecemos simplesmente não existe.</p>
+            <div class="synopsis-details">
+                <div class="detail-row"><span class="detail-label">Editora</span><span
+                        class="detail-value">Objetivo</span></div>
+                <div class="detail-row"><span class="detail-label">Data de Publicação</span><span
+                        class="detail-value">Maio 2018</span></div>
+                <div class="detail-row"><span class="detail-label">ISBN</span><span
+                        class="detail-value">9782241263150</span></div>
+                <div class="detail-row"><span class="detail-label">Formato</span><span class="detail-value">Capa Dura,
+                        224p.</span></div>
+            </div>
+        </div>
+        <div class="recommended-section">
+            <div class="section-header">
+                <h2 class="section-title">Recomendados para você</h2><a href="#" class="view-profile">Ver Meu Perfil de
+                    Leitura →</a>
+            </div>
+            <div class="products-grid"><a href="#" class="product-card"><img
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300'%3E%3Crect fill='%23333' width='200' height='300'/%3E%3Ctext x='100' y='150' font-family='Arial' font-size='14' fill='%23999' text-anchor='middle' dominant-baseline='middle'%3EA Ordem do Tempo%3C/text%3E%3C/svg%3E"
+                        alt="A Ordem do Tempo" class="product-card-image">
+                    <div class="product-card-rating">
+                        <div class="stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+                        <span style="color:var(--medium-gray);font-size:0.8rem">5.0</span>
+                    </div>
+                    <h3 class="product-card-title">A Ordem do Tempo</h3>
+                    <p class="product-card-author">Carlo Rovelli</p>
+                    <p class="product-card-price">R$ 94,90</p><button class="add-btn">+ Adicionar</button>
+                </a><a href="#" class="product-card"><img
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300'%3E%3Crect fill='%23333' width='200' height='300'/%3E%3Ctext x='100' y='150' font-family='Arial' font-size='14' fill='%23999' text-anchor='middle' dominant-baseline='middle'%3EAstrofísica%3C/text%3E%3C/svg%3E"
+                        alt="Astrofísica para Apressados" class="product-card-image">
+                    <div class="product-card-rating">
+                        <div class="stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>☆</span></div>
+                        <span style="color:var(--medium-gray);font-size:0.8rem">4.5</span>
+                    </div>
+                    <h3 class="product-card-title">Astrofísica para Apressados</h3>
+                    <p class="product-card-author">Neil deGrasse Tyson</p>
+                    <p class="product-card-price">R$ 79,90</p><button class="add-btn">+ Adicionar</button>
+                </a><a href="#" class="product-card"><img
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300'%3E%3Crect fill='%23ddd' width='200' height='300'/%3E%3Ctext x='100' y='150' font-family='Arial' font-size='14' fill='%23666' text-anchor='middle' dominant-baseline='middle'%3EA Realidade Não É%3C/text%3E%3C/svg%3E"
+                        alt="A Realidade Não É o que Parece" class="product-card-image">
+                    <div class="product-card-rating">
+                        <div class="stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+                        <span style="color:var(--medium-gray);font-size:0.8rem">4.8</span>
+                    </div>
+                    <h3 class="product-card-title">A Realidade Não É o que Parece</h3>
+                    <p class="product-card-author">Carlo Rovelli</p>
+                    <p class="product-card-price">R$ 87,50</p><button class="add-btn">+ Adicionar</button>
+                </a></div>
+        </div>
+        <div class="reviews-section">
+            <h2 class="reviews-title">Avaliações dos Leitores</h2>
+            <div class="review-card">
+                <p class="reviewer-name">Mariana L.<span class="review-date">12 de Fevereiro de 2026</span></p>
+                <div class="review-rating"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+                <p class="review-text">Uma conquista absolutamente impressionante. Rovelli consegue fazer conceitos
+                    profundos de gravidade quântica parecem bela poesia. Mudou a forma como penso sobre minha existência
+                    diária.</p>
+            </div>
+            <div class="review-card">
+                <p class="reviewer-name">Julian K.<span class="review-date">28 de Janeiro de 2026</span></p>
+                <div class="review-rating"><span>★</span><span>★</span><span>★</span><span>★</span><span>☆</span></div>
+                <p class="review-text">Uma exploração muito breve, mas intensa, sobre termodinâmica e gravidade quântica
+                    em loop. Explica a mudança de pensar o mundo como "coisas" para pensá-lo como "relações".
+                    Envolvente!</p>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Nexo</h4>
+                <p>Nexo é uma livraria virtual curada dedicada a obras culturais da alta qualidade, filosofia clássica,
+                    ciência de vanguarda e edições raras de arte.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Atendimento</h4><a href="#">Fale Conosco</a><a href="#">Entregas & Devoluções</a><a
+                    href="#">Perguntas Frequentes</a><a href="#">Encontre uma Loja</a>
+            </div>
+            <div class="footer-section">
+                <h4>Jurídico</h4><a href="#">Política de Privacidade</a><a href="#">Termos de Uso</a><a href="#">Aviso
+                    de Direitos Autorais</a><a href="#">Mapa do Site</a>
+            </div>
+            <div
+                style="border-top:1px solid rgba(255,255,255,0.1);padding-top:2rem;grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;font-size:0.85rem">
+                © 2026 Nexo Inc. Conhecimento curado para mentes curiosas.<div class="social-icons"><a href="#"
+                        title="Instagram">📷</a><a href="#" title="Twitter">𝕏</a><a href="#" title="LinkedIn">in</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Nexo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --c1: #FF9500;
+            --c2: #0F1419;
+            --c3: #1a2332;
+            --c4: #FFF;
+            --c5: #A0A8B8;
+            --c6: #2A3546
+        }
+
+        body {
+            font-family: system-ui;
+            background: var(--c2);
+            color: var(--c4);
+            line-height: 1.6
+        }
+
+        header {
+            background: var(--c3);
+            border-bottom: 1px solid var(--c6);
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 24px
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700
+        }
+
+        .logo::after {
+            content: "•";
+            color: var(--c1);
+            margin: 0 4px
+        }
+
+        nav {
+            display: flex;
+            gap: 48px;
+            flex: 1
+        }
+
+        nav a {
+            color: var(--c5);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase
+        }
+
+        nav a:hover {
+            color: var(--c1)
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 24px;
+            margin-left: auto
+        }
+
+        .search-bar {
+            background: var(--c2);
+            border: 1px solid var(--c6);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: var(--c5);
+            width: 250px;
+            font-size: 12px
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 16px;
+            align-items: center
+        }
+
+        .user-profile-name {
+            font-size: 12px;
+            color: var(--c5)
+        }
+
+        .dark-mode-toggle {
+            display: flex;
+            background: var(--c2);
+            border: 1px solid var(--c6);
+            border-radius: 20px;
+            padding: 4px;
+            gap: 4px
+        }
+
+        .dark-mode-toggle button {
+            background: 0;
+            border: 0;
+            color: var(--c5);
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px
+        }
+
+        .dark-mode-toggle button.active {
+            background: var(--c1);
+            color: var(--c2)
+        }
+
+        .hero {
+            background: linear-gradient(135deg, rgba(15, 20, 25, .8), rgba(15, 20, 25, .6));
+            padding: 48px 24px
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--c1);
+            color: var(--c2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 24px
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            max-width: 500px
+        }
+
+        .hero p {
+            font-size: 14px;
+            color: var(--c5);
+            margin-bottom: 24px;
+            max-width: 400px
+        }
+
+        .hero-cta {
+            background: var(--c1);
+            color: var(--c2);
+            border: 0;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase
+        }
+
+        .hero-cta:hover {
+            background: #E68A00
+        }
+
+        .directory {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 24px
+        }
+
+        .directory h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 24px
+        }
+
+        .category-pills {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 48px;
+            flex-wrap: wrap
+        }
+
+        .category-pill {
+            background: var(--c3);
+            color: var(--c5);
+            border: 1px solid var(--c6);
+            padding: 12px 24px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500
+        }
+
+        .category-pill:hover {
+            border-color: var(--c1);
+            color: var(--c1)
+        }
+
+        .category-pill.active {
+            background: var(--c2);
+            color: var(--c4);
+            border-color: var(--c4)
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 48px
+        }
+
+        .product-card {
+            background: var(--c3);
+            border: 1px solid var(--c6);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column
+        }
+
+        .product-card:hover {
+            border-color: var(--c1);
+            transform: translateY(-4px)
+        }
+
+        .product-image {
+            width: 100%;
+            aspect-ratio: 3/4;
+            background: linear-gradient(135deg, #2a3546, #1a2a3a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px
+        }
+
+        .product-info {
+            padding: 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column
+        }
+
+        .product-rating {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 12px;
+            color: var(--c1);
+            font-size: 12px
+        }
+
+        .star.empty {
+            color: var(--c6)
+        }
+
+        .product-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px
+        }
+
+        .product-author {
+            font-size: 12px;
+            color: var(--c5);
+            margin-bottom: 16px
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto
+        }
+
+        .product-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--c1)
+        }
+
+        .add-button {
+            background: var(--c2);
+            color: var(--c4);
+            border: 1px solid var(--c6);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer
+        }
+
+        .add-button:hover {
+            background: var(--c1);
+            color: var(--c2)
+        }
+
+        .pagination-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 48px;
+            color: var(--c5);
+            font-size: 12px
+        }
+
+        .pagination {
+            display: flex;
+            gap: 12px;
+            align-items: center
+        }
+
+        .pagination button {
+            background: var(--c3);
+            color: var(--c5);
+            border: 1px solid var(--c6);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600
+        }
+
+        .pagination button:hover {
+            border-color: var(--c1)
+        }
+
+        .pagination button.active {
+            background: var(--c2);
+            color: var(--c4);
+            border-color: var(--c4)
+        }
+
+        .pagination-dots {
+            padding: 0 12px
+        }
+
+        footer {
+            background: var(--c3);
+            border-top: 1px solid var(--c6);
+            padding: 48px 24px;
+            margin-top: 48px
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 48px
+        }
+
+        .footer-brand h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px
+        }
+
+        .footer-brand p {
+            font-size: 12px;
+            color: var(--c5);
+            line-height: 1.8;
+            max-width: 250px
+        }
+
+        .footer-section h4 {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--c1);
+            margin-bottom: 16px
+        }
+
+        .footer-section ul {
+            list-style: none
+        }
+
+        .footer-section li {
+            margin-bottom: 12px
+        }
+
+        .footer-section a {
+            color: var(--c5);
+            text-decoration: none;
+            font-size: 12px
+        }
+
+        .footer-section a:hover {
+            color: var(--c1)
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--c6);
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .footer-copyright {
+            font-size: 11px;
+            color: var(--c5)
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 24px
+        }
+
+        .footer-social a {
+            color: var(--c5);
+            text-decoration: none;
+            font-size: 16px
+        }
+
+        .footer-social a:hover {
+            color: var(--c1)
+        }
+
+        @media(max-width:1024px) {
+            .product-grid {
+                grid-template-columns: repeat(3, 1fr)
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+
+        @media(max-width:768px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            nav {
+                display: none
+            }
+
+            .hero h1 {
+                font-size: 36px
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media(max-width:480px) {
+            .product-grid {
+                grid-template-columns: 1fr
+            }
+
+            .hero h1 {
+                font-size: 24px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">Nexo</div>
+            <nav><a href="#">CATÁLOGO</a><a href="#">FILOSOFIA</a><a href="#">CIÊNCIA</a><a href="#">ARTE</a><a
+                    href="#">HISTÓRIA</a></nav>
+            <div class="header-actions"><input type="text" class="search-bar"
+                    placeholder="Buscar títulos, autores, editoras...">
+                <div class="header-icons"><span class="user-profile-name">Arthur S.</span>
+                    <div class="dark-mode-toggle"><button class="active">🌙</button><button>☀️</button></div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <section class="hero">
+        <div class="hero-container"><span class="hero-badge">EDIÇÃO EXCLUSIVA DO CURADOR</span>
+            <h1>Sabedoria, Ciência & Arte. Selecionados à mão.</h1>
+            <p>Explore nossa nova coleção de edições limitadas e traduções premium de obras fundamentais do
+                conhecimento. Para os que buscam cultura atemporal.</p><button class="hero-cta">Explorar
+                Coleção</button>
+        </div>
+    </section>
+    <section class="directory">
+        <h2>Diretório do Conhecimento</h2>
+        <div class="category-pills"><button class="category-pill active">Todos os Assuntos</button><button
+                class="category-pill">Filosofia</button><button class="category-pill">Ciência &
+                Tecnologia</button><button class="category-pill">Arte & Arquitetura</button><button
+                class="category-pill">Literatura Clássica</button><button class="category-pill">História &
+                Sociologia</button></div>
+        <div class="product-grid">
+            <div class="product-card">
+                <div class="product-image">📘</div>
+                <div class="product-info">
+                    <div class="product-rating"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <h3 class="product-title">The Order of Time</h3>
+                    <p class="product-author">Carlo Rovelli</p>
+                    <div class="product-footer"><span class="product-price">R$ 94,90</span><button class="add-button">+
+                            Adicionar</button></div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">📕</div>
+                <div class="product-info">
+                    <div class="product-rating"><span>★</span><span>★</span><span>★</span><span>★</span><span
+                            class="empty">★</span></div>
+                    <h3 class="product-title">Beyond Good and Evil</h3>
+                    <p class="product-author">Friedrich Nietzsche</p>
+                    <div class="product-footer"><span class="product-price">R$ 72,50</span><button class="add-button">+
+                            Adicionar</button></div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">🌸</div>
+                <div class="product-info">
+                    <div class="product-rating"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <h3 class="product-title">Mimesis</h3>
+                    <p class="product-author">Erich Auerbach</p>
+                    <div class="product-footer"><span class="product-price">R$ 149,90</span><button class="add-button">+
+                            Adicionar</button></div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">🟨</div>
+                <div class="product-info">
+                    <div class="product-rating"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <h3 class="product-title">Design and Form</h3>
+                    <p class="product-author">Johannes Itten</p>
+                    <div class="product-footer"><span class="product-price">R$ 119,90</span><button class="add-button">+
+                            Adicionar</button></div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">🔬</div>
+                <div class="product-info">
+                    <div class="product-rating"><span>★</span><span>★</span><span>★</span><span
+                            class="empty">★</span><span class="empty">★</span></div>
+                    <h3 class="product-title">A Estrutura das Revoluções Científicas</h3>
+                    <p class="product-author">Thomas S. Kuhn</p>
+                    <div class="product-footer"><span class="product-price">R$ 99,90</span><button class="add-button">+
+                            Adicionar</button></div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">📜</div>
+                <div class="product-info">
+                    <div class="product-rating"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <h3 class="product-title">A República</h3>
+                    <p class="product-author">Platão</p>
+                    <div class="product-footer"><span class="product-price">R$ 59,90</span><button class="add-button">+
+                            Adicionar</button></div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">🖼️</div>
+                <div class="product-info">
+                    <div class="product-rating"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <h3 class="product-title">O Retrato de Dorian Gray</h3>
+                    <p class="product-author">Oscar Wilde</p>
+                    <div class="product-footer"><span class="product-price">R$ 54,90</span><button class="add-button">+
+                            Adicionar</button></div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">📐</div>
+                <div class="product-info">
+                    <div class="product-rating"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <h3 class="product-title">Gödel, Escher, Bach</h3>
+                    <p class="product-author">Douglas R. Hofstadter</p>
+                    <div class="product-footer"><span class="product-price">R$ 172,90</span><button class="add-button">+
+                            Adicionar</button></div>
+                </div>
+            </div>
+        </div>
+        <div class="pagination-section"><span>Exibindo 8 de 142 itens</span>
+            <div class="pagination"><button class="active">1</button><button>2</button><button>3</button><span
+                    class="pagination-dots">...</span><button>18</button></div>
+        </div>
+    </section>
+    <footer>
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h3>Nexo</h3>
+                <p>Nexo é uma livraria virtual curada, dedicada a obras culturais de alta qualidade, filosofia clássica,
+                    ciência de vanguarda e edições raras de arte. A expertise, a tecnologia e o desejo de conectar
+                    grandes mentes em torno do conhecimento formam a base do que fazemos.</p>
+            </div>
+            <div class="footer-section">
+                <h4>ATENDIMENTO</h4>
+                <ul>
+                    <li><a href="#">Fale Conosco</a></li>
+                    <li><a href="#">Entregas & Devoluções</a></li>
+                    <li><a href="#">Perguntas Frequentes</a></li>
+                    <li><a href="#">Encontre uma Loja</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>JURÍDICO</h4>
+                <ul>
+                    <li><a href="#">Política de Privacidade</a></li>
+                    <li><a href="#">Termos de Uso</a></li>
+                    <li><a href="#">Aviso de Direitos Autorais</a></li>
+                    <li><a href="#">Mapa do Site</a></li>
+                </ul>
+            </div>
+            <div></div>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copyright">© 2025 Nexo Inc. Conhecimento curado para mentes curiosas.</p>
+            <div class="footer-social"><a href="#">📷</a><a href="#">𝕏</a><a href="#">💼</a></div>
+        </div>
+    </footer>
+</body>
+
+</html>

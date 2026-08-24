@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cadastro - Nexo Livraria Virtual</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}:root{--primary:#FF9500;--dark:#0F1419;--light-gray:#F5F5F5;--medium-gray:#999;--text-dark:#333;--border-light:#E5E5E5;--success:#22C55E}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:#fff;color:var(--text-dark)}header{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;border-bottom:1px solid var(--border-light);position:sticky;top:0;background:#fff;z-index:100}.logo{font-size:1.5rem;font-weight:700;color:var(--dark)}.logo::after{content:".";color:var(--primary)}.nav-section{display:flex;gap:3rem;align-items:center}nav{display:flex;gap:2rem;align-items:center}nav a{text-decoration:none;color:var(--medium-gray);font-size:.875rem;font-weight:500;text-transform:uppercase;transition:color .3s}nav a:hover,nav a.active{color:var(--dark)}.search-bar{display:flex;align-items:center;background:var(--light-gray);border-radius:8px;padding:.75rem 1rem;flex:1;max-width:400px}.search-bar input{border:none;background:transparent;outline:none;width:100%;font-size:.875rem;color:var(--text-dark)}.search-bar input::placeholder{color:var(--medium-gray)}.user-section{display:flex;align-items:center;gap:1.5rem}.profile-btn{background:0;border:none;cursor:pointer;font-size:.875rem;color:var(--text-dark);font-weight:500}.toggle-btn{width:40px;height:24px;background:var(--dark);border:none;border-radius:12px;cursor:pointer;position:relative;display:flex;align-items:center;padding:0 3px}.toggle-btn::after{content:"";position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;transition:left .3s;left:2px}.toggle-btn.active{background:var(--primary)}.toggle-btn.active::after{left:18px}main{min-height:calc(100vh - 300px);padding:2rem;background:#fff}.form-container{max-width:700px;margin:0 auto;background:#fff;border:1px solid var(--border-light);border-radius:12px;padding:2.5rem}.form-header{text-align:center;margin-bottom:2.5rem}.form-header h1{font-size:1.75rem;font-weight:700;color:var(--dark);margin-bottom:.75rem}.form-header p{color:var(--medium-gray);font-size:.95rem;line-height:1.5}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem}.form-group{display:flex;flex-direction:column}.form-group.full{grid-column:1 / -1}.form-group label{font-size:.875rem;font-weight:600;color:var(--dark);margin-bottom:.5rem}.form-group label .required{color:var(--primary)}.form-group input,.form-group select{padding:.75rem;border:1px solid var(--border-light);border-radius:8px;font-size:.875rem;font-family:inherit;transition:border-color .3s}.form-group input:focus,.form-group select:focus{outline:0;border-color:var(--primary)}.form-group input::placeholder{color:var(--medium-gray)}.preferences-section{margin-bottom:2rem}.preferences-title{font-size:.875rem;font-weight:600;color:var(--dark);margin-bottom:1rem}.preferences-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}.preference-toggle{padding:.75rem 1rem;border:2px solid var(--border-light);background:#fff;border-radius:8px;font-size:.875rem;font-weight:500;color:var(--text-dark);cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:.5rem;text-align:center}.preference-toggle:hover{border-color:var(--primary)}.preference-toggle.active{background:var(--primary);border-color:var(--primary);color:#fff}.checkbox-group{display:flex;align-items:flex-start;gap:.75rem;margin-bottom:2rem;padding:1rem;background:var(--light-gray);border-radius:8px}.checkbox-group input[type=checkbox]{width:20px;height:20px;margin-top:.25rem;cursor:pointer;accent-color:var(--primary)}.checkbox-group label{font-size:.875rem;color:var(--text-dark);line-height:1.5;cursor:pointer;margin:0}.submit-btn{width:100%;padding:1rem;background:var(--dark);color:#fff;border:0;border-radius:8px;font-size:.95rem;font-weight:600;cursor:pointer;transition:background-color .3s}.submit-btn:hover{background:#1a202c}.submit-btn:active{transform:scale(.98)}footer{background:var(--dark);color:#fff;padding:3rem 2rem 1rem;margin-top:4rem}.footer-content{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:3rem;margin-bottom:2rem}.footer-section h4{font-size:.95rem;font-weight:600;color:var(--primary);margin-bottom:1rem;text-transform:uppercase}.footer-section p{font-size:.875rem;line-height:1.6;color:rgba(255,255,255,.7)}.footer-section a{display:block;font-size:.875rem;color:rgba(255,255,255,.7);text-decoration:none;margin-bottom:.75rem;transition:color .3s}.footer-section a:hover{color:var(--primary)}.footer-bottom{text-align:center;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.1);font-size:.875rem;color:rgba(255,255,255,.6);display:flex;justify-content:space-between;align-items:center}.social-icons{display:flex;gap:1rem;justify-content:flex-end}.social-icons a{color:rgba(255,255,255,.6);text-decoration:none;transition:color .3s;font-size:1rem}.social-icons a:hover{color:var(--primary)}@media (max-width:768px){header{flex-direction:column;gap:1rem;padding:1rem}.nav-section{flex-direction:column;gap:1rem;width:100%}nav{flex-direction:column;gap:.5rem;width:100%}.search-bar{max-width:100%;width:100%}.form-container{padding:1.5rem;border:0;border-radius:0}.form-grid{grid-template-columns:1fr;gap:1.25rem}.preferences-grid{grid-template-columns:repeat(2,1fr)}.footer-content{grid-template-columns:1fr;gap:2rem}.footer-bottom{flex-direction:column;gap:1rem;text-align:center}.social-icons{justify-content:center}main{padding:1rem}}@media (max-width:480px){.form-container{padding:1rem}.form-header h1{font-size:1.5rem}.preferences-grid{grid-template-columns:1fr}.form-group label{font-size:.8rem}.form-group input,.form-group select{font-size:.8rem}}
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Nexo</div>
+        <div class="nav-section">
+            <nav>
+                <a href="#" class="active">CATÁLOGO</a>
+                <a href="#">FILOSOFIA</a>
+                <a href="#">CIÊNCIA</a>
+                <a href="#">ARTE</a>
+                <a href="#">HISTÓRIA</a>
+            </nav>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar títulos, autores, editoras...">
+            </div>
+        </div>
+        <div class="user-section">
+            <button class="profile-btn">👤 Arthur S.</button>
+            <button class="toggle-btn active" title="Alternar tema"></button>
+            <a href="#" style="text-decoration:none;color:var(--text-dark);">🛒</a>
+        </div>
+    </header>
+    <main>
+        <div class="form-container">
+            <div class="form-header">
+                <h1>Junte-se ao Círculo Nexo</h1>
+                <p>Crie uma conta para acompanhar pedidos e configurar insights personalizados de leitura com IA.</p>
+            </div>
+            <form id="registrationForm">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label for="fullName">Nome Completo <span class="required">*</span></label>
+                        <input type="text" id="fullName" name="fullName" placeholder="ex: Arthur Schopenhauer" required>
+                    </div>
+                    <div class="form-group full">
+                        <label for="email">Endereço de E-mail <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="ex: arthur@nexo.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha <span class="required">*</span></label>
+                        <input type="password" id="password" name="password" placeholder="Mínimo de 8 caracteres" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmar Senha <span class="required">*</span></label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Repita sua senha" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cpf">CPF <span class="required">*</span></label>
+                        <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefone <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" placeholder="+55 (11) 99999-9999" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="birthDate">Data de Nascimento <span class="required">*</span></label>
+                        <input type="text" id="birthDate" name="birthDate" placeholder="DD/MM/YYYY" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Gênero</label>
+                        <select id="gender" name="gender">
+                            <option value="">Prefiro não informar</option>
+                            <option value="m">Masculino</option>
+                            <option value="f">Feminino</option>
+                            <option value="other">Outro</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="preferences-section">
+                    <div class="preferences-title">Preferências de Leitura (Personalização IA)</div>
+                    <div class="preferences-grid">
+                        <button type="button" class="preference-toggle active" data-category="filosofia">✓ Filosofia</button>
+                        <button type="button" class="preference-toggle active" data-category="ciencia">✓ Ciência de Vanguarda</button>
+                        <button type="button" class="preference-toggle" data-category="artes">Artes Plásticas</button>
+                        <button type="button" class="preference-toggle" data-category="poesia">Poesia Clássica</button>
+                        <button type="button" class="preference-toggle active" data-category="historia">✓ História & Antiguidade</button>
+                        <button type="button" class="preference-toggle" data-category="ficcao">Ficção & Romances</button>
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" name="terms" checked required>
+                    <label for="terms">Aceito os Termos e Condições da Rede de Curadores Nexo e autorizo o processamento das preferências de leitura para recomendações curadas.</label>
+                </div>
+                <button type="submit" class="submit-btn">Criar Conta</button>
+            </form>
+        </div>
+    </main>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Nexo</h4>
+                <p>Nexo é uma livraria virtual curada, dedicada a obras culturais da alta qualidade, filosofia clássica, ciência de vanguarda e edições raras de arte.</p>
+            </div>
+            <div class="footer-section">
+                <h4>ATENDIMENTO</h4>
+                <a href="#">Fale Conosco</a>
+                <a href="#">Entregas & Devoluções</a>
+                <a href="#">Perguntas Frequentes</a>
+                <a href="#">Encontre uma Loja</a>
+            </div>
+            <div class="footer-section">
+                <h4>JURÍDICO</h4>
+                <a href="#">Política de Privacidade</a>
+                <a href="#">Termos de Uso</a>
+                <a href="#">Aviso de Direitos Autorais</a>
+                <a href="#">Mapa do Site</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 Nexo Inc. Conhecimento curado para mentes curiosas.
+            <div class="social-icons">
+                <a href="#" title="Instagram">📷</a>
+                <a href="#" title="Twitter">𝕏</a>
+                <a href="#" title="LinkedIn">in</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Toggle preference buttons
+        document.querySelectorAll('.preference-toggle').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                btn.classList.toggle('active');
+                const text = btn.dataset.category.replace(/([A-Z])/g, ' $1').trim();
+                const capitalized = text.charAt(0).toUpperCase() + text.slice(1);
+                if (btn.classList.contains('active')) {
+                    btn.textContent = '✓ ' + capitalized;
+                } else {
+                    btn.textContent = capitalized;
+                }
+            });
+        });
+
+        // Form submission
+        document.getElementById('registrationForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Formulário de cadastro enviado com sucesso!');
+        });
+    </script>
+</body>
+</html>
