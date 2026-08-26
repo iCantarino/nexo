@@ -1,173 +1,249 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Perfil - Nexo Livraria Virtual</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}:root{--primary:#FF9500;--dark:#0F1419;--light-gray:#F5F5F5;--medium-gray:#999;--text-dark:#333;--border-light:#E5E5E5;--error:#C41E3A;--success:#22C55E}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:#fff;color:var(--text-dark)}header{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;border-bottom:1px solid var(--border-light);position:sticky;top:0;background:#fff;z-index:100}.logo{font-size:1.5rem;font-weight:700;color:var(--dark)}.logo::after{content:".";color:var(--primary)}.nav-section{display:flex;gap:3rem;align-items:center}nav{display:flex;gap:2rem;align-items:center}nav a{text-decoration:none;color:var(--medium-gray);font-size:.875rem;font-weight:500;text-transform:uppercase;transition:color .3s}nav a:hover,nav a.active{color:var(--dark)}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --primary: #FF9500;
+            --dark: #0F1419;
+            --light-gray: #F5F5F5;
+            --medium-gray: #999;
+            --text-dark: #333;
+            --border-light: #E5E5E5;
+            --error: #C41E3A;
+            --success: #22C55E
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #fff;
+            color: var(--text-dark)
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 100
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .logo::after {
+            content: ".";
+            color: var(--primary)
+        }
+
+        .nav-section {
+            display: flex;
+            gap: 3rem;
+            align-items: center
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--medium-gray);
+            font-size: .875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: color .3s
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: var(--dark)
+        }
     </style>
 </head>
+
 <body>
-<header>
-<div class="logo">Nexo</div>
-<div class="nav-section">
-<nav>
-<a href="#">CATÁLOGO</a>
-<a href="#">FILOSOFIA</a>
-<a href="#">CIÊNCIA</a>
-<a href="#">ARTE</a>
-<a href="#">HISTÓRIA</a>
-</nav>
-<div class="search-bar">
-<input type="text" placeholder="Buscar títulos, autores, editoras...">
-</div>
-</div>
-<div class="user-section">
-<button class="profile-btn">Arthur S.</button>
-<button class="toggle-btn active" title="Alternar tema"></button>
-<a href="#" style="text-decoration:none;color:var(--text-dark);">Carrinho</a>
-</div>
-</header>
+    <header>
+        <div class="logo">Nexo</div>
+        <div class="nav-section">
+            <nav>
+                <a href="#">CATÁLOGO</a>
+                <a href="#">FILOSOFIA</a>
+                <a href="#">CIÊNCIA</a>
+                <a href="#">ARTE</a>
+                <a href="#">HISTÓRIA</a>
+            </nav>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar títulos, autores, editoras...">
+            </div>
+        </div>
+        <div class="user-section">
+            <button class="profile-btn">Arthur S.</button>
+            <button class="toggle-btn active" title="Alternar tema"></button>
+            <a href="#" style="text-decoration:none;color:var(--text-dark);">Carrinho</a>
+        </div>
+    </header>
 
-<main>
-<div class="profile-wrapper">
-<div>
-<div class="profile-section">
-<div class="profile-header">
-<h1>Seu Perfil</h1>
-<span class="premium-badge">CURADOR PREMIUM</span>
-</div>
-<h2>Dados Pessoais</h2>
-<div class="field-group">
-<label>Nome Completo</label>
-<input type="text" placeholder="Arthur Schopenhauer" readonly>
-</div>
-<div class="field-group">
-<label>E-mail</label>
-<input type="email" placeholder="arthur@nexo.com" readonly>
-</div>
-<div class="two-columns">
-<div class="field-group">
-<label>CPF</label>
-<input type="text" placeholder="123.456.789-00" readonly>
-</div>
-<div class="field-group">
-<label>Telefone</label>
-<input type="tel" placeholder="+55 (11) 99999-9999" readonly>
-</div>
-</div>
-<div class="two-columns">
-<div class="field-group">
-<label>Data de Nascimento</label>
-<input type="text" placeholder="22/02/1988" readonly>
-</div>
-<div class="field-group">
-<label>Genero</label>
-<input type="text" placeholder="Prefiro nao informar" readonly>
-</div>
-</div>
-<button class="save-btn">Salvar Dados</button>
-</div>
-<div class="profile-section" style="margin-top:2rem;">
-<h2>Preferencias de Leitura e IA</h2>
-<p style="color:var(--medium-gray);font-size:.875rem;margin-bottom:1.5rem;">Configure quais tipos de livros alimentam o agente de recomendacao IA.</p>
-<div class="preferences-list">
-<div class="preference-item">
-<label>Filosofia e Metafisica</label>
-<button class="switch active"></button>
-</div>
-<div class="preference-item">
-<label>Antiguidade Classica</label>
-<button class="switch active"></button>
-</div>
-<div class="preference-item">
-<label>Fisica e Ciencia de Vanguarda</label>
-<button class="switch active"></button>
-</div>
-<div class="preference-item">
-<label>Poesia Modernista</label>
-<button class="switch"></button>
-</div>
-</div>
-</div>
-</div>
+    <main>
+        <div class="profile-wrapper">
+            <div>
+                <div class="profile-section">
+                    <div class="profile-header">
+                        <h1>Seu Perfil</h1>
+                        <span class="premium-badge">CURADOR PREMIUM</span>
+                    </div>
+                    <h2>Dados Pessoais</h2>
+                    <div class="field-group">
+                        <label>Nome Completo</label>
+                        <input type="text" placeholder="Arthur Schopenhauer" readonly>
+                    </div>
+                    <div class="field-group">
+                        <label>E-mail</label>
+                        <input type="email" placeholder="arthur@nexo.com" readonly>
+                    </div>
+                    <div class="two-columns">
+                        <div class="field-group">
+                            <label>CPF</label>
+                            <input type="text" placeholder="123.456.789-00" readonly>
+                        </div>
+                        <div class="field-group">
+                            <label>Telefone</label>
+                            <input type="tel" placeholder="+55 (11) 99999-9999" readonly>
+                        </div>
+                    </div>
+                    <div class="two-columns">
+                        <div class="field-group">
+                            <label>Data de Nascimento</label>
+                            <input type="text" placeholder="22/02/1988" readonly>
+                        </div>
+                        <div class="field-group">
+                            <label>Genero</label>
+                            <input type="text" placeholder="Prefiro nao informar" readonly>
+                        </div>
+                    </div>
+                    <button class="save-btn">Salvar Dados</button>
+                </div>
+                <div class="profile-section" style="margin-top:2rem;">
+                    <h2>Preferencias de Leitura e IA</h2>
+                    <p style="color:var(--medium-gray);font-size:.875rem;margin-bottom:1.5rem;">Configure quais tipos de
+                        livros alimentam o agente de recomendacao IA.</p>
+                    <div class="preferences-list">
+                        <div class="preference-item">
+                            <label>Filosofia e Metafisica</label>
+                            <button class="switch active"></button>
+                        </div>
+                        <div class="preference-item">
+                            <label>Antiguidade Classica</label>
+                            <button class="switch active"></button>
+                        </div>
+                        <div class="preference-item">
+                            <label>Fisica e Ciencia de Vanguarda</label>
+                            <button class="switch active"></button>
+                        </div>
+                        <div class="preference-item">
+                            <label>Poesia Modernista</label>
+                            <button class="switch"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-<div class="right-column">
-<div class="profile-section">
-<h2>Enderecos Salvos</h2>
-<div class="address-card">
-<div style="margin-bottom:1rem;">
-<div class="address-title">Casa (Padrao)</div>
-<div class="address-info">
-Av. Paulista, 1000 - Apt 42<br>
-Sao Paulo, SP
-</div>
-</div>
-<div class="address-actions">
-<a href="#" class="edit-link">Editar</a>
-<a href="#" class="delete-link">Excluir</a>
-</div>
-</div>
-</div>
+            <div class="right-column">
+                <div class="profile-section">
+                    <h2>Enderecos Salvos</h2>
+                    <div class="address-card">
+                        <div style="margin-bottom:1rem;">
+                            <div class="address-title">Casa (Padrao)</div>
+                            <div class="address-info">
+                                Av. Paulista, 1000 - Apt 42<br>
+                                Sao Paulo, SP
+                            </div>
+                        </div>
+                        <div class="address-actions">
+                            <a href="#" class="edit-link">Editar</a>
+                            <a href="#" class="delete-link">Excluir</a>
+                        </div>
+                    </div>
+                </div>
 
-<div class="profile-section">
-<h2>Pagamentos Salvos</h2>
-<div class="payment-card">
-<div class="card-info">
-<span class="card-icon">Cartao</span>
-Final 4321
-</div>
-<a href="#" class="delete-link">Excluir</a>
-</div>
-</div>
+                <div class="profile-section">
+                    <h2>Pagamentos Salvos</h2>
+                    <div class="payment-card">
+                        <div class="card-info">
+                            <span class="card-icon">Cartao</span>
+                            Final 4321
+                        </div>
+                        <a href="#" class="delete-link">Excluir</a>
+                    </div>
+                </div>
 
-<div class="profile-section">
-<div class="danger-zone">
-<div class="danger-title">Zona de Risco</div>
-<div class="danger-text">
-Desativar sua conta e permanente. Voce perdera acesso ao historico de pedidos e ao seu perfil curado por IA.
-</div>
-<button class="danger-btn">Desativar Conta</button>
-</div>
-</div>
-</div>
-</div>
-</main>
+                <div class="profile-section">
+                    <div class="danger-zone">
+                        <div class="danger-title">Zona de Risco</div>
+                        <div class="danger-text">
+                            Desativar sua conta e permanente. Voce perdera acesso ao historico de pedidos e ao seu
+                            perfil curado por IA.
+                        </div>
+                        <button class="danger-btn">Desativar Conta</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 
-<footer>
-<div class="footer-content">
-<div class="footer-section">
-<h4>Nexo</h4>
-<p>Nexo e uma livraria virtual curada, dedicada a obras culturais da alta qualidade, filosofia classica, ciencia de vanguarda e edicoes raras de arte.</p>
-</div>
-<div class="footer-section">
-<h4>ATENDIMENTO</h4>
-<a href="#">Fale Conosco</a>
-<a href="#">Entregas e Devolucoes</a>
-<a href="#">Perguntas Frequentes</a>
-<a href="#">Encontre uma Loja</a>
-</div>
-<div class="footer-section">
-<h4>JURIDICO</h4>
-<a href="#">Politica de Privacidade</a>
-<a href="#">Termos de Uso</a>
-<a href="#">Aviso de Direitos Autorais</a>
-<a href="#">Mapa do Site</a>
-</div>
-</div>
-<div class="footer-bottom">
-2026 Nexo Inc. Conhecimento curado para mentes curiosas.
-<div class="social-icons">
-<a href="#" title="Instagram">Instagram</a>
-<a href="#" title="Twitter">Twitter</a>
-<a href="#" title="LinkedIn">LinkedIn</a>
-</div>
-</div>
-</footer>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Nexo</h4>
+                <p>Nexo e uma livraria virtual curada, dedicada a obras culturais da alta qualidade, filosofia classica,
+                    ciencia de vanguarda e edicoes raras de arte.</p>
+            </div>
+            <div class="footer-section">
+                <h4>ATENDIMENTO</h4>
+                <a href="#">Fale Conosco</a>
+                <a href="#">Entregas e Devolucoes</a>
+                <a href="#">Perguntas Frequentes</a>
+                <a href="#">Encontre uma Loja</a>
+            </div>
+            <div class="footer-section">
+                <h4>JURIDICO</h4>
+                <a href="#">Politica de Privacidade</a>
+                <a href="#">Termos de Uso</a>
+                <a href="#">Aviso de Direitos Autorais</a>
+                <a href="#">Mapa do Site</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            2026 Nexo Inc. Conhecimento curado para mentes curiosas.
+            <div class="social-icons">
+                <a href="#" title="Instagram">Instagram</a>
+                <a href="#" title="Twitter">Twitter</a>
+                <a href="#" title="LinkedIn">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
 
-<script>
-document.querySelectorAll('.switch').forEach(btn=>{btn.addEventListener('click',e=>{e.preventDefault();btn.classList.toggle('active')})});document.querySelector('.toggle-btn').addEventListener('click',()=>{document.querySelector('.toggle-btn').classList.toggle('active')});document.querySelectorAll('.delete-link').forEach(link=>{link.addEventListener('click',e=>{if(!link.closest('.address-card'))return;e.preventDefault();confirm('Tem certeza que deseja excluir este endereco?')&&alert('Endereco excluido com sucesso!')})});document.querySelector('.danger-btn').addEventListener('click',()=>{confirm('ATENCAO: Esta acao e IRREVERSIVEL. Desativar sua conta permanentemente?')&&alert('Sua conta foi desativada. Sentiremos sua falta!')});document.querySelectorAll('.edit-link').forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();alert('Abrir editor de endereco (modal)')})});document.querySelector('.save-btn').addEventListener('click',()=>{alert('Dados salvos com sucesso!')});
-</script>
+    <script>
+        document.querySelectorAll('.switch').forEach(btn => { btn.addEventListener('click', e => { e.preventDefault(); btn.classList.toggle('active') }) }); document.querySelector('.toggle-btn').addEventListener('click', () => { document.querySelector('.toggle-btn').classList.toggle('active') }); document.querySelectorAll('.delete-link').forEach(link => { link.addEventListener('click', e => { if (!link.closest('.address-card')) return; e.preventDefault(); confirm('Tem certeza que deseja excluir este endereco?') && alert('Endereco excluido com sucesso!') }) }); document.querySelector('.danger-btn').addEventListener('click', () => { confirm('ATENCAO: Esta acao e IRREVERSIVEL. Desativar sua conta permanentemente?') && alert('Sua conta foi desativada. Sentiremos sua falta!') }); document.querySelectorAll('.edit-link').forEach(link => { link.addEventListener('click', e => { e.preventDefault(); alert('Abrir editor de endereco (modal)') }) }); document.querySelector('.save-btn').addEventListener('click', () => { alert('Dados salvos com sucesso!') });
+    </script>
 </body>
+
 </html>

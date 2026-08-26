@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Meus Pedidos - Nexo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --primary: #FF9500;
+            --dark: #0F1419;
+            --light-gray: #F5F5F5;
+            --medium-gray: #999;
+            --text-dark: #333;
+            --border-light: #E5E5E5
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #fff;
+            color: var(--text-dark)
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 100
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .logo::after {
+            content: ".";
+            color: var(--primary)
+        }
+
+        .nav-section {
+            display: flex;
+            gap: 3rem;
+            align-items: center
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--medium-gray);
+            font-size: .875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: color .3s
+        }
+
+        nav a:hover {
+            color: var(--dark)
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: .75rem 1rem;
+            flex: 1;
+            max-width: 400px
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: .875rem;
+            color: var(--text-dark)
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem
+        }
+
+        .profile-btn {
+            background: 0;
+            border: none;
+            cursor: pointer;
+            font-size: .875rem;
+            color: var(--text-dark);
+            font-weight: 500
+        }
+
+        .cart-btn {
+            background: var(--dark);
+            border: none;
+            border-radius: 6px;
+            padding: .5rem 1rem;
+            cursor: pointer;
+            font-size: .875rem;
+            color: #fff;
+            font-weight: 600
+        }
+
+        main {
+            min-height: calc(100vh - 300px);
+            padding: 2rem;
+            background: #fff
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: .5rem
+        }
+
+        .page-subtitle {
+            font-size: .875rem;
+            color: var(--medium-gray);
+            margin-bottom: 2rem
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap
+        }
+
+        .filter-btn {
+            background: var(--light-gray);
+            border: none;
+            padding: .75rem 1.5rem;
+            border-radius: 24px;
+            cursor: pointer;
+            font-size: .875rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            transition: all .3s
+        }
+
+        .filter-btn.active {
+            background: var(--dark);
+            color: #fff
+        }
+
+        .order-card {
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-light)
+        }
+
+        .order-id {
+            font-weight: 700;
+            color: var(--dark);
+            font-size: 1rem
+        }
+
+        .order-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: .875rem;
+            color: var(--medium-gray)
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: .4rem .8rem;
+            border-radius: 6px;
+            font-size: .75rem;
+            font-weight: 700;
+            text-transform: uppercase
+        }
+
+        .status-transit {
+            background: #FFF4E6;
+            color: #E67E00
+        }
+
+        .status-delivered {
+            background: #ECFDF5;
+            color: #059669
+        }
+
+        .order-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .products-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem
+        }
+
+        .product-item {
+            display: flex;
+            gap: 1rem;
+            border: 1px solid var(--border-light);
+            padding: 1rem;
+            border-radius: 8px;
+            background: var(--light-gray)
+        }
+
+        .product-thumbnail {
+            width: 80px;
+            height: 120px;
+            background: #ddd;
+            border-radius: 6px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark)
+        }
+
+        .product-info h4 {
+            font-size: .95rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: .5rem
+        }
+
+        .product-info p {
+            font-size: .8rem;
+            color: var(--medium-gray);
+            margin-bottom: .25rem
+        }
+
+        .quantity-badge {
+            background: var(--dark);
+            color: #fff;
+            padding: .2rem .5rem;
+            border-radius: 4px;
+            font-size: .75rem;
+            font-weight: 600
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            flex-wrap: wrap
+        }
+
+        .btn {
+            padding: .75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: .875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .3s
+        }
+
+        .btn-secondary {
+            background: var(--light-gray);
+            color: var(--text-dark)
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-light)
+        }
+
+        .btn-primary {
+            background: var(--dark);
+            color: #fff
+        }
+
+        .btn-primary:hover {
+            background: #1a2028
+        }
+
+        .btn-accent {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary)
+        }
+
+        .btn-accent:hover {
+            background: var(--primary);
+            color: #fff
+        }
+
+        .page-btn {
+            background: var(--light-gray);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: .875rem;
+            font-weight: 600;
+            color: var(--text-dark)
+        }
+
+        .page-btn.active {
+            background: var(--dark);
+            color: #fff
+        }
+
+        footer {
+            background: var(--dark);
+            color: #fff;
+            padding: 3rem 2rem;
+            margin-top: 3rem
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, .1)
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            color: var(--primary)
+        }
+
+        .footer-section p {
+            font-size: .875rem;
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 1rem
+        }
+
+        .footer-section a {
+            display: block;
+            color: #ccc;
+            text-decoration: none;
+            font-size: .875rem;
+            margin-bottom: .75rem;
+            transition: color .3s
+        }
+
+        .footer-section a:hover {
+            color: var(--primary)
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: .875rem;
+            color: #ccc
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem
+        }
+
+        @media(max-width:768px) {
+            .filters {
+                flex-direction: column
+            }
+
+            .filter-btn {
+                width: 100%
+            }
+
+            .products-container {
+                grid-template-columns: 1fr
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media(max-width:480px) {
+            main {
+                padding: 1rem
+            }
+
+            .page-title {
+                font-size: 1.75rem
+            }
+
+            .order-card {
+                padding: 1rem
+            }
+
+            .btn {
+                padding: .6rem 1rem;
+                font-size: .8rem
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">Nexo</div>
+        <div class="nav-section">
+            <nav>
+                <a href="#">CATALOGO</a>
+                <a href="#">FILOSOFIA</a>
+                <a href="#">CIENCIA</a>
+                <a href="#">ARTE</a>
+                <a href="#">HISTORIA</a>
+            </nav>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar no catalogo...">
+            </div>
+        </div>
+        <div class="user-section">
+            <button class="profile-btn">Arthur S.</button>
+            <button class="cart-btn">Carrinho</button>
+        </div>
+    </header>
+
+    <main>
+        <div style="max-width:1200px;margin:0 auto;">
+            <h1 class="page-title">Meus Pedidos &amp; Trocas</h1>
+            <p class="page-subtitle">Arthur S. • Conta #NX-88291</p>
+
+            <div class="filters">
+                <button class="filter-btn active" data-filter="todos">Todos os Pedidos</button>
+                <button class="filter-btn" data-filter="aberto">Em Aberto</button>
+                <button class="filter-btn" data-filter="transito">Em Transito</button>
+                <button class="filter-btn" data-filter="entregue">Entreques</button>
+                <button class="filter-btn" data-filter="cancelado">Cancelados</button>
+                <button class="filter-btn" data-filter="trocas">Trocas</button>
+            </div>
+
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <div class="order-id">Order #NX-2981A</div>
+                        <div class="order-meta">
+                            <span>Realizado em 14 Out 2026</span>
+                            <span class="status-badge status-transit">EM TRANSITO</span>
+                        </div>
+                    </div>
+                    <div class="order-price">R$ 212,20</div>
+                </div>
+
+                <div class="products-container">
+                    <div class="product-item">
+                        <div class="product-thumbnail" style="background:#1E3A8A;color:#fff;">Livro</div>
+                        <div class="product-info">
+                            <h4>A Ordem do Tempo</h4>
+                            <p>por Carlo Rovelli</p>
+                            <p>Edicao Ciencia Classica</p>
+                            <div
+                                style="display:flex;gap:.5rem;font-size:.8rem;color:var(--medium-gray);margin-top:.5rem;">
+                                <span>Quantidade:</span>
+                                <span class="quantity-badge">1</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-item">
+                        <div class="product-thumbnail" style="background:#B45309;color:#fff;">Livro</div>
+                        <div class="product-info">
+                            <h4>Alem do Bem e do Mal</h4>
+                            <p>por Friedrich Nietzsche</p>
+                            <p>Traducao de Filosofia</p>
+                            <div
+                                style="display:flex;gap:.5rem;font-size:.8rem;color:var(--medium-gray);margin-top:.5rem;">
+                                <span>Quantidade:</span>
+                                <span class="quantity-badge">2</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-actions">
+                    <button class="btn btn-secondary">Rastrear Pacote</button>
+                    <button class="btn btn-primary">Ver Detalhes</button>
+                </div>
+            </div>
+
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <div class="order-id">Order #NX-1928B</div>
+                        <div class="order-meta">
+                            <span>Realizado em 29 Set 2026</span>
+                            <span class="status-badge status-delivered">ENTREGUE</span>
+                        </div>
+                    </div>
+                    <div class="order-price">R$ 269,90</div>
+                </div>
+
+                <div class="products-container">
+                    <div class="product-item">
+                        <div class="product-thumbnail" style="background:#A78BFA;color:#fff;">Livro</div>
+                        <div class="product-info">
+                            <h4>Mimesis</h4>
+                            <p>por Erich Auerbach</p>
+                            <p>Literatura Classica Rara</p>
+                            <div
+                                style="display:flex;gap:.5rem;font-size:.8rem;color:var(--medium-gray);margin-top:.5rem;">
+                                <span>Quantidade:</span>
+                                <span class="quantity-badge">1</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-actions">
+                    <button class="btn btn-secondary">Nota Fiscal PDF</button>
+                    <button class="btn btn-accent">Solicitar Troca</button>
+                    <button class="btn btn-primary">Comprar Novamente</button>
+                </div>
+            </div>
+
+            <div
+                style="display:flex;justify-content:space-between;align-items:center;margin-top:3rem;padding:2rem 0;border-top:1px solid var(--border-light);">
+                <div style="font-size:.875rem;color:var(--medium-gray);">Exibindo 2 de 28 pedidos no historico</div>
+                <div style="display:flex;gap:.5rem;align-items:center;">
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button style="background:transparent;border:none;cursor:default;font-size:.875rem;">...</button>
+                    <button class="page-btn">6</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Nexo</h4>
+                <p>Nexo e uma livraria virtual curada, dedicada a obras culturais da alta qualidade, filosofia classica,
+                    ciencia de vanguarda e edicoes raras de arte.</p>
+            </div>
+            <div class="footer-section">
+                <h4>ATENDIMENTO</h4>
+                <a href="#">Fale Conosco</a>
+                <a href="#">Entregas e Devolucoes</a>
+                <a href="#">Perguntas Frequentes</a>
+                <a href="#">Encontre uma Loja</a>
+            </div>
+            <div class="footer-section">
+                <h4>JURIDICO</h4>
+                <a href="#">Politica de Privacidade</a>
+                <a href="#">Termos de Uso</a>
+                <a href="#">Aviso de Direitos Autorais</a>
+                <a href="#">Mapa do Site</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            2026 Nexo Inc. Conhecimento curado para mentes curiosas.
+            <div class="social-icons">
+                <a href="#">Instagram</a>
+                <a href="#">Twitter</a>
+                <a href="#">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.filter-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); const filter = btn.getAttribute('data-filter'); const cards = document.querySelectorAll('.order-card'); cards.forEach((card, index) => { if (filter === 'todos') { card.style.display = 'block' } else if (filter === 'transito' && index === 0) { card.style.display = 'block' } else if (filter === 'entregue' && index === 1) { card.style.display = 'block' } else { card.style.display = 'none' } }) }) }); document.querySelectorAll('.page-btn:not([style])').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.page-btn:not([style])').forEach(b => b.classList.remove('active')); btn.classList.add('active') }) }); document.querySelectorAll('.btn').forEach(btn => { btn.addEventListener('click', (e) => { const text = btn.textContent.trim(); if (text.includes('Rastrear')) { alert('Abrindo rastreador de pacote... (Pedido #NX-2981A)') } else if (text.includes('Detalhes')) { alert('Abrindo detalhes completos do pedido...') } else if (text.includes('Fiscal')) { alert('Baixando nota fiscal em PDF...') } else if (text.includes('Troca')) { alert('Iniciando processo de troca... Entre em contato conosco') } else if (text.includes('Novamente')) { alert('Itens adicionados ao carrinho!') } }) });
+    </script>
+</body>
+
+</html>

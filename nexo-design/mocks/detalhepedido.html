@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Detalhe do Pedido - Nexo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --primary: #FF9500;
+            --dark: #0F1419;
+            --light-gray: #F5F5F5;
+            --medium-gray: #999;
+            --text-dark: #333;
+            --border-light: #E5E5E5;
+            --success: #10B981;
+            --error: #EF4444;
+            --warning: #FBBF24
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #fff;
+            color: var(--text-dark)
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 100
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .logo::after {
+            content: ".";
+            color: var(--primary)
+        }
+
+        .nav-section {
+            display: flex;
+            gap: 3rem;
+            align-items: center
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--medium-gray);
+            font-size: .875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: color .3s
+        }
+
+        nav a:hover {
+            color: var(--dark)
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: .75rem 1rem;
+            flex: 1;
+            max-width: 400px
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: .875rem;
+            color: var(--text-dark)
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem
+        }
+
+        .profile-btn {
+            background: 0;
+            border: none;
+            cursor: pointer;
+            font-size: .875rem;
+            color: var(--text-dark);
+            font-weight: 500
+        }
+
+        .cart-btn {
+            background: var(--dark);
+            border: none;
+            border-radius: 6px;
+            padding: .5rem 1rem;
+            cursor: pointer;
+            font-size: .875rem;
+            color: #fff;
+            font-weight: 600
+        }
+
+        main {
+            min-height: calc(100vh - 300px);
+            padding: 2rem;
+            background: #fff
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: .875rem;
+            color: var(--medium-gray);
+            margin-bottom: 2rem;
+            cursor: pointer
+        }
+
+        .breadcrumb-back {
+            background: 0;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-dark);
+            margin-right: .5rem;
+            font-weight: 600
+        }
+
+        .timeline-section {
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem
+        }
+
+        .timeline-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .timeline-info {
+            font-size: .875rem;
+            color: var(--medium-gray)
+        }
+
+        .timeline-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            position: relative
+        }
+
+        .timeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: .75rem;
+            flex: 1;
+            position: relative
+        }
+
+        .timeline-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--dark);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: .875rem;
+            z-index: 2;
+            position: relative;
+            flex-shrink: 0
+        }
+
+        .timeline-step.active .timeline-circle {
+            background: var(--primary)
+        }
+
+        .timeline-label {
+            font-size: .75rem;
+            font-weight: 600;
+            text-align: center;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            line-height: 1.2;
+            max-width: 70px
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border-light);
+            z-index: 1
+        }
+
+        .timeline-step.completed .timeline-line {
+            background: var(--dark)
+        }
+
+        .timeline-step.active~.timeline-step .timeline-line {
+            background: var(--border-light)
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem
+        }
+
+        @media(max-width:768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .content-section {
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 2rem
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            font-size: .875rem;
+            letter-spacing: .05em
+        }
+
+        .section-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem
+        }
+
+        .address-text {
+            color: var(--text-dark);
+            line-height: 1.6;
+            font-size: .875rem
+        }
+
+        .address-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: .5rem
+        }
+
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: .75rem;
+            font-size: .875rem
+        }
+
+        .payment-item {
+            display: flex;
+            align-items: center;
+            gap: .5rem
+        }
+
+        .payment-bullet {
+            color: var(--text-dark);
+            font-weight: 600
+        }
+
+        .products-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem
+        }
+
+        .product-item {
+            display: flex;
+            gap: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-light)
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0
+        }
+
+        .product-thumbnail {
+            width: 80px;
+            height: 100px;
+            border-radius: 8px;
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: .75rem;
+            flex-shrink: 0
+        }
+
+        .product-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: .5rem
+        }
+
+        .product-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-dark)
+        }
+
+        .product-author {
+            font-size: .875rem;
+            color: var(--medium-gray)
+        }
+
+        .product-quantity {
+            font-size: .875rem;
+            color: var(--medium-gray)
+        }
+
+        .product-price {
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: .75rem;
+            flex-wrap: wrap
+        }
+
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem
+        }
+
+        .summary-section {
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 2rem
+        }
+
+        .summary-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            font-size: .875rem;
+            letter-spacing: .05em
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: .75rem 0;
+            font-size: .875rem;
+            border-bottom: 1px solid var(--border-light)
+        }
+
+        .summary-item:last-of-type {
+            border-bottom: none
+        }
+
+        .summary-label {
+            color: var(--text-dark)
+        }
+
+        .summary-value {
+            color: var(--text-dark);
+            font-weight: 600
+        }
+
+        .summary-discount {
+            color: var(--error)
+        }
+
+        .total-section {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 1.5rem
+        }
+
+        .total-label {
+            font-size: .875rem;
+            color: var(--medium-gray);
+            margin-bottom: .5rem
+        }
+
+        .total-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .actions-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem
+        }
+
+        .btn {
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: .875rem;
+            font-weight: 600;
+            transition: all .3s;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff
+        }
+
+        .btn-primary:hover {
+            background: #E67E00;
+            transform: translateY(-2px)
+        }
+
+        .btn-secondary {
+            background: #fff;
+            color: var(--error);
+            border: 2px solid var(--error)
+        }
+
+        .btn-secondary:hover {
+            background: rgba(239, 68, 68, .05)
+        }
+
+        .badge {
+            display: inline-block;
+            padding: .375rem .75rem;
+            border-radius: 20px;
+            font-size: .75rem;
+            font-weight: 600;
+            text-transform: uppercase
+        }
+
+        .badge-delivered {
+            background: #ECFDF5;
+            color: #059669
+        }
+
+        .badge-exchange {
+            background: #FEF3C7;
+            color: #D97706
+        }
+
+        .btn-tertiary {
+            background: #fff;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            border-radius: 6px;
+            padding: .5rem 1rem
+        }
+
+        .btn-tertiary:hover {
+            background: rgba(255, 149, 0, .05)
+        }
+
+        .footer {
+            background: var(--dark);
+            color: #fff;
+            margin-top: 3rem
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto
+        }
+
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem
+        }
+
+        .footer-section h4 {
+            font-size: .875rem;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: .5rem
+        }
+
+        .footer-section a {
+            color: #999;
+            text-decoration: none;
+            font-size: .875rem;
+            transition: color .3s
+        }
+
+        .footer-section a:hover {
+            color: #fff
+        }
+
+        .footer-section p {
+            font-size: .875rem;
+            line-height: 1.6;
+            color: #999
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, .1);
+            max-width: 1200px;
+            margin: 0 auto;
+            font-size: .875rem;
+            color: #999
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1.5rem
+        }
+
+        .social-icons a {
+            color: #fff;
+            text-decoration: none;
+            font-size: .875rem
+        }
+
+        .social-icons a:hover {
+            color: var(--primary)
+        }
+
+        @media(max-width:768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem
+            }
+
+            .nav-section {
+                flex-direction: column;
+                width: 100%;
+                gap: 1rem
+            }
+
+            nav {
+                width: 100%;
+                justify-content: center
+            }
+
+            .search-bar {
+                max-width: 100%
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem
+            }
+
+            main {
+                padding: 1rem
+            }
+
+            .timeline-container {
+                flex-wrap: wrap
+            }
+
+            .timeline-step {
+                flex: 0 0 calc(20% - .8rem)
+            }
+
+            .timeline-label {
+                font-size: .65rem
+            }
+
+            .timeline-line {
+                display: none
+            }
+
+            .content-wrapper {
+                gap: 1rem
+            }
+
+            .content-section {
+                padding: 1.5rem
+            }
+
+            .right-column {
+                gap: 1rem
+            }
+
+            .product-item {
+                gap: 1rem
+            }
+
+            .product-thumbnail {
+                width: 60px;
+                height: 75px
+            }
+
+            .btn {
+                font-size: .8rem;
+                padding: .75rem
+            }
+
+            .total-amount {
+                font-size: 1.5rem
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo">Nexo</div>
+        <div class="nav-section">
+            <nav>
+                <a href="home.html">CATALOGO</a>
+                <a href="#">FILOSOFIA</a>
+                <a href="#">CIENCIA</a>
+                <a href="#">ARTE</a>
+                <a href="#">HISTORIA</a>
+            </nav>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar no catalogo...">
+            </div>
+        </div>
+        <div class="user-section">
+            <button class="profile-btn">Arthur S.</button>
+            <button class="cart-btn">🛒</button>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+        <div class="container">
+
+            <!-- BREADCRUMB -->
+            <div class="breadcrumb">
+                <button class="breadcrumb-back" onclick="history.back()">← Voltar para Meus Pedidos</button>
+            </div>
+
+            <!-- TIMELINE STATUS -->
+            <div class="timeline-section">
+                <div class="timeline-title">
+                    <span>Detalhe do Status do Pedido</span>
+                    <span class="timeline-info">Pedido #NX-2981A • 14 de Outubro de 2026</span>
+                </div>
+
+                <div class="timeline-container">
+                    <div class="timeline-step completed">
+                        <div class="timeline-circle">1</div>
+                        <div class="timeline-label">EM ABERTO</div>
+                        <div class="timeline-line"></div>
+                    </div>
+
+                    <div class="timeline-step completed">
+                        <div class="timeline-circle">2</div>
+                        <div class="timeline-label">EM PROCESSAMENTO</div>
+                        <div class="timeline-line"></div>
+                    </div>
+
+                    <div class="timeline-step completed">
+                        <div class="timeline-circle">3</div>
+                        <div class="timeline-label">PAGAMENTO REALIZADO</div>
+                        <div class="timeline-line"></div>
+                    </div>
+
+                    <div class="timeline-step active">
+                        <div class="timeline-circle">4</div>
+                        <div class="timeline-label">EM TRÂNSITO</div>
+                        <div class="timeline-line"></div>
+                    </div>
+
+                    <div class="timeline-step">
+                        <div class="timeline-circle">5</div>
+                        <div class="timeline-label">ENTREGUE</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTENT MAIN -->
+            <div class="content-wrapper">
+
+                <!-- LEFT COLUMN -->
+                <div>
+
+                    <!-- DELIVERY ADDRESS -->
+                    <div class="content-section">
+                        <div class="section-title">ENDERECO DE ENTREGA</div>
+                        <div class="section-content">
+                            <div class="address-text">
+                                <div class="address-title">Arthur Schopenhauer</div>
+                                <div>Av. Paulista, 1000 - Apt 42, São Paulo, SP 01310-100</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PAYMENT METHOD -->
+                    <div class="content-section" style="margin-top:1.5rem;">
+                        <div class="section-title">FORMA DE PAGAMENTO</div>
+                        <div class="section-content">
+                            <div style="font-size:.875rem;margin-bottom:1rem;">Pagamento dividido entre cartões:</div>
+                            <div class="payment-methods">
+                                <div class="payment-item">
+                                    <span class="payment-bullet">•</span>
+                                    <span>Visa final 4921:</span>
+                                </div>
+                                <div class="payment-item">
+                                    <span class="payment-bullet">•</span>
+                                    <span>Mastercard final 8832:</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PRODUCTS -->
+                    <div class="content-section" style="margin-top:1.5rem;">
+                        <div class="section-title">PRODUTOS DO PEDIDO</div>
+
+                        <div class="products-list">
+
+                            <!-- PRODUCT 1 -->
+                            <div class="product-item">
+                                <div class="product-thumbnail"
+                                    style="background:#1E40AF;color:#fff;font-size:.7rem;display:flex;align-items:center;justify-content:center;text-align:center;padding:.5rem;">
+                                    <span>A Ordem do Tempo</span></div>
+                                <div class="product-info">
+                                    <div class="product-title">A Ordem do Tempo</div>
+                                    <div class="product-author">por Carlo Rovelli</div>
+                                    <div class="product-quantity">Qrd: 1</div>
+                                    <div class="product-price" style="margin-top:.5rem;">R$ 94,90</div>
+                                    <div style="margin-top:.5rem;"><span class="badge badge-delivered">Entregue</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PRODUCT 2 -->
+                            <div class="product-item">
+                                <div class="product-thumbnail"
+                                    style="background:#B45309;color:#fff;font-size:.7rem;display:flex;align-items:center;justify-content:center;text-align:center;padding:.5rem;">
+                                    <span>Além do Bem e do Mal</span></div>
+                                <div class="product-info">
+                                    <div class="product-title">Além do Bem e do Mal</div>
+                                    <div class="product-author">por Friedrich Nietzsche</div>
+                                    <div class="product-quantity">Qrd: 2</div>
+                                    <div class="product-price" style="margin-top:.5rem;">R$ 119,80 (R$ 59,90 cada)</div>
+                                    <div style="margin-top:.5rem;display:flex;gap:.5rem;"><button
+                                            class="btn-tertiary">Solicitar Troca</button></div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT COLUMN -->
+                <div class="right-column">
+
+                    <!-- SUMMARY -->
+                    <div class="summary-section">
+                        <div class="summary-title">Resumo</div>
+
+                        <div class="summary-item">
+                            <span class="summary-label">Subtotal</span>
+                            <span class="summary-value">R$ 214,70</span>
+                        </div>
+
+                        <div class="summary-item">
+                            <span class="summary-label">Cupom Aplicado (WELCOME5)</span>
+                            <span class="summary-value summary-discount">-R$ 25,00</span>
+                        </div>
+
+                        <div class="summary-item">
+                            <span class="summary-label">Frete</span>
+                            <span class="summary-value">R$ 22,50</span>
+                        </div>
+
+                        <!-- TOTAL -->
+                        <div class="total-section">
+                            <div class="total-label">Total Pago</div>
+                            <div class="total-amount">R$ 212,20</div>
+                        </div>
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="actions-section">
+                        <button class="btn btn-primary" onclick="confirmReceipt()">Confirmar Recebimento</button>
+                        <button class="btn btn-secondary" onclick="cancelOrder()">Cancelar Pedido</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Nexo</h4>
+                <p>Nexo é uma livraria virtual curada, dedicada a obras culturais da alta qualidade, filosofia clássica,
+                    ciência de vanguarda e edições raras de arte.</p>
+            </div>
+            <div class="footer-section">
+                <h4>ATENDIMENTO</h4>
+                <a href="#">Fale Conosco</a>
+                <a href="#">Entregas & Devoluções</a>
+                <a href="#">Perguntas Frequentes</a>
+                <a href="#">Encontre uma Loja</a>
+            </div>
+            <div class="footer-section">
+                <h4>JURIDICO</h4>
+                <a href="#">Política de Privacidade</a>
+                <a href="#">Termos de Uso</a>
+                <a href="#">Aviso de Direitos Autorais</a>
+                <a href="#">Mapa do Site</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 Nexo Inc. Conhecimento curado para mentes curiosas.
+            <div class="social-icons">
+                <a href="#">Instagram</a>
+                <a href="#">Twitter</a>
+                <a href="#">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Confirm Receipt
+        function confirmReceipt() { alert('✓ Recebimento confirmado!\nObrigado por sua compra na Nexo.'); }
+
+        // Cancel Order
+        function cancelOrder() { if (confirm('Tem certeza que deseja cancelar este pedido?\nEsta ação não pode ser desfeita.')) { alert('Pedido cancelado com sucesso.\nVocê receberá um email de confirmação em breve.'); } }
+
+        // Timeline activation - show active step
+        document.querySelectorAll('.timeline-step').forEach((step, index) => { if (index < 4) { step.classList.add('completed'); } });
+
+        // Solicitar Troca button
+        document.querySelectorAll('.btn-tertiary').forEach(btn => { btn.addEventListener('click', () => { alert('Solicitação de troca iniciada!\nNosso time de atendimento entrará em contato em breve.'); }) });
+
+        // Header interactions
+        document.querySelector('.profile-btn').addEventListener('click', () => { alert('Abrindo perfil do usuário...') });
+        document.querySelector('.cart-btn').addEventListener('click', () => { alert('Abrindo carrinho de compras...') });
+
+        // Search functionality
+        document.querySelector('.search-bar input').addEventListener('keypress', (e) => { if (e.key === 'Enter') { alert('Buscando por: ' + e.target.value); } });
+
+        // Navigation links
+        document.querySelectorAll('nav a').forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); alert('Navegando para: ' + e.target.textContent); }) });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Confirmar Despacho - Nexo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --primary: #FF9500;
+            --dark: #0F1419;
+            --light-gray: #F5F5F5;
+            --medium-gray: #999;
+            --text-dark: #333;
+            --border-light: #E5E5E5
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #fff;
+            color: var(--text-dark)
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 100
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .logo::after {
+            content: ".";
+            color: var(--primary)
+        }
+
+        .nav-section {
+            display: flex;
+            gap: 3rem;
+            align-items: center
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--medium-gray);
+            font-size: .875rem;
+            font-weight: 500;
+            text-transform: uppercase
+        }
+
+        nav a:hover {
+            color: var(--dark)
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: .75rem 1rem;
+            flex: 1;
+            max-width: 400px
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: .875rem
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem
+        }
+
+        .profile-btn {
+            background: 0;
+            border: none;
+            cursor: pointer;
+            font-size: .875rem;
+            font-weight: 500
+        }
+
+        .cart-btn {
+            background: var(--dark);
+            border: none;
+            border-radius: 6px;
+            padding: .5rem 1rem;
+            cursor: pointer;
+            color: #fff;
+            font-weight: 600;
+            position: relative
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--primary);
+            color: #fff;
+            font-size: .7rem;
+            font-weight: 700;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        main {
+            min-height: calc(100vh - 300px);
+            padding: 2rem;
+            background: #fff
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 2rem
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem
+        }
+
+        .form-section {
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 2rem
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--light-gray);
+            padding-bottom: .75rem
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: .5rem;
+            font-size: .95rem
+        }
+
+        .form-group.required label::after {
+            content: " *";
+            color: #EF4444
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: .75rem;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            font-size: .95rem;
+            color: var(--text-dark)
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 149, 0, .1)
+        }
+
+        .footer {
+            background: var(--dark);
+            color: #fff;
+            padding: 3rem 2rem 1.5rem;
+            margin-top: 3rem
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            margin-bottom: 2rem
+        }
+
+        .footer-section h4 {
+            font-size: .95rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            letter-spacing: .05em
+        }
+
+        .footer-section p {
+            font-size: .85rem;
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 1rem
+        }
+
+        .footer-section a {
+            display: block;
+            color: #ccc;
+            text-decoration: none;
+            font-size: .85rem;
+            margin-bottom: .75rem
+        }
+
+        .footer-section a:hover {
+            color: var(--primary)
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, .1);
+            max-width: 1200px;
+            margin: 0 auto;
+            font-size: .8rem;
+            color: #999
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem
+        }
+
+        .social-icons a {
+            color: #999;
+            text-decoration: none
+        }
+
+        .social-icons a:hover {
+            color: var(--primary)
+        }
+
+        @media (max-width:768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem
+            }
+
+            .nav-section {
+                flex-direction: column;
+                width: 100%
+            }
+
+            nav {
+                flex-wrap: wrap;
+                justify-content: center
+            }
+
+            main {
+                padding: 1rem
+            }
+
+            .page-title {
+                font-size: 1.5rem
+            }
+
+            .content-wrapper {
+                grid-template-columns: 1fr
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">Nexo</div>
+        <div class="nav-section">
+            <nav>
+                <a href="home.html">CATÁLOGO</a>
+                <a href="#">FILOSOFIA</a>
+                <a href="#">CIÊNCIA</a>
+                <a href="#">ARTE</a>
+                <a href="#">HISTÓRIA</a>
+            </nav>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar no catálogo...">
+            </div>
+        </div>
+        <div class="user-section">
+            <button class="profile-btn">Arthur S.</button>
+            <button class="cart-btn">🛒<span class="cart-badge">1</span></button>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <h1 class="page-title">Confirmar Despacho</h1>
+            <div class="content-wrapper">
+
+                <div class="form-section">
+                    <div class="section-title">Recibo e Detalhes do Envio</div>
+
+                    <div class="form-group required">
+                        <label for="carrier">Selecionar Transportadora</label>
+                        <select id="carrier" required>
+                            <option value="">Selecione...</option>
+                            <option value="fedex" selected>FedEx Ground</option>
+                            <option value="dhl">DHL Express</option>
+                            <option value="ups">UPS</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group required">
+                        <label for="tracking">Código de Rastreio</label>
+                        <input type="text" id="tracking" placeholder="Ex: FX-988172901-US" value="FX-988172901-US"
+                            required>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                        <div class="form-group required">
+                            <label for="dispatch-date">Data de Despacho</label>
+                            <input type="date" id="dispatch-date" value="2026-10-16" required>
+                        </div>
+                        <div class="form-group required">
+                            <label for="delivery-date">Previsão de Entrega</label>
+                            <input type="date" id="delivery-date" value="2026-10-21" required>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;gap:1rem;margin-top:2rem;">
+                        <button
+                            style="background:var(--primary);color:#fff;border:none;border-radius:6px;padding:.75rem 1.5rem;cursor:pointer;font-weight:600;"
+                            onclick="confirmDispatch()">Confirmar Despacho</button>
+                        <button
+                            style="background:0;border:0;color:var(--primary);cursor:pointer;text-transform:uppercase;font-size:.75rem;font-weight:600;"
+                            onclick="markApproved()">APROVADO PELA NEXO</button>
+                    </div>
+                </div>
+
+                <div style="background:#fff;border:1px solid var(--border-light);border-radius:12px;padding:2rem;">
+                    <div
+                        style="font-size:.85rem;font-weight:700;color:var(--primary);text-transform:uppercase;margin-bottom:1.5rem;">
+                        Resumo da Troca</div>
+
+                    <div style="display:flex;gap:1rem;margin-bottom:1.5rem;">
+                        <div
+                            style="width:80px;height:120px;background:linear-gradient(135deg,#1a1a1a 0%,#1a1a1a 40%,#FFD700 40%,#FFD700 100%);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.1);">
+                            <div
+                                style="font-size:1.5rem;font-weight:900;color:#FFD700;transform:rotate(-15deg);text-align:center;padding:.5rem;">
+                                <div>DESIGN</div>
+                                <div>AND</div>
+                                <div>FORM</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-size:.95rem;font-weight:700;color:var(--dark);margin-bottom:.25rem;">Design
+                                e Forma</div>
+                            <div style="font-size:.85rem;color:var(--medium-gray);">Johannes Itten</div>
+                        </div>
+                    </div>
+
+                    <div style="background:var(--light-gray);padding:1rem;border-radius:6px;font-size:.9rem;">
+                        <p style="margin-bottom:.75rem;"><strong>Motivo da Devolução:</strong></p>
+                        <p style="margin-bottom:1rem;">Item com Defeito</p>
+                        <p style="margin-bottom:.75rem;"><strong>ID da Solicitação:</strong></p>
+                        <p>TROCA-2981A-NX</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Nexo</h4>
+                <p>Nexo é uma livraria virtual curada, dedicada a obras culturais da alta qualidade, filosofia clássica,
+                    ciência de vanguarda e edições raras de arte.</p>
+            </div>
+            <div class="footer-section">
+                <h4>ATENDIMENTO</h4>
+                <a href="#">Fale Conosco</a>
+                <a href="#">Entregas & Devoluções</a>
+                <a href="#">Perguntas Frequentes</a>
+                <a href="#">Encontre uma Loja</a>
+            </div>
+            <div class="footer-section">
+                <h4>JURÍDICO</h4>
+                <a href="#">Política de Privacidade</a>
+                <a href="#">Termos de Uso</a>
+                <a href="#">Aviso de Direitos Autorais</a>
+                <a href="#">Mapa do Site</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 Nexo Inc. Conhecimento curado para mentes curiosas.
+            <div class="social-icons">
+                <a href="#">Instagram</a>
+                <a href="#">Twitter</a>
+                <a href="#">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function confirmDispatch() { const carrier = document.getElementById("carrier").value; const tracking = document.getElementById("tracking").value; const dispatchDate = document.getElementById("dispatch-date").value; const deliveryDate = document.getElementById("delivery-date").value; if (!carrier || !tracking || !dispatchDate || !deliveryDate) { alert("Por favor, preencha todos os campos obrigatórios (*).\n"); return; } alert(`✓ Despacho Confirmado!\n\nTransportadora: ${carrier.toUpperCase()}\nCódigo de Rastreio: ${tracking}\nData de Despacho: ${dispatchDate}\nPrevisão de Entrega: ${deliveryDate}\n\nO cliente receberá um e-mail com as informações de rastreamento em breve.`); }
+        function markApproved() { alert("✓ Despacho marcado como APROVADO PELA NEXO!\n\nO status será atualizado no sistema e o cliente será notificado."); }
+    </script>
+
+</body>
+
+</html>

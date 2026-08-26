@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Solicitar Troca de Item - Nexo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --primary: #FF9500;
+            --dark: #0F1419;
+            --light-gray: #F5F5F5;
+            --medium-gray: #999;
+            --text-dark: #333;
+            --border-light: #E5E5E5;
+            --success: #10B981;
+            --error: #EF4444;
+            --warning: #FBBF24
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #fff;
+            color: var(--text-dark)
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 100
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .logo::after {
+            content: ".";
+            color: var(--primary)
+        }
+
+        .nav-section {
+            display: flex;
+            gap: 3rem;
+            align-items: center
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--medium-gray);
+            font-size: .875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: color .3s
+        }
+
+        nav a:hover {
+            color: var(--dark)
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: .75rem 1rem;
+            flex: 1;
+            max-width: 400px
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: .875rem;
+            color: var(--text-dark)
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem
+        }
+
+        .profile-btn {
+            background: 0;
+            border: none;
+            cursor: pointer;
+            font-size: .875rem;
+            color: var(--text-dark);
+            font-weight: 500
+        }
+
+        .cart-btn {
+            background: var(--dark);
+            border: none;
+            border-radius: 6px;
+            padding: .5rem 1rem;
+            cursor: pointer;
+            font-size: .875rem;
+            color: #fff;
+            font-weight: 600
+        }
+
+        main {
+            min-height: calc(100vh - 300px);
+            padding: 2rem;
+            background: #fff
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            font-size: .875rem;
+            color: var(--medium-gray);
+            margin-bottom: 2rem;
+            cursor: pointer
+        }
+
+        .breadcrumb-back {
+            background: 0;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-dark);
+            margin-right: .5rem;
+            font-weight: 600
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 2rem
+        }
+
+        .timeline-section {
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem
+        }
+
+        .timeline-title {
+            font-size: .875rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 1.5rem
+        }
+
+        .timeline-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem
+        }
+
+        .timeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative
+        }
+
+        .timeline-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--dark);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: .875rem;
+            z-index: 2;
+            flex-shrink: 0
+        }
+
+        .timeline-step.active .timeline-circle {
+            background: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255, 149, 0, .2)
+        }
+
+        .timeline-label {
+            font-size: .7rem;
+            text-align: center;
+            margin-top: .5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            line-height: 1.2
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 20px;
+            left: calc(50% + 20px);
+            right: calc(-50% - 20px);
+            height: 2px;
+            background: var(--border-light);
+            z-index: 1
+        }
+
+        .timeline-step:last-child .timeline-line {
+            display: none
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem
+        }
+
+        .content-section {
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 2rem
+        }
+
+        .section-title {
+            font-size: .875rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 1.5rem
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem
+        }
+
+        .form-group label {
+            font-size: .875rem;
+            font-weight: 600;
+            color: var(--text-dark)
+        }
+
+        .form-group select,
+        .form-group textarea {
+            padding: .75rem;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            font-size: .875rem;
+            font-family: inherit;
+            color: var(--text-dark);
+            background: #fff
+        }
+
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 149, 0, .1)
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical
+        }
+
+        .form-group.required label::after {
+            content: " *";
+            color: var(--error)
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem
+        }
+
+        .btn {
+            padding: .75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: .875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .3s
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff
+        }
+
+        .btn-primary:hover {
+            background: #E68700;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 149, 0, .3)
+        }
+
+        .btn-secondary {
+            background: #fff;
+            color: var(--text-dark);
+            border: 1px solid var(--border-light)
+        }
+
+        .btn-secondary:hover {
+            background: var(--light-gray);
+            border-color: var(--text-dark)
+        }
+
+        .product-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            text-align: center
+        }
+
+        .product-label {
+            font-size: .875rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: .05em
+        }
+
+        .product-thumbnail {
+            width: 200px;
+            height: 280px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #FFD700 50%, #FFD700 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a1a1a;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .1)
+        }
+
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem
+        }
+
+        .product-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-dark)
+        }
+
+        .product-author {
+            font-size: .875rem;
+            color: var(--medium-gray)
+        }
+
+        .product-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary)
+        }
+
+        .product-notice {
+            font-size: .8rem;
+            color: var(--medium-gray);
+            line-height: 1.5;
+            margin-top: 1rem;
+            padding: .75rem;
+            background: var(--light-gray);
+            border-radius: 6px
+        }
+
+        .footer {
+            background: var(--dark);
+            color: #fff;
+            padding: 3rem 2rem 1rem
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, .1)
+        }
+
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem
+        }
+
+        .footer-section h4 {
+            font-size: .875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--primary)
+        }
+
+        .footer-section p {
+            font-size: .8rem;
+            color: rgba(255, 255, 255, .7);
+            line-height: 1.6
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, .7);
+            text-decoration: none;
+            font-size: .8rem;
+            transition: color .3s
+        }
+
+        .footer-section a:hover {
+            color: #fff
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 0;
+            font-size: .8rem;
+            color: rgba(255, 255, 255, .7)
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1.5rem
+        }
+
+        .social-icons a {
+            color: rgba(255, 255, 255, .7);
+            text-decoration: none;
+            font-size: .8rem;
+            transition: color .3s
+        }
+
+        .social-icons a:hover {
+            color: #fff
+        }
+
+        @media (max-width:768px) {
+            header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem
+            }
+
+            .nav-section {
+                gap: 1rem;
+                flex-direction: column;
+                width: 100%
+            }
+
+            .search-bar {
+                max-width: 100%
+            }
+
+            nav {
+                flex-wrap: wrap;
+                justify-content: center
+            }
+
+            main {
+                padding: 1rem
+            }
+
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem
+            }
+
+            .page-title {
+                font-size: 1.5rem
+            }
+
+            .timeline-container {
+                flex-wrap: wrap
+            }
+
+            .timeline-step {
+                flex: 0 1 calc(50% - .5rem)
+            }
+
+            .timeline-line {
+                display: none !important
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo">Nexo</div>
+        <div class="nav-section">
+            <nav>
+                <a href="home.html">CATALOGO</a>
+                <a href="#">FILOSOFIA</a>
+                <a href="#">CIENCIA</a>
+                <a href="#">ARTE</a>
+                <a href="#">HISTORIA</a>
+            </nav>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar no catalogo...">
+            </div>
+        </div>
+        <div class="user-section">
+            <button class="profile-btn">Arthur S.</button>
+            <button class="cart-btn">🛒</button>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+        <div class="container">
+
+            <!-- BREADCRUMB -->
+            <div class="breadcrumb">
+                <button class="breadcrumb-back" onclick="history.back()">← Voltar para Meus Pedidos</button>
+            </div>
+
+            <!-- PAGE TITLE -->
+            <h1 class="page-title">Solicitar Troca de Item</h1>
+
+            <!-- TIMELINE PROGRESS -->
+            <div class="timeline-section">
+                <div class="timeline-title">PROGRESSO DA TROCA</div>
+                <div class="timeline-container">
+                    <div class="timeline-step active">
+                        <div class="timeline-circle">1</div>
+                        <div class="timeline-label">Solicitação Criada</div>
+                        <div class="timeline-line"></div>
+                    </div>
+
+                    <div class="timeline-step">
+                        <div class="timeline-circle">2</div>
+                        <div class="timeline-label">Aprovada pela Nexo</div>
+                        <div class="timeline-line"></div>
+                    </div>
+
+                    <div class="timeline-step">
+                        <div class="timeline-circle">3</div>
+                        <div class="timeline-label">Aguardando Despacho</div>
+                        <div class="timeline-line"></div>
+                    </div>
+
+                    <div class="timeline-step">
+                        <div class="timeline-circle">4</div>
+                        <div class="timeline-label">Item Recebido</div>
+                        <div class="timeline-line"></div>
+                    </div>
+
+                    <div class="timeline-step">
+                        <div class="timeline-circle">5</div>
+                        <div class="timeline-label">Crédito/Troca Concluída</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTENT WRAPPER -->
+            <div class="content-wrapper">
+
+                <!-- LEFT COLUMN: EXCHANGE DETAILS FORM -->
+                <div>
+                    <div class="content-section">
+                        <div class="section-title">Detalhes da Troca</div>
+                        <div class="section-content">
+
+                            <!-- MOTIVO DA TROCA -->
+                            <div class="form-group required">
+                                <label for="reason">Motivo da Troca</label>
+                                <select id="reason" required>
+                                    <option value="">Selecione um motivo válido...</option>
+                                    <option value="defect">Item com Defeito</option>
+                                    <option value="damaged">Item Danificado/Amassado</option>
+                                    <option value="different">Item Diferente do Anunciado</option>
+                                    <option value="pages">Páginas Faltando/Danificadas</option>
+                                    <option value="wrong">Pedido Errado/Trocado</option>
+                                    <option value="other">Outro Motivo</option>
+                                </select>
+                            </div>
+
+                            <!-- DETALHES/CONDIÇÕES -->
+                            <div class="form-group required">
+                                <label for="details">Detalhes / Condições do Item</label>
+                                <textarea id="details"
+                                    placeholder="Descreva o estado do livro (lombada danificada, versão impressa errada, dano na capa, etc.)"
+                                    required></textarea>
+                            </div>
+
+                            <!-- TRANSPORTADORA -->
+                            <div class="form-group required">
+                                <label for="carrier">Transportadora de Devolução Preferida</label>
+                                <select id="carrier" required>
+                                    <option value="">Selecione uma transportadora...</option>
+                                    <option value="dhl" selected>DHL Express</option>
+                                    <option value="sedex">SEDEX</option>
+                                    <option value="pac">PAC</option>
+                                    <option value="loggi">Loggi</option>
+                                    <option value="other">Outra Transportadora</option>
+                                </select>
+                            </div>
+
+                            <!-- ACTION BUTTONS -->
+                            <div class="button-group">
+                                <button class="btn btn-primary" onclick="submitExchangeRequest()">Enviar
+                                    Solicitação</button>
+                                <button class="btn btn-secondary" onclick="informLaterExchange()">Informar Despacho
+                                    Depois</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: PRODUCT BEING EXCHANGED -->
+                <div>
+                    <div class="content-section">
+                        <div class="product-section">
+                            <div class="product-label">Item Sendo Trocado</div>
+
+                            <!-- PRODUCT THUMBNAIL -->
+                            <div class="product-thumbnail"
+                                style="background:linear-gradient(135deg,#1a1a1a 0%,#1a1a1a 40%,#FFD700 40%,#FFD700 100%);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+                                <div
+                                    style="font-size:3.5rem;font-weight:900;color:#FFD700;transform:rotate(-15deg);letter-spacing:-.1em;text-align:center;padding:1rem;">
+                                    <div>DESIGN</div>
+                                    <div>AND</div>
+                                    <div>FORM</div>
+                                </div>
+                            </div>
+
+                            <!-- PRODUCT INFO -->
+                            <div class="product-info">
+                                <div class="product-title">Design e Forma</div>
+                                <div class="product-author">Johannes Itten</div>
+                                <div class="product-price">R$ 119,90</div>
+                            </div>
+
+                            <!-- NOTICE -->
+                            <div class="product-notice">
+                                Trocas são aceitas até 30 dias após a entrega. O item deve ser devolvido em suas
+                                condições originais.
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Nexo</h4>
+                <p>Nexo é uma livraria virtual curada, dedicada a obras culturais da alta qualidade, filosofia classica,
+                    ciencia de vanguarda e edicoes raras de arte.</p>
+            </div>
+            <div class="footer-section">
+                <h4>ATENDIMENTO</h4>
+                <a href="#">Fale Conosco</a>
+                <a href="#">Entregas e Devoluções</a>
+                <a href="#">Perguntas Frequentes</a>
+                <a href="#">Encontre uma Loja</a>
+            </div>
+            <div class="footer-section">
+                <h4>JURIDICO</h4>
+                <a href="#">Política de Privacidade</a>
+                <a href="#">Termos de Uso</a>
+                <a href="#">Aviso de Direitos Autorais</a>
+                <a href="#">Mapa do Site</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 Nexo Inc. Conhecimento curado para mentes curiosas.
+            <div class="social-icons">
+                <a href="#">Instagram</a>
+                <a href="#">Twitter</a>
+                <a href="#">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function submitExchangeRequest() { const reason = document.getElementById('reason').value; const details = document.getElementById('details').value; const carrier = document.getElementById('carrier').value; if (!reason || !details) { alert('Por favor, preencha todos os campos obrigatórios (*).'); return; } alert(`✓ Solicitação de Troca Enviada!\n\nMotivo: ${reason}\nTransportadora: ${carrier}\n\nVocê receberá um e-mail com as instruções de devolução em breve.`); } function informLaterExchange() { alert('Avisaremos você quando for hora de retornar o item. Você pode completar o despacho mais tarde através de Meus Pedidos.'); } document.querySelectorAll('#reason, #details, #carrier').forEach(field => { field.addEventListener('change', () => { const allFilled = document.getElementById('reason').value && document.getElementById('details').value && document.getElementById('carrier').value; console.log('Form validation:', { reason: !!document.getElementById('reason').value, details: !!document.getElementById('details').value, carrier: !!document.getElementById('carrier').value }); }); });
+    </script>
+
+</body>
+
+</html>

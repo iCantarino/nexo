@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Análises - Nexo Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --primary: #FF9500;
+            --primary-dark: #E68A00;
+            --dark: #0F1419;
+            --gray-900: #1F2937;
+            --gray-800: #374151;
+            --gray-700: #4B5563;
+            --gray-600: #6B7280;
+            --gray-500: #9CA3AF;
+            --gray-400: #D1D5DB;
+            --gray-300: #E5E7EB;
+            --gray-200: #F3F4F6;
+            --gray-100: #F9FAFB;
+            --success: #10B981;
+            --warning: #FBBF24;
+            --danger: #EF4444;
+            --info: #3B82F6;
+            --secondary: #8B5CF6;
+            --teal: #14B8A6
+        }
+
+        html,
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #fff;
+            color: var(--dark)
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            overflow: hidden
+        }
+
+        .sidebar {
+            width: 240px;
+            background: var(--dark);
+            color: #fff;
+            padding: 24px 16px;
+            overflow-y: auto;
+            border-right: 1px solid var(--gray-800)
+        }
+
+        .sidebar-header {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .sidebar-header span {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(255, 149, 0, .1);
+            padding: 4px 8px;
+            border-radius: 4px
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .sidebar-item {
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all .2s
+        }
+
+        .sidebar-item.active {
+            background: var(--primary);
+            color: var(--dark)
+        }
+
+        .sidebar-item:not(.active):hover {
+            background: rgba(255, 255, 255, .1)
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 24px;
+            border-top: 1px solid var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px
+        }
+
+        .sidebar-footer-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--dark);
+            flex-shrink: 0
+        }
+
+        .sidebar-footer-name {
+            font-weight: 600
+        }
+
+        .sidebar-footer-role {
+            color: var(--gray-600)
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden
+        }
+
+        .header {
+            background: #fff;
+            border-bottom: 1px solid var(--gray-200);
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .header-left h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--dark)
+        }
+
+        .header-left p {
+            font-size: 14px;
+            color: var(--gray-600)
+        }
+
+        .date-picker {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--gray-700);
+            font-weight: 500
+        }
+
+        .date-picker:hover {
+            border-color: var(--primary)
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px
+        }
+
+        .content::-webkit-scrollbar {
+            width: 8px
+        }
+
+        .content::-webkit-scrollbar-track {
+            background: transparent
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 4px
+        }
+
+        .content::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-400)
+        }
+
+        .kpi-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px
+        }
+
+        .kpi-card {
+            background: #fff;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all .3s
+        }
+
+        .kpi-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(255, 149, 0, .1)
+        }
+
+        .kpi-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 12px
+        }
+
+        .kpi-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 12px
+        }
+
+        .kpi-change {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .kpi-change.positive {
+            color: var(--success)
+        }
+
+        .kpi-change.negative {
+            color: var(--danger)
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px
+        }
+
+        .chart-card {
+            background: #fff;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 24px
+        }
+
+        .chart-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--dark)
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">Nexo <span>ADMIN</span></div>
+        <nav class="sidebar-menu">
+            <div class="sidebar-item"><span>📊</span> Dashboard</div>
+            <div class="sidebar-item"><span>👥</span> Clientes</div>
+            <div class="sidebar-item"><span>📋</span> Pedidos</div>
+            <div class="sidebar-item"><span>🔄</span> Trocas</div>
+            <div class="sidebar-item active"><span>📈</span> Análises</div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-footer-avatar">AS</div>
+            <div>
+                <div class="sidebar-footer-name">Arthur Schopenhauer</div>
+                <div class="sidebar-footer-role">Curador Master</div>
+            </div>
+        </div>
+    </aside>
+    <main class="main">
+        <header class="header">
+            <div class="header-left">
+                <h1>Métricas & Desempenho</h1>
+                <p>Análise em tempo real de vendas, acervo e retenção de usuários.</p>
+            </div>
+            <div class="date-picker">📅 01/01/2026 - 31/01/2026 <span>▼</span></div>
+        </header>
+        <div class="content">
+            <section class="kpi-section">
+                <div class="kpi-card">
+                    <div class="kpi-label">TOTAL DE PEDIDOS</div>
+                    <div class="kpi-value">1.842</div>
+                    <div class="kpi-change positive">📈 +12.4% vs mês ant.</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">FATURAMENTO LÍQUIDO</div>
+                    <div class="kpi-value">R$ 142.850</div>
+                    <div class="kpi-change positive">📈 +8.2% vs mês ant.</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">CLIENTES ATIVOS</div>
+                    <div class="kpi-value">8.420</div>
+                    <div class="kpi-change positive">📈 +14.1% vs mês ant.</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">TICKET MÉDIO</div>
+                    <div class="kpi-value">R$ 77,55</div>
+                    <div class="kpi-change negative">📉 -2.1% vs mês ant.</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">TAXA DE DEVOLUÇÃO</div>
+                    <div class="kpi-value">2.4%</div>
+                    <div class="kpi-change positive">📈 -0.5% vs mês ant.</div>
+                </div>
+            </section>
+            <section class="charts-section">
+                <div class="chart-card">
+                    <h3>Pedidos Realizados</h3>
+                    <div class="tabs"><button class="tab active" data-period="daily">Diário</button><button class="tab"
+                            data-period="weekly">Semanal</button><button class="tab"
+                            data-period="monthly">Mensal</button></div>
+                    <div class="chart-container"><svg class="line-chart-svg" viewBox="0 0 600 250"
+                            preserveAspectRatio="xMidYMid meet">
+                            <defs>
+                                <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#FF9500;stop-opacity:0.1" />
+                                    <stop offset="100%" style="stop-color:#FF9500;stop-opacity:0" />
+                                </linearGradient>
+                            </defs>
+                            <rect x="50" y="20" width="1" height="200" fill="#E5E7EB" />
+                            <line x1="50" y1="220" x2="580" y2="220" stroke="#E5E7EB" stroke-width="1" /><text x="70"
+                                y="240" font-size="12" fill="#6B7280" text-anchor="middle">Semana 1</text><text x="200"
+                                y="240" font-size="12" fill="#6B7280" text-anchor="middle">Semana 2</text><text x="330"
+                                y="240" font-size="12" fill="#6B7280" text-anchor="middle">Semana 3</text><text x="460"
+                                y="240" font-size="12" fill="#6B7280" text-anchor="middle">Semana 4</text>
+                            <polyline points="70,140 200,100 330,80 460,120" fill="none" stroke="#FF9500"
+                                stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                            <polygon points="70,140 200,100 330,80 460,120 460,220 70,220" fill="url(#chartGradient)" />
+                            <circle cx="70" cy="140" r="5" fill="#FF9500" />
+                            <circle cx="200" cy="100" r="5" fill="#FF9500" />
+                            <circle cx="330" cy="80" r="5" fill="#FF9500" />
+                            <circle cx="460" cy="120" r="5" fill="#FF9500" />
+                        </svg></div>
+                </div>
+                <div class="chart-card">
+                    <h3>Categorias Populares</h3>
+                    <div class="bar-chart-container">
+                        <div class="bar-item">
+                            <div class="bar-label">Filosofia</div>
+                            <div class="bar-wrapper">
+                                <div class="bar-visual" style="width:45%"></div>
+                                <div class="bar-percent">45%</div>
+                                <div class="bar-count">850 exemplares</div>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar-label">Ciência & Tech</div>
+                            <div class="bar-wrapper">
+                                <div class="bar-visual cat2" style="width:28%"></div>
+                                <div class="bar-percent">28%</div>
+                                <div class="bar-count">540 exemplares</div>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar-label">Clássicos Lit.</div>
+                            <div class="bar-wrapper">
+                                <div class="bar-visual cat3" style="width:17%"></div>
+                                <div class="bar-percent">17%</div>
+                                <div class="bar-count">320 exemplares</div>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar-label">Arte & Arq.</div>
+                            <div class="bar-wrapper">
+                                <div class="bar-visual cat4" style="width:10%"></div>
+                                <div class="bar-percent">10%</div>
+                                <div class="bar-count">180 exemplares</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="bottom-section">
+                <div class="chart-card">
+                    <h3>Distribuição de Status</h3>
+                    <div class="donut-chart-wrapper"><svg class="donut-svg" viewBox="0 0 200 200"
+                            preserveAspectRatio="xMidYMid meet">
+                            <circle cx="100" cy="100" r="70" fill="#10B981" stroke-width="25" stroke="#10B981" />
+                            <circle cx="100" cy="100" r="70" fill="none" stroke-width="25" stroke="#FF9500"
+                                stroke-dasharray="125.6 471.2" stroke-dashoffset="0" stroke-linecap="round" />
+                            <circle cx="100" cy="100" r="70" fill="none" stroke-width="25" stroke="#8B5CF6"
+                                stroke-dasharray="75.4 471.2" stroke-dashoffset="-125.6" stroke-linecap="round" />
+                            <circle cx="100" cy="100" r="70" fill="none" stroke-width="25" stroke="#EF4444"
+                                stroke-dasharray="18.8 471.2" stroke-dashoffset="-201" stroke-linecap="round" />
+                            <circle cx="100" cy="100" r="45" fill="white" />
+                        </svg>
+                        <div class="donut-legend">
+                            <div class="donut-legend-item">
+                                <div class="donut-color" style="background:#10B981"></div>
+                                <div class="donut-text">
+                                    <div class="donut-label">Entregas: 65%</div>
+                                </div>
+                            </div>
+                            <div class="donut-legend-item">
+                                <div class="donut-color" style="background:#FF9500"></div>
+                                <div class="donut-text">
+                                    <div class="donut-label">Processando: 20%</div>
+                                </div>
+                            </div>
+                            <div class="donut-legend-item">
+                                <div class="donut-color" style="background:#8B5CF6"></div>
+                                <div class="donut-text">
+                                    <div class="donut-label">Em Trânsito: 12%</div>
+                                </div>
+                            </div>
+                            <div class="donut-legend-item">
+                                <div class="donut-color" style="background:#EF4444"></div>
+                                <div class="donut-text">
+                                    <div class="donut-label">Cancelados: 3%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="top-sales-card">
+                    <h3>Exemplares Mais Vendidos</h3>
+                    <div class="sales-list">
+                        <div class="sales-item">
+                            <div class="sales-rank">1</div>
+                            <div class="sales-info">
+                                <div class="sales-title">A Ordem do Tempo</div>
+                                <div class="sales-author">por Carlo Rovelli</div>
+                            </div>
+                            <div class="sales-count">242 vendas</div>
+                        </div>
+                        <div class="sales-item">
+                            <div class="sales-rank">2</div>
+                            <div class="sales-info">
+                                <div class="sales-title">Além do Bem e do Mal</div>
+                                <div class="sales-author">por Friedrich Nietzsche</div>
+                            </div>
+                            <div class="sales-count">189 vendas</div>
+                        </div>
+                        <div class="sales-item">
+                            <div class="sales-rank">3</div>
+                            <div class="sales-info">
+                                <div class="sales-title">Mimesis</div>
+                                <div class="sales-author">por Erich Auerbach</div>
+                            </div>
+                            <div class="sales-count">154 vendas</div>
+                        </div>
+                        <div class="sales-item">
+                            <div class="sales-rank">4</div>
+                            <div class="sales-info">
+                                <div class="sales-title">Design e Forma</div>
+                                <div class="sales-author">por Johannes Itten</div>
+                            </div>
+                            <div class="sales-count">120 vendas</div>
+                        </div>
+                        <div class="sales-item">
+                            <div class="sales-rank">5</div>
+                            <div class="sales-info">
+                                <div class="sales-title">A República</div>
+                                <div class="sales-author">por Platão</div>
+                            </div>
+                            <div class="sales-count">98 vendas</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <script>const periodTabs = document.querySelectorAll("[data-period]"); periodTabs.forEach(tab => { tab.addEventListener("click", function () { periodTabs.forEach(t => t.classList.remove("active")); this.classList.add("active") }) })</script>
+</body>
+
+</html>

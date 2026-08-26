@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Admin - Clientes & Pedidos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: -apple-system, sans-serif;
+            background: #f5f5f5;
+            color: #333
+        }
+
+        :root {
+            --primary: #FF9500;
+            --dark: #0F1419;
+            --success: #10B981;
+            --error: #EF4444;
+            --light-gray: #f5f5f5;
+            --border-gray: #E5E5E5;
+            --medium-gray: #999
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh
+        }
+
+        aside {
+            width: 250px;
+            background: var(--dark);
+            color: #fff;
+            padding: 24px 16px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            border-right: 1px solid var(--border-gray)
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 4px
+        }
+
+        .logo span:last-child {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: #ccc;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all .2s;
+            border: none;
+            background: 0
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, .1);
+            color: #fff
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: #000;
+            font-weight: 600
+        }
+
+        .user-profile {
+            position: absolute;
+            bottom: 24px;
+            left: 16px;
+            right: 16px;
+            padding: 12px;
+            background: rgba(255, 255, 255, .05);
+            border-radius: 8px;
+            font-size: 13px
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            color: #000;
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #fff
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: #ccc
+        }
+
+        main {
+            margin-left: 250px;
+            flex: 1;
+            padding: 32px;
+            background: #fff
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border-gray);
+            padding-bottom: 24px
+        }
+
+        .header-left h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px
+        }
+
+        .header-left p {
+            font-size: 14px;
+            color: var(--medium-gray)
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--medium-gray)
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 32px
+        }
+
+        .customers-section {
+            background: #fff;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            padding: 24px
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 20px
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 24px
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 10px 16px;
+            border: 1px solid var(--border-gray);
+            border-radius: 6px;
+            font-size: 14px
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary)
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        thead {
+            background: #f9f9f9
+        }
+
+        th {
+            text-align: left;
+            padding: 12px;
+            color: var(--medium-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            border-bottom: 2px solid var(--border-gray)
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-gray)
+        }
+
+        tbody tr {
+            transition: background-color .2s;
+            cursor: pointer
+        }
+
+        tbody tr:hover {
+            background: #f9f9f9
+        }
+
+        tbody tr.selected {
+            background: #FFFACD
+        }
+
+        tbody tr.selected td {
+            font-weight: 600
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase
+        }
+
+        .status-ativo {
+            background: #D1FAE5;
+            color: var(--success)
+        }
+
+        .status-inativo {
+            background: #FEE2E2;
+            color: var(--error)
+        }
+
+        .status-em-transito {
+            background: #FED7AA;
+            color: var(--warning)
+        }
+
+        .status-entregue {
+            background: #D1FAE5;
+            color: var(--success)
+        }
+
+        .customer-info-section {
+            background: #fff;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            padding: 24px
+        }
+
+        .selected-customer-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 12px
+        }
+
+        .customer-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 4px
+        }
+
+        .customer-email {
+            font-size: 13px;
+            color: var(--medium-gray);
+            margin-bottom: 24px
+        }
+
+        .orders-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 12px
+        }
+
+        .orders-count {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 600
+        }
+
+        .order-card {
+            background: #f9f9f9;
+            border: 1px solid var(--border-gray);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 12px
+        }
+
+        .order-id {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 4px
+        }
+
+        .order-title {
+            font-size: 12px;
+            color: var(--medium-gray);
+            margin-bottom: 8px
+        }
+
+        .order-status {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 8px
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--medium-gray)
+        }
+
+        .order-price {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        @media (max-width:1200px) {
+            .content {
+                grid-template-columns: 1fr
+            }
+
+            .customers-section {
+                max-height: 500px;
+                overflow-y: auto
+            }
+        }
+
+        @media (max-width:768px) {
+            .container {
+                flex-direction: column
+            }
+
+            aside {
+                position: fixed;
+                left: -250px;
+                height: 100%;
+                z-index: 1000;
+                transition: left .3s
+            }
+
+            main {
+                margin-left: 0;
+                padding: 16px
+            }
+
+            .header-left h1 {
+                font-size: 20px
+            }
+
+            .content {
+                grid-template-columns: 1fr;
+                gap: 16px
+            }
+
+            table {
+                font-size: 11px
+            }
+
+            th,
+            td {
+                padding: 8px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <aside>
+            <div class="logo">Nexo <span>Admin</span></div>
+            <nav class="nav"><a href="#" class="nav-item">📊 Dashboard</a><a href="#" class="nav-item active">👥
+                    Clientes</a><a href="#" class="nav-item">📦 Pedidos</a><a href="#" class="nav-item">🔄 Trocas</a><a
+                    href="#" class="nav-item">📈 Análises</a></nav>
+            <div class="user-profile">
+                <div class="user-avatar">AS</div>
+                <div class="user-name">Arthur Schopenhauer</div>
+                <div class="user-role">Curador Master</div>
+            </div>
+        </aside>
+        <main>
+            <header>
+                <div class="header-left">
+                    <h1>Clientes & Histórico de Pedidos</h1>
+                    <p>Gestão de perfis e consulta de transações da plataforma.</p>
+                </div>
+                <div class="header-right"><span class="status-dot"></span>Sessão Ativa</div>
+            </header>
+            <div class="content">
+                <div class="customers-section">
+                    <h2 class="section-title">Diretório de Clientes</h2>
+                    <div class="search-container"><input type="text" id="searchInput"
+                            placeholder="Buscar por nome, e-mail, CPF..."><span class="search-icon">🔍</span></div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>CPF</th>
+                                <th>Status</th>
+                                <th>Pedidos/Última</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="customer-row selected" data-id="1" data-name="Mariana L. Lima"
+                                data-email="mariana.lima@curious.com">
+                                <td><strong>Mariana L. Lima</strong></td>
+                                <td>mariana.lima@curious.com</td>
+                                <td>123.456.789-00</td>
+                                <td><span class="status-badge status-ativo">Ativo</span></td>
+                                <td>1412 Fev 2026</td>
+                            </tr>
+                            <tr class="customer-row" data-id="2" data-name="Julian Krause"
+                                data-email="julian.k@thermodynamics.o...">
+                                <td><strong>Julian Krause</strong></td>
+                                <td>julian.k@thermodynamics.o...</td>
+                                <td>987.654.321-11</td>
+                                <td><span class="status-badge status-ativo">Ativo</span></td>
+                                <td>828 Jan 2026</td>
+                            </tr>
+                            <tr class="customer-row" data-id="3" data-name="Erich Auerbach"
+                                data-email="auerbach.mimesis@classic....">
+                                <td><strong>Erich Auerbach</strong></td>
+                                <td>auerbach.mimesis@classic....</td>
+                                <td>456.789.123-22</td>
+                                <td><span class="status-badge status-inativo">Inativo</span></td>
+                                <td>2315 Dez 2025</td>
+                            </tr>
+                            <tr class="customer-row" data-id="4" data-name="Oscar Wilde"
+                                data-email="dorian@aestheticism.com">
+                                <td><strong>Oscar Wilde</strong></td>
+                                <td>dorian@aestheticism.com</td>
+                                <td>321.654.987-99</td>
+                                <td><span class="status-badge status-ativo">Ativo</span></td>
+                                <td>510 Jan 2026</td>
+                            </tr>
+                            <tr class="customer-row" data-id="5" data-name="Douglas Hofstadter"
+                                data-email="geb@braintree.net">
+                                <td><strong>Douglas Hofstadter</strong></td>
+                                <td>geb@braintree.net</td>
+                                <td>789.123.456-55</td>
+                                <td><span class="status-badge status-ativo">Ativo</span></td>
+                                <td>1905 Fev 2026</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="customer-info-section">
+                    <div class="selected-customer-label">Cliente Selecionado</div>
+                    <h2 class="customer-name" id="selectedName">Mariana L. Lima</h2>
+                    <p class="customer-email" id="selectedEmail">mariana.lima@curious.com</p>
+                    <div>
+                        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px">
+                            <h3 class="orders-title">Histórico de Compras</h3><span class="orders-count"
+                                id="ordersCount">3 registros</span>
+                        </div>
+                        <div id="ordersList">
+                            <div class="order-card">
+                                <div class="order-id">NX-2981A</div>
+                                <div class="order-title">A Ordem do Tempo + 1 outro</div>
+                                <div class="order-status"><span class="status-badge status-em-transito">Em
+                                        Trânsito</span></div>
+                                <div class="order-footer"><span>12 Fev 2026</span><span class="order-price">R$
+                                        42,40</span></div>
+                            </div>
+                            <div class="order-card">
+                                <div class="order-id">NX-1928B</div>
+                                <div class="order-title">Mimesis (Edição Rara)</div>
+                                <div class="order-status"><span class="status-badge status-entregue">Entregue</span>
+                                </div>
+                                <div class="order-footer"><span>29 Set 2025</span><span class="order-price">R$
+                                        53,99</span></div>
+                            </div>
+                            <div class="order-card">
+                                <div class="order-id">NX-1042C</div>
+                                <div class="order-title">Além do Bem e do Mal</div>
+                                <div class="order-status"><span class="status-badge status-entregue">Entregue</span>
+                                </div>
+                                <div class="order-footer"><span>15 Mai 2025</span><span class="order-price">R$
+                                        29,99</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>const customerRows = document.querySelectorAll(".customer-row"); const selectedNameEl = document.getElementById("selectedName"); const selectedEmailEl = document.getElementById("selectedEmail"); const searchInput = document.getElementById("searchInput"); const customerOrders = { "1": [{ id: "NX-2981A", title: "A Ordem do Tempo + 1 outro", status: "Em Trânsito", statusClass: "status-em-transito", date: "12 Fev 2026", price: "R$ 42,40" }, { id: "NX-1928B", title: "Mimesis (Edição Rara)", status: "Entregue", statusClass: "status-entregue", date: "29 Set 2025", price: "R$ 53,99" }, { id: "NX-1042C", title: "Além do Bem e do Mal", status: "Entregue", statusClass: "status-entregue", date: "15 Mai 2025", price: "R$ 29,99" }], "2": [{ id: "NX-5001A", title: "O Ser e o Nada", status: "Entregue", statusClass: "status-entregue", date: "10 Jan 2026", price: "R$ 85,50" }], "3": [{ id: "NX-3001A", title: "Mimesis (Edição Padrão)", status: "Entregue", statusClass: "status-entregue", date: "15 Dez 2025", price: "R$ 45,00" }], "4": [{ id: "NX-4001A", title: "O Retrato de Dorian Gray", status: "Entregue", statusClass: "status-entregue", date: "08 Jan 2026", price: "R$ 35,99" }, { id: "NX-4002A", title: "A Importância de Ser Honesto", status: "Entregue", statusClass: "status-entregue", date: "20 Nov 2025", price: "R$ 28,50" }], "5": [{ id: "NX-6001A", title: "Gödel, Escher, Bach", status: "Entregue", statusClass: "status-entregue", date: "05 Fev 2026", price: "R$ 120,00" }, { id: "NX-6002A", title: "Eu Sou uma Loop Estranho", status: "Em Trânsito", statusClass: "status-em-transito", date: "20 Fev 2026", price: "R$ 65,00" }] }; function updateCustomerInfo(row) { customerRows.forEach(r => r.classList.remove("selected")); row.classList.add("selected"); const name = row.dataset.name; const email = row.dataset.email; const id = row.dataset.id; selectedNameEl.textContent = name; selectedEmailEl.textContent = email; const orders = customerOrders[id] || []; const ordersList = document.getElementById("ordersList"); const ordersCountEl = document.getElementById("ordersCount"); ordersCountEl.textContent = orders.length + " registros"; ordersList.innerHTML = orders.map(order => `<div class="order-card"><div class="order-id">${order.id}</div><div class="order-title">${order.title}</div><div class="order-status"><span class="status-badge ${order.statusClass}">${order.status}</span></div><div class="order-footer"><span>${order.date}</span><span class="order-price">${order.price}</span></div></div>`).join(""); } customerRows.forEach(row => { row.addEventListener("click", () => updateCustomerInfo(row)); }); searchInput.addEventListener("input", (e) => { const searchTerm = e.target.value.toLowerCase(); customerRows.forEach(row => { const name = row.dataset.name.toLowerCase(); const email = row.dataset.email.toLowerCase(); row.style.display = (name.includes(searchTerm) || email.includes(searchTerm)) ? "" : "none"; }); }); console.log("✅ Admin Pedidos carregado");</script>
+</body>
+
+</html>

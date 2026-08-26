@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Meus Cupons - Nexo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --primary: #FF9500;
+            --dark: #0F1419;
+            --light-gray: #F5F5F5;
+            --medium-gray: #999;
+            --text-dark: #333;
+            --border-light: #E5E5E5;
+            --success: #10B981;
+            --badge-yellow: #FBBF24;
+            --badge-blue: #6366F1
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #fff;
+            color: var(--text-dark)
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 100
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .logo::after {
+            content: ".";
+            color: var(--primary)
+        }
+
+        .nav-section {
+            display: flex;
+            gap: 3rem;
+            align-items: center
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--medium-gray);
+            font-size: .875rem;
+            font-weight: 500;
+            text-transform: uppercase
+        }
+
+        nav a:hover {
+            color: var(--dark)
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: .75rem 1rem;
+            flex: 1;
+            max-width: 400px
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: .875rem
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem
+        }
+
+        .profile-btn {
+            background: 0;
+            border: none;
+            cursor: pointer;
+            font-size: .875rem;
+            font-weight: 500
+        }
+
+        .cart-btn {
+            background: var(--dark);
+            border: none;
+            border-radius: 6px;
+            padding: .5rem 1rem;
+            cursor: pointer;
+            color: #fff;
+            font-weight: 600;
+            position: relative
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--primary);
+            color: #fff;
+            font-size: .7rem;
+            font-weight: 700;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        main {
+            min-height: calc(100vh - 300px);
+            padding: 2rem;
+            background: #fff
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .credit-balance {
+            text-align: right;
+            color: var(--medium-gray);
+            font-size: .95rem
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap
+        }
+
+        .tab {
+            padding: .75rem 1.5rem;
+            border: none;
+            background: #fff;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: .9rem;
+            font-weight: 600;
+            color: var(--medium-gray);
+            border: 1px solid var(--border-light);
+            transition: all .2s
+        }
+
+        .tab.active {
+            background: var(--dark);
+            color: #fff;
+            border-color: var(--dark)
+        }
+
+        .tab:hover {
+            border-color: var(--primary)
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem
+        }
+
+        .coupon-column h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--light-gray);
+            padding-bottom: .75rem
+        }
+
+        .coupon-card {
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: box-shadow .2s
+        }
+
+        .coupon-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .1)
+        }
+
+        .coupon-header {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem
+        }
+
+        .badge {
+            display: inline-block;
+            padding: .35rem .75rem;
+            border-radius: 4px;
+            font-size: .75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .05em
+        }
+
+        .badge-yellow {
+            background: var(--badge-yellow);
+            color: #000
+        }
+
+        .badge-blue {
+            background: var(--badge-blue);
+            color: #fff
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: .35rem .75rem;
+            border-radius: 4px;
+            font-size: .75rem;
+            font-weight: 700;
+            background: var(--success);
+            color: #fff;
+            text-transform: uppercase
+        }
+
+        .coupon-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .coupon-description {
+            font-size: .9rem;
+            color: var(--medium-gray);
+            margin: 1rem 0;
+            line-height: 1.5
+        }
+
+        .coupon-expiry {
+            font-size: .85rem;
+            color: var(--medium-gray);
+            padding-top: .75rem;
+            border-top: 1px solid var(--light-gray)
+        }
+
+        .footer {
+            background: var(--dark);
+            color: #fff;
+            padding: 3rem 2rem 1.5rem;
+            margin-top: 3rem
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            margin-bottom: 2rem
+        }
+
+        .footer-section h4 {
+            font-size: .95rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            letter-spacing: .05em
+        }
+
+        .footer-section p {
+            font-size: .85rem;
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 1rem
+        }
+
+        .footer-section a {
+            display: block;
+            color: #ccc;
+            text-decoration: none;
+            font-size: .85rem;
+            margin-bottom: .75rem
+        }
+
+        .footer-section a:hover {
+            color: var(--primary)
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, .1);
+            max-width: 1200px;
+            margin: 0 auto;
+            font-size: .8rem;
+            color: #999
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem
+        }
+
+        .social-icons a {
+            color: #999;
+            text-decoration: none
+        }
+
+        .social-icons a:hover {
+            color: var(--primary)
+        }
+
+        @media (max-width:768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem
+            }
+
+            .nav-section {
+                flex-direction: column;
+                width: 100%
+            }
+
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem
+            }
+
+            .search-bar {
+                max-width: 100%
+            }
+
+            main {
+                padding: 1rem
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 1rem
+            }
+
+            .page-title {
+                font-size: 1.5rem
+            }
+
+            .credit-balance {
+                text-align: left
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo">Nexo</div>
+        <div class="nav-section">
+            <nav>
+                <a href="home.html">CATÁLOGO</a>
+                <a href="#">FILOSOFIA</a>
+                <a href="#">CIÊNCIA</a>
+                <a href="#">ARTE</a>
+                <a href="#">HISTÓRIA</a>
+            </nav>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar no catálogo...">
+            </div>
+        </div>
+        <div class="user-section">
+            <button class="profile-btn">Arthur S.</button>
+            <button class="cart-btn">🛒<span class="cart-badge">1</span></button>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+        <div class="container">
+
+            <!-- PAGE HEADER -->
+            <div class="page-header">
+                <h1 class="page-title">Meus Vouchers & Cupons</h1>
+                <div class="credit-balance">Saldo de Crédito Ativo:<br><strong>R\$ 75,00</strong></div>
+            </div>
+
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab active" onclick="showTab(event, 'available')">Cupons Disponíveis (3)</button>
+                <button class="tab" onclick="showTab(event, 'history')">Histórico de Uso</button>
+                <button class="tab" onclick="showTab(event, 'expired')">Cupons Expirados</button>
+            </div>
+
+            <!-- CONTENT GRID -->
+            <div class="content-grid">
+
+                <!-- LEFT COLUMN: PROMOTIONAL COUPONS -->
+                <div class="coupon-column">
+                    <h3>Cupons Promocionais</h3>
+
+                    <!-- COUPON 1 -->
+                    <div class="coupon-card">
+                        <div class="coupon-header">
+                            <span class="badge badge-yellow">WELCOMES</span>
+                            <span class="status-badge">Ativo</span>
+                        </div>
+                        <div class="coupon-value">R\$ 25,00 de Desconto</div>
+                        <p class="coupon-description">Válido em qualquer compra a partir de R\$ 150,00. Exclusivo para
+                            novos curadores da plataforma.</p>
+                        <div class="coupon-expiry">Expira em 31 Dez 2026</div>
+                    </div>
+
+                    <!-- COUPON 2 -->
+                    <div class="coupon-card">
+                        <div class="coupon-header">
+                            <span class="badge badge-yellow">TIMELESSTHOUGHTS</span>
+                            <span class="status-badge">Ativo</span>
+                        </div>
+                        <div class="coupon-value">10% de Desconto</div>
+                        <p class="coupon-description">Aplicável apenas para itens das categorias Filosofia ou Literatura
+                            Clássica.</p>
+                        <div class="coupon-expiry">Expira em 15 Nov 2026</div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT COLUMN: EXCHANGE CREDITS -->
+                <div class="coupon-column">
+                    <h3>Cupons de Troca (Créditos de Troca)</h3>
+
+                    <!-- COUPON 3 -->
+                    <div class="coupon-card">
+                        <div class="coupon-header">
+                            <span class="badge badge-blue">EXCH-DESIGN44</span>
+                            <span class="status-badge">Ativo</span>
+                        </div>
+                        <div class="coupon-value">R\$ 75,00 de Crédito</div>
+                        <p class="coupon-description">Resultante da solicitação de troca #EX-998A12. Sem limite mínimo
+                            de pedido.</p>
+                        <div class="coupon-expiry">Expira em 14 Out 2027</div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Nexo</h4>
+                <p>Nexo é uma livraria virtual curada, dedicada a obras culturais da alta qualidade, filosofia clássica,
+                    ciência de vanguarda e edições raras de arte.</p>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+                <div class="footer-section">
+                    <h4>ATENDIMENTO</h4>
+                    <a href="#">Fale Conosco</a>
+                    <a href="#">Entregas & Devoluções</a>
+                    <a href="#">Perguntas Frequentes</a>
+                    <a href="#">Encontre uma Loja</a>
+                </div>
+                <div class="footer-section">
+                    <h4>JURÍDICO</h4>
+                    <a href="#">Política de Privacidade</a>
+                    <a href="#">Termos de Uso</a>
+                    <a href="#">Aviso de Direitos Autorais</a>
+                    <a href="#">Mapa do Site</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 Nexo Inc. Conhecimento curado para mentes curiosas.
+            <div class="social-icons">
+                <a href="#">Instagram</a>
+                <a href="#">Twitter</a>
+                <a href="#">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function showTab(event, tabName) { event.preventDefault(); const tabs = document.querySelectorAll(".tab"); tabs.forEach(tab => tab.classList.remove("active")); event.target.classList.add("active"); if (tabName === "history") { alert("Histórico de Uso:\n\nCupom WELCOMES: Usado em 2026-10-05 - R\$ 25,00 de desconto\nCupom TIMELESSTHOUGHTS: Usado em 2026-09-15 - 10% de desconto"); } else if (tabName === "expired") { alert("Cupons Expirados:\n\nNenhum cupom expirado no momento."); } }
+    </script>
+
+</body>
+
+</html>

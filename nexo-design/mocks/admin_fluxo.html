@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Admin - Fluxo de Pedidos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: -apple-system, sans-serif;
+            background: #f5f5f5;
+            color: #333
+        }
+
+        :root {
+            --primary: #FF9500;
+            --dark: #0F1419;
+            --success: #10B981;
+            --error: #EF4444;
+            --warning: #FBBF24;
+            --light-gray: #f5f5f5;
+            --border-gray: #E5E5E5;
+            --medium-gray: #999
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh
+        }
+
+        aside {
+            width: 250px;
+            background: var(--dark);
+            color: #fff;
+            padding: 24px 16px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            border-right: 1px solid var(--border-gray)
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 4px
+        }
+
+        .logo span:last-child {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: #ccc;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all .2s;
+            border: none;
+            background: 0
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, .1);
+            color: #fff
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: #000;
+            font-weight: 600
+        }
+
+        .user-profile {
+            position: absolute;
+            bottom: 24px;
+            left: 16px;
+            right: 16px;
+            padding: 12px;
+            background: rgba(255, 255, 255, .05);
+            border-radius: 8px;
+            font-size: 13px
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            color: #000;
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #fff
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: #ccc
+        }
+
+        main {
+            margin-left: 250px;
+            flex: 1;
+            padding: 32px;
+            background: #fff
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border-gray);
+            padding-bottom: 24px
+        }
+
+        .header-left h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px
+        }
+
+        .header-left p {
+            font-size: 14px;
+            color: var(--medium-gray)
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--medium-gray)
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px
+        }
+
+        section {
+            margin-bottom: 40px
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-gray);
+            padding-bottom: 12px
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap
+        }
+
+        .tab-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border-gray);
+            border-radius: 20px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all .2s;
+            color: var(--medium-gray)
+        }
+
+        .tab-btn.active {
+            background: var(--dark);
+            color: #fff;
+            border-color: var(--dark)
+        }
+
+        .tab-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary)
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 13px
+        }
+
+        thead {
+            background: #f9f9f9
+        }
+
+        th {
+            text-align: left;
+            padding: 14px;
+            color: var(--medium-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            border-bottom: 2px solid var(--border-gray)
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid var(--border-gray)
+        }
+
+        tbody tr:hover {
+            background: #f9f9f9
+        }
+
+        .order-id {
+            font-weight: 700;
+            color: var(--dark)
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase
+        }
+
+        .badge-aberto {
+            background: #FFE5CC;
+            color: var(--primary)
+        }
+
+        .badge-processamento {
+            background: #FFE5CC;
+            color: var(--primary)
+        }
+
+        .badge-envio {
+            background: #FED7AA;
+            color: var(--warning)
+        }
+
+        .badge-transito {
+            background: #BFDBFE;
+            color: #1E40AF
+        }
+
+        .badge-entregue {
+            background: #D1FAE5;
+            color: var(--success)
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            background: var(--dark);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all .2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: #000
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, .5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000
+        }
+
+        .modal-overlay.show {
+            display: flex
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .3)
+        }
+
+        .modal-alert {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #FEF3C7;
+            border-radius: 8px;
+            border-left: 4px solid var(--warning)
+        }
+
+        .alert-icon {
+            font-size: 20px
+        }
+
+        .alert-text {
+            font-size: 14px;
+            color: #333
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 12px
+        }
+
+        .modal-text {
+            font-size: 14px;
+            color: var(--medium-gray);
+            line-height: 1.6;
+            margin-bottom: 24px
+        }
+
+        .modal-text strong {
+            color: var(--primary)
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .modal-btn.cancel {
+            background: var(--light-gray);
+            color: var(--dark)
+        }
+
+        .modal-btn.confirm {
+            background: var(--dark);
+            color: #fff
+        }
+
+        .modal-btn.confirm:hover {
+            background: var(--primary);
+            color: #000
+        }
+
+        .exchanges-section {
+            background: #fff;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            padding: 24px
+        }
+
+        .exchange-card {
+            background: #f9f9f9;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .exchange-info h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 4px
+        }
+
+        .exchange-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--error);
+            color: #fff;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px
+        }
+
+        .exchange-desc {
+            font-size: 13px;
+            color: var(--medium-gray);
+            margin-top: 8px
+        }
+
+        .exchange-actions {
+            display: flex;
+            gap: 12px
+        }
+
+        .exchange-btn {
+            padding: 10px 20px;
+            border: 2px solid #999;
+            background: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all .2s
+        }
+
+        .exchange-btn.accept {
+            border-color: var(--success);
+            color: var(--success)
+        }
+
+        .exchange-btn.accept:hover {
+            background: var(--success);
+            color: #fff
+        }
+
+        .exchange-btn.reject {
+            border-color: var(--error);
+            color: var(--error)
+        }
+
+        .exchange-btn.reject:hover {
+            background: var(--error);
+            color: #fff
+        }
+
+        @media (max-width:1200px) {
+            .orders-table {
+                font-size: 11px
+            }
+
+            th,
+            td {
+                padding: 10px
+            }
+        }
+
+        @media (max-width:768px) {
+            .container {
+                flex-direction: column
+            }
+
+            aside {
+                position: fixed;
+                left: -250px;
+                height: 100%;
+                z-index: 1000;
+                transition: left .3s
+            }
+
+            main {
+                margin-left: 0;
+                padding: 16px
+            }
+
+            .header-left h1 {
+                font-size: 20px
+            }
+
+            .tabs {
+                gap: 4px
+            }
+
+            .tab-btn {
+                padding: 6px 12px;
+                font-size: 11px
+            }
+
+            .action-btn {
+                padding: 6px 12px;
+                font-size: 10px
+            }
+
+            .exchange-card {
+                flex-direction: column;
+                align-items: flex-start
+            }
+
+            .exchange-actions {
+                width: 100%;
+                gap: 8px
+            }
+
+            .exchange-btn {
+                flex: 1
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <aside>
+            <div class="logo">Nexo <span>Admin</span></div>
+            <nav class="nav"><a href="#" class="nav-item">Dashboard</a><a href="#" class="nav-item">Clientes</a><a
+                    href="#" class="nav-item active">Pedidos</a><a href="#" class="nav-item">Trocas</a><a href="#"
+                    class="nav-item">Analises</a></nav>
+            <div class="user-profile">
+                <div class="user-avatar">AS</div>
+                <div class="user-name">Arthur Schopenhauer</div>
+                <div class="user-role">Curador Master</div>
+            </div>
+        </aside>
+        <main>
+            <header>
+                <div class="header-left">
+                    <h1>Fluxo e Gestao de Pedidos</h1>
+                    <p>Supervisao de status operacionais, envios e trocas de produtos.</p>
+                </div>
+                <div class="header-right"><span class="status-dot"></span>Sessao Ativa</div>
+            </header>
+            <section>
+                <h2 class="section-title">Fila de Transicoes de Status</h2>
+                <div class="tabs"><button class="tab-btn active" data-filter="todos">Todos (4)</button><button
+                        class="tab-btn" data-filter="processamento">Aguardando Processamento</button><button
+                        class="tab-btn" data-filter="envio">Aguardando Envio</button><button class="tab-btn"
+                        data-filter="transito">Em Transito</button></div>
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Pedido</th>
+                            <th>Cliente</th>
+                            <th>Data</th>
+                            <th>Itens</th>
+                            <th>Total</th>
+                            <th>Status Atual</th>
+                            <th>Acao de Fluxo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="order-row" data-status="em-aberto">
+                            <td class="order-id">NX-2981A</td>
+                            <td>Mariana L. Lima</td>
+                            <td>12 Fev 2026</td>
+                            <td>2</td>
+                            <td>R$ 42,40</td>
+                            <td><span class="status-badge badge-aberto">Em Aberto</span></td>
+                            <td><button class="action-btn" onclick="showModal(event)">Avancar para: EM PROCESSAMENTO
+                                    &gt;&gt;</button></td>
+                        </tr>
+                        <tr class="order-row" data-status="processamento">
+                            <td class="order-id">NX-2977B</td>
+                            <td>Arthur S.</td>
+                            <td>11 Fev 2026</td>
+                            <td>3</td>
+                            <td>R$ 156,80</td>
+                            <td><span class="status-badge badge-processamento">Em Processamento</span></td>
+                            <td><button class="action-btn" onclick="showModal(event)">Avancar para: PAGAMENTO REALIZADO
+                                    &gt;&gt;</button></td>
+                        </tr>
+                        <tr class="order-row" data-status="envio">
+                            <td class="order-id">NX-2965C</td>
+                            <td>Juliana F.</td>
+                            <td>10 Fev 2026</td>
+                            <td>1</td>
+                            <td>R$ 85,50</td>
+                            <td><span class="status-badge badge-envio">Aguardando Envio</span></td>
+                            <td><button class="action-btn" onclick="showModal(event)">Avancar para: EM TRANSITO
+                                    &gt;&gt;</button></td>
+                        </tr>
+                        <tr class="order-row" data-status="transito">
+                            <td class="order-id">NX-2950D</td>
+                            <td>Erich Auerbach</td>
+                            <td>09 Fev 2026</td>
+                            <td>1</td>
+                            <td>R$ 45,00</td>
+                            <td><span class="status-badge badge-transito">Em Transito</span></td>
+                            <td><button class="action-btn" onclick="showModal(event)">Avancar para: ENTREGUE
+                                    &gt;&gt;</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+    </div>
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-alert">
+                <div class="alert-icon">⚠️</div>
+                <div class="alert-text"><strong>Confirmar alteracao de status?</strong></div>
+            </div>
+            <p class="modal-title" style="margin-bottom:16px">Confirme a transicao de status</p>
+            <div class="modal-text">Voce esta prestes a atualizar o status do Pedido <strong
+                    id="modalOrderId">#NX-2981A</strong> de <strong id="modalCurrentStatus">EM ABERTO</strong> para
+                <strong id="modalNextStatus">EM PROCESSAMENTO</strong>. Esta acao enviara uma notificacao ao e-mail
+                cadastrado do cliente.</div>
+            <div class="modal-buttons"><button class="modal-btn cancel" onclick="closeModal()">Cancelar</button><button
+                    class="modal-btn confirm" onclick="confirmTransition()">Confirmar Transicao</button></div>
+        </div>
+    </div>
+    <section>
+        <h2 class="section-title">Solicitacoes de Troca em Aberto</h2>
+        <div class="exchanges-section">
+            <div class="exchange-card">
+                <div class="exchange-info">
+                    <h3>Pedido #NX-2900X</h3><span class="exchange-badge">TROCA SOLICITADA</span>
+                    <p class="exchange-desc">Solicitado por Erich Auerbach em 02 Fev 2026. Motivo: Livro com dano na capa.</p>
+                </div>
+                <div class="exchange-actions"><button class="exchange-btn accept" onclick="handleExchange(event, 'accept')">Aceitar Troca</button><button class="exchange-btn reject" onclick="handleExchange(event, 'reject')">Recusar Troca</button></div>
+            </div>
+            <div class="exchange-card">
+                <div class="exchange-info">
+                    <h3>Pedido #NX-2851Y</h3><span class="exchange-badge">TROCA SOLICITADA</span>
+                    <p class="exchange-desc">Solicitado por Oscar Wilde em 01 Fev 2026. Motivo: Edicao incorreta enviada.</p>
+                </div>
+                <div class="exchange-actions"><button class="exchange-btn accept" onclick="handleExchange(event, 'accept')">Aceitar Troca</button><button class="exchange-btn reject" onclick="handleExchange(event, 'reject')">Recusar Troca</button></div>
+            </div>
+        </div>
+    </section>
+    </main>
+    </div>
+    <script>let currentOrderBtn = null; function showModal(e) { e.preventDefault(); currentOrderBtn = e.target; const btn = currentOrderBtn; const actionText = btn.textContent; const nextStatus = actionText.split(": ")[1]?.split(" >>")[0]; const modal = document.getElementById("confirmModal"); const row = btn.closest("tr"); const orderId = row.cells[0].textContent; const currentStatus = row.cells[5].textContent.trim(); document.getElementById("modalOrderId").textContent = "#" + orderId; document.getElementById("modalCurrentStatus").textContent = currentStatus; document.getElementById("modalNextStatus").textContent = nextStatus; modal.classList.add("show"); } function closeModal() { document.getElementById("confirmModal").classList.remove("show"); currentOrderBtn = null; } function confirmTransition() { if (currentOrderBtn) { alert("Status do pedido atualizado com sucesso!"); closeModal(); } } document.querySelectorAll(".tab-btn").forEach(btn => { btn.addEventListener("click", function () { document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active")); this.classList.add("active"); const filter = this.dataset.filter; document.querySelectorAll(".order-row").forEach(row => { if (filter === "todos") { row.style.display = ""; } else { row.style.display = row.dataset.status.includes(filter) ? "" : "none"; } }); }); }); function handleExchange(e, action) { e.preventDefault(); const btn = e.target; const card = btn.closest(".exchange-card"); const orderNum = card.querySelector("h3").textContent; if (action === "accept") { alert("Troca aceita para " + orderNum); } else { alert("Troca recusada para " + orderNum); } card.style.opacity = "0"; setTimeout(() => card.remove(), 300); } document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closeModal(); } }); console.log("Admin Fluxo carregado");</script>
+</body>
+
+</html>
