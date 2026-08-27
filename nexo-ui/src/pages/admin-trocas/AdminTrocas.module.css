@@ -1,0 +1,626 @@
+.adminTrocas {
+  	width: 100%;
+  	position: relative;
+  	background-color: #faf9f6;
+  	display: flex;
+  	align-items: flex-start;
+  	min-height: 900px;
+  	text-align: left;
+  	font-size: 14px;
+  	color: #0f172a;
+  	font-family: Inter;
+}
+.sidebar {
+  	align-self: stretch;
+  	width: 260px;
+  	background-color: #fff;
+  	border-right: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 24px;
+  	gap: 32px;
+}
+.brand {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+  	font-size: 28px;
+  	font-family: Newsreader;
+}
+.nexo {
+  	position: relative;
+}
+.brandDot {
+  	height: 6px;
+  	width: 6px;
+  	position: relative;
+  	border-radius: 3px;
+  	background-color: #d97706;
+}
+.adminTag {
+  	border-radius: 4px;
+  	background-color: #fef3c7;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 2px 6px;
+  	font-size: 10px;
+  	color: #d97706;
+  	font-family: Inter;
+}
+.navList {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 8px;
+  	color: #475569;
+}
+.navItemDashboard {
+  	align-self: stretch;
+  	border-radius: 8px;
+  	background-color: rgba(0, 0, 0, 0);
+  	display: flex;
+  	align-items: center;
+  	padding: 12px 16px;
+  	gap: 12px;
+}
+.iconWrapper {
+  	height: 18px;
+  	width: 18px;
+  	overflow: hidden;
+  	flex-shrink: 0;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.frameIcon {
+  	height: 18px;
+  	width: 18px;
+  	position: relative;
+}
+.dashboard {
+  	position: relative;
+  	font-weight: 500;
+}
+.navItemTrocas {
+  	align-self: stretch;
+  	border-radius: 8px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: center;
+  	padding: 12px 16px;
+  	gap: 12px;
+  	color: #fff;
+}
+.trocas {
+  	position: relative;
+  	font-weight: 600;
+}
+.sidebarFooter {
+  	align-self: stretch;
+  	flex: 1;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	justify-content: flex-end;
+  	gap: 16px;
+  	color: #d97706;
+}
+.line {
+  	align-self: stretch;
+  	height: 0px;
+  	position: relative;
+  	border-top: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+}
+.userProfile {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	gap: 12px;
+}
+.avatar {
+  	height: 36px;
+  	width: 36px;
+  	border-radius: 18px;
+  	background-color: #fef3c7;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.userInfo {
+  	flex: 1;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 2px;
+  	color: #0f172a;
+}
+.arthurSchopenhauer {
+  	position: relative;
+  	font-weight: 600;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+  	white-space: nowrap;
+}
+.curadorMaster {
+  	position: relative;
+  	font-size: 12px;
+  	color: #64748b;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+  	white-space: nowrap;
+}
+.contentArea {
+  	align-self: stretch;
+  	flex: 1;
+  	overflow: hidden;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	font-size: 32px;
+  	font-family: Newsreader;
+}
+.header {
+  	align-self: stretch;
+  	background-color: #fff;
+  	border-bottom: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	padding: 24px 40px;
+  	gap: 20px;
+}
+.headerTitles {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 4px;
+}
+.acompanhamentoEAprovao {
+  	position: relative;
+  	font-size: 14px;
+  	font-family: Inter;
+  	color: #64748b;
+}
+.headerActions {
+  	display: flex;
+  	align-items: center;
+  	gap: 16px;
+  	font-size: 13px;
+  	font-family: Inter;
+}
+.notificationBell {
+  	height: 40px;
+  	width: 40px;
+  	border-radius: 100px;
+  	background-color: #faf9f6;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 10px;
+  	box-sizing: border-box;
+}
+.iconWrapper6 {
+  	height: 20px;
+  	width: 20px;
+  	overflow: hidden;
+  	flex-shrink: 0;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.frameIcon6 {
+  	height: 20px;
+  	width: 20px;
+  	position: relative;
+}
+.adminBadge {
+  	border-radius: 100px;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: center;
+  	padding: 6px 16px;
+  	gap: 8px;
+}
+.liveIndicator {
+  	height: 8px;
+  	width: 8px;
+  	position: relative;
+  	border-radius: 4px;
+  	background-color: #22c55e;
+}
+.workspace {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 32px;
+  	gap: 24px;
+  	font-size: 13px;
+  	color: #475569;
+  	font-family: Inter;
+}
+.filtersRow {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+}
+.frame {
+  	border-radius: 100px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 6px 12px;
+  	color: #fff;
+}
+.frame2 {
+  	border-radius: 100px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 6px 12px;
+}
+.trocasSplit {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 24px;
+  	font-size: 22px;
+  	color: #0f172a;
+  	font-family: Newsreader;
+}
+.mainPanel {
+  	flex: 1;
+  	border-radius: 12px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	overflow: hidden;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 24px;
+  	gap: 20px;
+}
+.tableContainer {
+  	align-self: stretch;
+  	overflow: hidden;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	font-size: 12px;
+  	color: #64748b;
+  	font-family: Inter;
+}
+.tableHeader {
+  	align-self: stretch;
+  	border-radius: 6px;
+  	background-color: #faf9f6;
+  	overflow: hidden;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 12px;
+}
+.idTroca {
+  	width: 100px;
+  	position: relative;
+  	display: inline-block;
+  	flex-shrink: 0;
+}
+.pedidoOrig {
+  	width: 120px;
+  	position: relative;
+  	display: inline-block;
+  	flex-shrink: 0;
+}
+.cliente {
+  	width: 140px;
+  	position: relative;
+  	display: inline-block;
+  	flex-shrink: 0;
+}
+.aes {
+  	flex: 1;
+  	position: relative;
+}
+.tableBody {
+  	align-self: stretch;
+  	overflow: hidden;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	font-size: 13px;
+  	color: #0f172a;
+}
+.row0 {
+  	align-self: stretch;
+  	border-bottom: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: center;
+  	padding: 14px 12px;
+}
+.nx2981a {
+  	width: 120px;
+  	position: relative;
+  	font-weight: 500;
+  	color: #475569;
+  	display: inline-block;
+  	flex-shrink: 0;
+}
+.marianaLLima {
+  	width: 140px;
+  	position: relative;
+  	font-size: 14px;
+  	font-weight: 600;
+  	display: inline-block;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+  	white-space: nowrap;
+  	flex-shrink: 0;
+}
+.frame8 {
+  	width: 140px;
+  	display: flex;
+  	align-items: flex-start;
+  	font-size: 11px;
+  	color: #d97706;
+}
+.badgeStatus {
+  	border-radius: 4px;
+  	background-color: #fef3c7;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 4px 8px;
+}
+.frame9 {
+  	flex: 1;
+  	display: flex;
+  	align-items: flex-start;
+  	font-size: 12px;
+  	color: #15803d;
+}
+.frame10 {
+  	overflow: hidden;
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 8px;
+  	flex-shrink: 0;
+}
+.frame11 {
+  	border-radius: 6px;
+  	background-color: #dcfce7;
+  	border: 1px solid #15803d;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 6px 12px;
+}
+.frame12 {
+  	border-radius: 6px;
+  	background-color: #fee2e2;
+  	border: 1px solid #b91c1c;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 6px 12px;
+  	color: #b91c1c;
+}
+.frame13 {
+  	width: 140px;
+  	display: flex;
+  	align-items: flex-start;
+  	font-size: 11px;
+  	color: #1d4ed8;
+}
+.badgeStatus2 {
+  	border-radius: 4px;
+  	background-color: #dbeafe;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 4px 8px;
+}
+.frame14 {
+  	flex: 1;
+  	display: flex;
+  	align-items: flex-start;
+  	color: #64748b;
+}
+.aguardandoEnvioDo {
+  	position: relative;
+  	font-weight: 500;
+  	flex-shrink: 0;
+}
+.frame15 {
+  	width: 140px;
+  	display: flex;
+  	align-items: flex-start;
+  	font-size: 11px;
+  	color: #7c3aed;
+}
+.badgeStatus3 {
+  	border-radius: 4px;
+  	background-color: #f2e8ff;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 4px 8px;
+}
+.frame16 {
+  	flex: 1;
+  	display: flex;
+  	align-items: flex-start;
+  	font-size: 12px;
+  	color: #fff;
+}
+.frame17 {
+  	border-radius: 6px;
+  	background-color: #0f172a;
+  	overflow: hidden;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 6px 12px;
+  	flex-shrink: 0;
+}
+.frame18 {
+  	width: 140px;
+  	display: flex;
+  	align-items: flex-start;
+  	font-size: 11px;
+  	color: #15803d;
+}
+.badgeStatus4 {
+  	border-radius: 4px;
+  	background-color: #dcfce7;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 4px 8px;
+}
+.frame20 {
+  	border-radius: 6px;
+  	background-color: #d97706;
+  	overflow: hidden;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 6px 12px;
+  	flex-shrink: 0;
+}
+.sidePanel {
+  	width: 420px;
+  	border-radius: 12px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 24px;
+  	gap: 24px;
+  	font-size: 12px;
+  	color: #64748b;
+  	font-family: Inter;
+}
+.detailHeader {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 6px;
+  	font-size: 11px;
+  	color: #d97706;
+}
+.detalhesDaSolicitao {
+  	position: relative;
+  	text-transform: uppercase;
+}
+.trocaEx112 {
+  	position: relative;
+  	font-size: 24px;
+  	font-family: Newsreader;
+  	color: #0f172a;
+}
+.clienteMarianaL {
+  	position: relative;
+  	font-size: 13px;
+  	color: #64748b;
+}
+.bookDetailStrip {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	gap: 16px;
+  	color: #0f172a;
+}
+.bookCoverIcon {
+  	height: 100px;
+  	width: 70px;
+  	position: relative;
+  	border-radius: 4px;
+  	object-fit: cover;
+}
+.frame21 {
+  	flex: 1;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 4px;
+}
+.aOrdemDo {
+  	align-self: stretch;
+  	position: relative;
+  	font-size: 14px;
+}
+.autorCarloRovelli {
+  	position: relative;
+  	color: #475569;
+}
+.valorOriginalR {
+  	position: relative;
+  	font-weight: 600;
+  	color: #64748b;
+}
+.frame22 {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 12px;
+}
+.oLivroChegou {
+  	align-self: stretch;
+  	position: relative;
+  	font-size: 13px;
+  	line-height: 150%;
+  	color: #475569;
+}
+.frame23 {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 8px;
+}
+.frame24 {
+  	align-self: stretch;
+  	border-radius: 6px;
+  	background-color: #faf9f6;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 12px;
+  	font-size: 13px;
+  	color: #0f172a;
+}
+.frame26 {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 10px;
+  	color: #0f172a;
+}
+.frame27 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 8px;
+}
+.ellipse {
+  	height: 6px;
+  	width: 6px;
+  	position: relative;
+  	border-radius: 50%;
+  	background-color: #d97706;
+}
+.frame28 {
+  	flex: 1;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 2px;
+}
+.fev2026Por {
+  	position: relative;
+  	font-size: 11px;
+  	color: #64748b;
+}
+
