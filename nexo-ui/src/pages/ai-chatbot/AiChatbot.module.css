@@ -1,0 +1,509 @@
+.aiChatbot {
+  	width: 100%;
+  	position: relative;
+  	background-color: #faf9f6;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	min-height: 1024px;
+  	text-align: left;
+  	font-size: 32px;
+  	color: #fff;
+  	font-family: Inter;
+}
+.navbar {
+  	align-self: stretch;
+  	height: 80px;
+  	background-color: #fff;
+  	border-bottom: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	padding: 0px 80px;
+  	gap: 20px;
+  	color: #475569;
+}
+.brand {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+  	color: #0f172a;
+  	font-family: Newsreader;
+}
+.logo {
+  	position: relative;
+}
+.brandDot {
+  	height: 6px;
+  	width: 6px;
+  	position: relative;
+  	border-radius: 3px;
+  	background-color: #d97706;
+}
+.navLinks {
+  	display: flex;
+  	align-items: center;
+  	gap: 32px;
+  	font-size: 14px;
+}
+.navItemCatalog {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	justify-content: center;
+  	gap: 4px;
+  	color: #0f172a;
+}
+.catlogo {
+  	position: relative;
+  	text-transform: uppercase;
+  	font-weight: 600;
+}
+.activeLine {
+  	width: 16px;
+  	height: 2px;
+  	position: relative;
+  	background-color: #d97706;
+}
+.navItemPhilosophy {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	justify-content: center;
+}
+.filosofia {
+  	position: relative;
+  	text-transform: uppercase;
+  	font-weight: 500;
+}
+.navActions {
+  	display: flex;
+  	align-items: center;
+  	gap: 24px;
+  	font-size: 13px;
+}
+.searchBar {
+  	width: 280px;
+  	border-radius: 6px;
+  	background-color: #faf9f6;
+  	display: flex;
+  	align-items: center;
+  	padding: 8px 16px;
+  	box-sizing: border-box;
+  	gap: 8px;
+}
+.searchIcon {
+  	height: 16px;
+  	width: 16px;
+  	position: relative;
+}
+.searchPlaceholder {
+  	flex: 1;
+  	position: relative;
+}
+.userMenu {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+  	font-size: 14px;
+  	color: #0f172a;
+}
+.userRoundIcon {
+  	height: 20px;
+  	width: 20px;
+  	position: relative;
+}
+.userName {
+  	position: relative;
+  	font-weight: 500;
+}
+.cartBtn {
+  	border-radius: 6px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: center;
+  	padding: 8px 12px;
+  	gap: 8px;
+  	font-size: 11px;
+  	color: #fff;
+}
+.shoppingBagIcon {
+  	height: 18px;
+  	width: 18px;
+  	position: relative;
+}
+.badge {
+  	border-radius: 10px;
+  	background-color: #d97706;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 2px 6px;
+}
+.body {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 80px;
+  	gap: 32px;
+  	font-size: 16px;
+}
+.frame {
+  	width: 800px;
+  	border-radius: 8px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 32px;
+  	gap: 24px;
+}
+.frame2 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	gap: 16px;
+}
+.frame3 {
+  	height: 40px;
+  	width: 40px;
+  	border-radius: 20px;
+  	background-color: #d97706;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.frame4 {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 2px;
+  	color: #0f172a;
+}
+.onlineCurador {
+  	position: relative;
+  	font-size: 12px;
+  	color: #15803d;
+}
+.line {
+  	align-self: stretch;
+  	height: 0px;
+  	position: relative;
+  	border-top: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+}
+.frame5 {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 24px;
+  	font-size: 12px;
+}
+.frame6 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 12px;
+}
+.frame7 {
+  	height: 32px;
+  	width: 32px;
+  	border-radius: 16px;
+  	background-color: #d97706;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.frame8 {
+  	width: 500px;
+  	border-radius: 8px;
+  	background-color: #faf9f6;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 16px;
+  	box-sizing: border-box;
+  	font-size: 14px;
+  	color: #0f172a;
+}
+.olArthurAnalisei {
+  	align-self: stretch;
+  	position: relative;
+  	line-height: 150%;
+}
+.frame9 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 0px 0px 0px 44px;
+  	font-size: 15px;
+  	color: #0f172a;
+  	font-family: Newsreader;
+}
+.frame10 {
+  	width: 500px;
+  	border-radius: 8px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 16px;
+  	gap: 16px;
+}
+.rectangleIcon {
+  	height: 88px;
+  	width: 64px;
+  	position: relative;
+  	border-radius: 4px;
+  	object-fit: cover;
+}
+.frame11 {
+  	flex: 1;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 8px;
+}
+.frame12 {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 2px;
+}
+.carloRovelli {
+  	position: relative;
+  	font-size: 12px;
+  	font-family: Inter;
+  	color: #475569;
+}
+.frame13 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	gap: 20px;
+  	font-size: 14px;
+  	font-family: Inter;
+}
+.frame14 {
+  	border-radius: 4px;
+  	background-color: #d97706;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 4px 10px;
+  	font-size: 12px;
+}
+.adicionarAoCarrinho {
+  	position: relative;
+  	font-weight: 600;
+}
+.frame15 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	justify-content: flex-end;
+  	font-size: 14px;
+}
+.frame16 {
+  	width: 400px;
+  	border-radius: 8px;
+  	background-color: #0f172a;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 16px;
+  	box-sizing: border-box;
+}
+.inputBox {
+  	align-self: stretch;
+  	border-radius: 8px;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	padding: 16px 20px;
+  	gap: 20px;
+  	font-size: 14px;
+  	color: #64748b;
+}
+.frame26 {
+  	border-radius: 6px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 8px 16px;
+  	font-size: 13px;
+  	color: #fff;
+}
+.frame27 {
+  	flex: 1;
+  	border-radius: 8px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 32px;
+  	gap: 24px;
+  	font-size: 13px;
+  	color: #0f172a;
+}
+.seuPerfilDe {
+  	position: relative;
+  	font-size: 24px;
+  	font-family: Newsreader;
+}
+.frame28 {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 12px;
+}
+.frame29 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	flex-wrap: wrap;
+  	align-content: flex-start;
+  	gap: 8px;
+  	font-size: 12px;
+  	color: #475569;
+}
+.frame30 {
+  	border-radius: 100px;
+  	background-color: #faf9f6;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 6px 12px;
+}
+.frame36 {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 16px;
+}
+.frame37 {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 12px;
+  	font-size: 14px;
+  	font-family: Newsreader;
+}
+.frame38 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	gap: 12px;
+}
+.rectangleIcon3 {
+  	height: 56px;
+  	width: 40px;
+  	position: relative;
+  	border-radius: 4px;
+  	object-fit: cover;
+}
+.frame39 {
+  	flex: 1;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 2px;
+}
+.almDoBem {
+  	position: relative;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+  	white-space: nowrap;
+}
+.friedrichNietzsche {
+  	position: relative;
+  	font-size: 11px;
+  	font-family: Inter;
+  	color: #64748b;
+}
+.footer {
+  	align-self: stretch;
+  	background-color: #0f172a;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 64px 80px 40px;
+  	gap: 48px;
+  	font-size: 28px;
+  	font-family: Newsreader;
+}
+.footerTop {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	justify-content: space-between;
+  	gap: 20px;
+}
+.footerBrand {
+  	width: 360px;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 16px;
+}
+.nexoUma {
+  	align-self: stretch;
+  	position: relative;
+  	font-size: 14px;
+  	line-height: 160%;
+  	font-family: Inter;
+  	color: #94a3b8;
+}
+.footerLinksRow {
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 80px;
+  	font-size: 14px;
+  	color: #cbd5e1;
+  	font-family: Inter;
+}
+.colHelp {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 12px;
+}
+.atendimento {
+  	position: relative;
+  	font-size: 12px;
+  	text-transform: uppercase;
+  	color: #d97706;
+}
+.line3 {
+  	align-self: stretch;
+  	height: 0px;
+  	position: relative;
+  	border-top: 1px solid #334155;
+  	box-sizing: border-box;
+}
+.footerBottom {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	gap: 20px;
+  	font-size: 12px;
+  	color: #64748b;
+  	font-family: Inter;
+}
+.socials {
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 16px;
+}
+

@@ -1,0 +1,577 @@
+.orderDetail {
+  	width: 100%;
+  	position: relative;
+  	background-color: #faf9f6;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	min-height: 1024px;
+  	text-align: left;
+  	font-size: 32px;
+  	color: #475569;
+  	font-family: Inter;
+}
+.navbar {
+  	align-self: stretch;
+  	height: 80px;
+  	background-color: #fff;
+  	border-bottom: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	padding: 0px 80px;
+  	gap: 20px;
+}
+.brand {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+  	color: #0f172a;
+  	font-family: Newsreader;
+}
+.logo {
+  	position: relative;
+}
+.brandDot {
+  	height: 6px;
+  	width: 6px;
+  	position: relative;
+  	border-radius: 3px;
+  	background-color: #d97706;
+}
+.navLinks {
+  	display: flex;
+  	align-items: center;
+  	gap: 32px;
+  	font-size: 14px;
+}
+.navItemCatalog {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	justify-content: center;
+  	gap: 4px;
+  	color: #0f172a;
+}
+.catlogo {
+  	position: relative;
+  	text-transform: uppercase;
+  	font-weight: 600;
+}
+.activeLine {
+  	width: 16px;
+  	height: 2px;
+  	position: relative;
+  	background-color: #d97706;
+}
+.navItemPhilosophy {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	justify-content: center;
+}
+.filosofia {
+  	position: relative;
+  	text-transform: uppercase;
+  	font-weight: 500;
+}
+.navActions {
+  	display: flex;
+  	align-items: center;
+  	gap: 24px;
+  	font-size: 13px;
+}
+.searchBar {
+  	width: 280px;
+  	border-radius: 6px;
+  	background-color: #faf9f6;
+  	display: flex;
+  	align-items: center;
+  	padding: 8px 16px;
+  	box-sizing: border-box;
+  	gap: 8px;
+}
+.searchIcon {
+  	height: 16px;
+  	width: 16px;
+  	position: relative;
+}
+.searchPlaceholder {
+  	flex: 1;
+  	position: relative;
+}
+.userMenu {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+  	font-size: 14px;
+  	color: #0f172a;
+}
+.userRoundIcon {
+  	height: 20px;
+  	width: 20px;
+  	position: relative;
+}
+.userName {
+  	position: relative;
+  	font-weight: 500;
+}
+.cartBtn {
+  	border-radius: 6px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: center;
+  	padding: 8px 12px;
+  	gap: 8px;
+  	font-size: 11px;
+  	color: #fff;
+}
+.shoppingBagIcon {
+  	height: 18px;
+  	width: 18px;
+  	position: relative;
+}
+.badge {
+  	border-radius: 10px;
+  	background-color: #d97706;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 2px 6px;
+}
+.body {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 80px;
+  	gap: 40px;
+  	font-size: 14px;
+  	color: #0f172a;
+}
+.backToList {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+}
+.frameIcon {
+  	height: 14px;
+  	width: 14px;
+  	position: relative;
+}
+.voltarParaMeus {
+  	position: relative;
+  	font-weight: 600;
+}
+.stepperCard {
+  	align-self: stretch;
+  	border-radius: 8px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 32px;
+  	gap: 24px;
+  	font-size: 28px;
+  	font-family: Newsreader;
+}
+.frame {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	gap: 20px;
+}
+.pedidoNx2981a {
+  	position: relative;
+  	font-size: 14px;
+  	font-family: Inter;
+  	color: #475569;
+}
+.stepper {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	padding: 16px 0px;
+  	gap: 0px;
+  	font-size: 11px;
+  	color: #fff;
+  	font-family: Inter;
+}
+.frame2 {
+  	flex: 1;
+  	display: flex;
+  	align-items: center;
+  	gap: 12px;
+}
+.frame4 {
+  	height: 24px;
+  	width: 24px;
+  	border-radius: 12px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.emAberto {
+  	position: relative;
+  	font-size: 12px;
+  	color: #0f172a;
+}
+.line {
+  	height: 0px;
+  	flex: 1;
+  	position: relative;
+  	border-top: 2px solid #0f172a;
+  	box-sizing: border-box;
+}
+.frame13 {
+  	height: 24px;
+  	width: 24px;
+  	border-radius: 12px;
+  	background-color: #d97706;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.emTrnsito {
+  	position: relative;
+  	font-size: 12px;
+  	color: #d97706;
+}
+.frame14 {
+  	flex: 1;
+  	display: flex;
+  	align-items: center;
+  	color: #4a5469;
+}
+.frame16 {
+  	height: 24px;
+  	width: 24px;
+  	border-radius: 12px;
+  	background-color: #e2e8f0;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.entregue {
+  	position: relative;
+  	font-size: 12px;
+  	color: #64748b;
+}
+.detailsSplit {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 32px;
+  	color: #d97706;
+}
+.leftCol {
+  	width: 800px;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 24px;
+}
+.addressPayment {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 24px;
+}
+.address {
+  	flex: 1;
+  	border-radius: 8px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 24px;
+  	gap: 12px;
+}
+.endereoDeEntrega {
+  	position: relative;
+  	text-transform: uppercase;
+  	flex-shrink: 0;
+}
+.arthurSchopenhauer {
+  	position: relative;
+  	font-size: 15px;
+  	font-weight: 600;
+  	color: #0f172a;
+  	flex-shrink: 0;
+}
+.avPaulista1000 {
+  	position: relative;
+  	line-height: 150%;
+  	color: #475569;
+  	flex-shrink: 0;
+}
+.formaDePagamento {
+  	position: relative;
+  	text-transform: uppercase;
+}
+.pagamentoDivididoEntre {
+  	position: relative;
+  	color: #475569;
+}
+.frame17 {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 6px;
+  	font-size: 13px;
+  	color: #0f172a;
+}
+.itemsBreakdown {
+  	align-self: stretch;
+  	border-radius: 8px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 24px;
+  	gap: 16px;
+  	font-size: 16px;
+  	color: #0f172a;
+}
+.produtosDoPedido {
+  	position: relative;
+  	font-size: 22px;
+  	font-family: Newsreader;
+}
+.itemRow {
+  	align-self: stretch;
+  	border-bottom: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: center;
+  	padding: 16px;
+  	gap: 16px;
+}
+.rectangleIcon {
+  	height: 88px;
+  	width: 64px;
+  	position: relative;
+  	border-radius: 4px;
+  	object-fit: cover;
+}
+.frame18 {
+  	flex: 1;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 4px;
+}
+.aOrdemDo {
+  	position: relative;
+  	font-family: Newsreader;
+}
+.porCarloRovelli {
+  	position: relative;
+  	font-size: 13px;
+  	color: #475569;
+}
+.frame19 {
+  	display: flex;
+  	align-items: center;
+  	gap: 12px;
+  	font-size: 14px;
+}
+.frame20 {
+  	display: flex;
+  	align-items: flex-start;
+  	font-size: 12px;
+  	color: #64748b;
+}
+.frame21 {
+  	border-radius: 4px;
+  	background-color: #e2e8f0;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 6px 12px;
+}
+.frame24 {
+  	display: flex;
+  	align-items: flex-start;
+  	font-size: 12px;
+  	color: #d97706;
+}
+.frame25 {
+  	border-radius: 4px;
+  	border: 1px solid #d97706;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 6px 12px;
+}
+.rightCol {
+  	flex: 1;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	font-size: 22px;
+  	color: #0f172a;
+  	font-family: Newsreader;
+}
+.summaryCard {
+  	align-self: stretch;
+  	border-radius: 8px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 24px;
+  	gap: 20px;
+}
+.frame26 {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 12px;
+  	font-size: 14px;
+  	color: #475569;
+  	font-family: Inter;
+}
+.r21470 {
+  	position: relative;
+  	font-weight: 600;
+  	color: #0f172a;
+}
+.r2500 {
+  	position: relative;
+  	font-weight: 600;
+  	color: #15803d;
+}
+.line5 {
+  	align-self: stretch;
+  	height: 0px;
+  	position: relative;
+  	border-top: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+}
+.frame30 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	gap: 20px;
+  	font-size: 20px;
+}
+.r21220 {
+  	position: relative;
+  	font-size: 24px;
+  	font-family: Inter;
+}
+.frame31 {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 12px;
+  	font-size: 15px;
+  	font-family: Inter;
+}
+.frame32 {
+  	align-self: stretch;
+  	border-radius: 6px;
+  	background-color: #d97706;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 12px 0px;
+}
+.frame33 {
+  	align-self: stretch;
+  	border-radius: 6px;
+  	background-color: #fee2e2;
+  	border: 1px solid #b91c1c;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 12px 0px;
+  	color: #b91c1c;
+}
+.footer {
+  	align-self: stretch;
+  	background-color: #0f172a;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 64px 80px 40px;
+  	gap: 48px;
+  	font-size: 28px;
+  	color: #fff;
+  	font-family: Newsreader;
+}
+.footerTop {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	justify-content: space-between;
+  	gap: 20px;
+}
+.footerBrand {
+  	width: 360px;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 16px;
+}
+.nexoUma {
+  	align-self: stretch;
+  	position: relative;
+  	font-size: 14px;
+  	line-height: 160%;
+  	font-family: Inter;
+  	color: #94a3b8;
+}
+.footerLinksRow {
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 80px;
+  	font-size: 14px;
+  	color: #cbd5e1;
+  	font-family: Inter;
+}
+.colHelp {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 12px;
+}
+.atendimento {
+  	position: relative;
+  	font-size: 12px;
+  	text-transform: uppercase;
+  	color: #d97706;
+}
+.line7 {
+  	align-self: stretch;
+  	height: 0px;
+  	position: relative;
+  	border-top: 1px solid #334155;
+  	box-sizing: border-box;
+}
+.footerBottom {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	gap: 20px;
+  	font-size: 12px;
+  	color: #64748b;
+  	font-family: Inter;
+}
+.socials {
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 16px;
+}
+

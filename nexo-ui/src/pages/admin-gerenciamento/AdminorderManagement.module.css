@@ -1,0 +1,639 @@
+.adminOrderManagement {
+  	width: 100%;
+  	position: relative;
+  	background-color: #faf9f6;
+  	display: flex;
+  	align-items: flex-start;
+  	isolation: isolate;
+  	min-height: 900px;
+  	text-align: left;
+  	font-size: 14px;
+  	color: #0f172a;
+  	font-family: Inter;
+}
+.sidebar {
+  	align-self: stretch;
+  	width: 260px;
+  	background-color: #fff;
+  	border-right: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 24px;
+  	gap: 32px;
+  	z-index: 0;
+}
+.brand {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+  	font-size: 28px;
+  	font-family: Newsreader;
+}
+.logo {
+  	position: relative;
+}
+.brandDot {
+  	height: 6px;
+  	width: 6px;
+  	position: relative;
+  	border-radius: 3px;
+  	background-color: #d97706;
+}
+.adminTag {
+  	border-radius: 4px;
+  	background-color: #fef3c7;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 2px 6px;
+  	font-size: 10px;
+  	color: #d97706;
+  	font-family: Inter;
+}
+.navList {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 8px;
+  	color: #475569;
+}
+.navItemDashboard {
+  	align-self: stretch;
+  	border-radius: 8px;
+  	background-color: rgba(0, 0, 0, 0);
+  	display: flex;
+  	align-items: center;
+  	padding: 12px 16px;
+  	gap: 12px;
+}
+.iconWrapper {
+  	height: 18px;
+  	width: 18px;
+  	overflow: hidden;
+  	flex-shrink: 0;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.layoutGridIcon {
+  	height: 18px;
+  	width: 18px;
+  	position: relative;
+}
+.dashboard {
+  	flex: 1;
+  	position: relative;
+  	font-weight: 500;
+}
+.navItemPedidos {
+  	align-self: stretch;
+  	border-radius: 8px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: center;
+  	padding: 12px 16px;
+  	gap: 12px;
+  	color: #fff;
+}
+.pedidos {
+  	flex: 1;
+  	position: relative;
+  	font-weight: 600;
+}
+.sidebarFooter {
+  	align-self: stretch;
+  	flex: 1;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	justify-content: flex-end;
+  	gap: 16px;
+  	color: #d97706;
+}
+.line {
+  	align-self: stretch;
+  	height: 0px;
+  	position: relative;
+  	border-top: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+}
+.userProfile {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	gap: 12px;
+}
+.avatar {
+  	height: 36px;
+  	width: 36px;
+  	border-radius: 18px;
+  	background-color: #fef3c7;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.userInfo {
+  	flex: 1;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 2px;
+  	color: #0f172a;
+}
+.arthurSchopenhauer {
+  	position: relative;
+  	font-weight: 600;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+  	white-space: nowrap;
+}
+.curadorMaster {
+  	position: relative;
+  	font-size: 12px;
+  	color: #64748b;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+  	white-space: nowrap;
+}
+.contentArea {
+  	align-self: stretch;
+  	flex: 1;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	z-index: 1;
+  	font-size: 32px;
+  	font-family: Newsreader;
+}
+.header {
+  	align-self: stretch;
+  	background-color: #fff;
+  	border-bottom: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	padding: 24px 40px;
+  	gap: 20px;
+}
+.headerTitles {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 4px;
+}
+.supervisoDeStatus {
+  	position: relative;
+  	font-size: 14px;
+  	font-family: Inter;
+  	color: #64748b;
+}
+.headerActions {
+  	display: flex;
+  	align-items: center;
+  	gap: 16px;
+  	font-size: 13px;
+  	font-family: Inter;
+}
+.notificationBell {
+  	height: 40px;
+  	width: 40px;
+  	border-radius: 100px;
+  	background-color: #faf9f6;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 10px;
+  	box-sizing: border-box;
+}
+.iconWrapper6 {
+  	height: 20px;
+  	width: 20px;
+  	overflow: hidden;
+  	flex-shrink: 0;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.badgeAlertIcon {
+  	height: 20px;
+  	width: 20px;
+  	position: relative;
+}
+.adminBadge {
+  	border-radius: 100px;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: center;
+  	padding: 6px 16px;
+  	gap: 8px;
+}
+.liveIndicator {
+  	height: 8px;
+  	width: 8px;
+  	position: relative;
+  	border-radius: 4px;
+  	background-color: #22c55e;
+}
+.sessoAtiva {
+  	position: relative;
+  	font-weight: 600;
+}
+.workspace {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 32px;
+  	gap: 24px;
+  	font-size: 22px;
+  	font-family: Inter;
+}
+.statusTransitionBoard {
+  	align-self: stretch;
+  	border-radius: 12px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 24px;
+  	gap: 20px;
+}
+.filaDeTransies {
+  	position: relative;
+  	font-family: Newsreader;
+}
+.filterPills {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+  	font-size: 12px;
+  	color: #475569;
+}
+.frame {
+  	border-radius: 100px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 6px 12px;
+  	color: #fff;
+}
+.frame2 {
+  	border-radius: 100px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 6px 12px;
+}
+.ordersWorkflowTable {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	font-size: 14px;
+}
+.tableHeader {
+  	align-self: stretch;
+  	border-radius: 6px;
+  	background-color: #faf9f6;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 12px;
+  	font-size: 12px;
+  	color: #64748b;
+}
+.pedido {
+  	width: 100px;
+  	position: relative;
+  	display: inline-block;
+  	flex-shrink: 0;
+}
+.cliente {
+  	width: 180px;
+  	position: relative;
+  	display: inline-block;
+  	flex-shrink: 0;
+}
+.itens {
+  	width: 80px;
+  	position: relative;
+  	display: inline-block;
+  	text-align: center;
+  	flex-shrink: 0;
+}
+.statusAtual {
+  	width: 160px;
+  	position: relative;
+  	display: inline-block;
+  	flex-shrink: 0;
+}
+.aoDeFluxo {
+  	width: 260px;
+  	position: relative;
+  	display: inline-block;
+  	flex-shrink: 0;
+}
+.workflowRow0 {
+  	align-self: stretch;
+  	border-bottom: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: center;
+  	padding: 16px 12px;
+}
+.marianaLLima {
+  	width: 180px;
+  	position: relative;
+  	font-weight: 600;
+  	display: inline-block;
+  	flex-shrink: 0;
+}
+.fev2026 {
+  	width: 100px;
+  	position: relative;
+  	font-size: 13px;
+  	color: #475569;
+  	display: inline-block;
+  	flex-shrink: 0;
+}
+.div {
+  	width: 80px;
+  	position: relative;
+  	font-size: 13px;
+  	color: #475569;
+  	text-align: center;
+  	display: inline-block;
+  	flex-shrink: 0;
+}
+.statusContainer {
+  	width: 160px;
+  	display: flex;
+  	align-items: flex-start;
+  	font-size: 11px;
+  	color: #475569;
+}
+.frame4 {
+  	border-radius: 4px;
+  	background-color: #e2e8f0;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 4px 8px;
+}
+.actionButtonContainer {
+  	width: 260px;
+  	display: flex;
+  	align-items: flex-start;
+  	font-size: 12px;
+  	color: #fff;
+}
+.frame5 {
+  	border-radius: 6px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: center;
+  	padding: 6px 12px;
+  	gap: 8px;
+}
+.iconWrapper7 {
+  	height: 12px;
+  	width: 12px;
+  	overflow: hidden;
+  	flex-shrink: 0;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.arrowRightIcon {
+  	height: 12px;
+  	width: 12px;
+  	position: relative;
+}
+.statusContainer2 {
+  	width: 160px;
+  	display: flex;
+  	align-items: flex-start;
+  	font-size: 11px;
+  	color: #d97706;
+}
+.frame6 {
+  	border-radius: 4px;
+  	background-color: #fef3c7;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 4px 8px;
+}
+.actionButtonContainer2 {
+  	width: 260px;
+  	overflow: hidden;
+  	flex-shrink: 0;
+  	display: flex;
+  	align-items: flex-start;
+  	font-size: 12px;
+  	color: #fff;
+}
+.frame7 {
+  	border-radius: 6px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: center;
+  	padding: 6px 12px;
+  	gap: 8px;
+  	flex-shrink: 0;
+}
+.statusContainer3 {
+  	width: 160px;
+  	display: flex;
+  	align-items: flex-start;
+  	font-size: 11px;
+  	color: #1d4ed8;
+}
+.frame8 {
+  	border-radius: 4px;
+  	background-color: #dbeafe;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 4px 8px;
+}
+.statusContainer4 {
+  	width: 160px;
+  	display: flex;
+  	align-items: flex-start;
+  	font-size: 11px;
+  	color: #7c3aed;
+}
+.frame10 {
+  	border-radius: 4px;
+  	background-color: #f2e8ff;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 4px 8px;
+}
+.exchangeWorkflow {
+  	align-self: stretch;
+  	border-radius: 12px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 24px;
+  	gap: 20px;
+  	font-family: Newsreader;
+}
+.exchangeItem {
+  	align-self: stretch;
+  	border-radius: 8px;
+  	background-color: #faf9f6;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: center;
+  	padding: 16px;
+  	gap: 24px;
+  	font-size: 14px;
+  	font-family: Inter;
+}
+.frame12 {
+  	flex: 1;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 4px;
+}
+.frame13 {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+}
+.frame14 {
+  	border-radius: 4px;
+  	background-color: #ffe4e6;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 2px 6px;
+  	font-size: 10px;
+  	color: #e11d48;
+}
+.solicitadoPorErich {
+  	position: relative;
+  	font-size: 13px;
+  	color: #475569;
+}
+.exchangeActions {
+  	display: flex;
+  	align-items: center;
+  	gap: 12px;
+  	font-size: 13px;
+  	color: #15803d;
+}
+.frame15 {
+  	border-radius: 6px;
+  	background-color: #dcfce7;
+  	border: 1px solid #15803d;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 8px 16px;
+}
+.frame16 {
+  	border-radius: 6px;
+  	background-color: #fee2e2;
+  	border: 1px solid #b91c1c;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 8px 16px;
+  	color: #b91c1c;
+}
+.modalBackdrop {
+  	height: 100%;
+  	width: 100%;
+  	margin: 0 !important;
+  	position: absolute;
+  	top: 0px;
+  	right: 0px;
+  	bottom: 0px;
+  	left: 0px;
+  	background-color: rgba(15, 23, 42, 0.4);
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	z-index: 2;
+  	font-size: 20px;
+  	color: #475569;
+}
+.modalContainer {
+  	width: 480px;
+  	box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+  	border-radius: 12px;
+  	background-color: #fff;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 28px;
+  	box-sizing: border-box;
+  	gap: 24px;
+}
+.modalHeader {
+  	display: flex;
+  	align-items: center;
+  	gap: 12px;
+  	color: #0f172a;
+  	font-family: Newsreader;
+}
+.frame17 {
+  	height: 40px;
+  	width: 40px;
+  	border-radius: 20px;
+  	background-color: #fef3c7;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.vocEstPrestesContainer {
+  	align-self: stretch;
+  	position: relative;
+  	font-size: 14px;
+  	line-height: 150%;
+}
+.vocEstPrestes {
+  	line-height: 150%;
+}
+.nx2981a2 {
+  	color: #0f172a;
+  	line-height: 150%;
+}
+.emAberto2 {
+  	font-weight: 600;
+  	color: #0f172a;
+  	line-height: 150%;
+}
+.emProcessamento2 {
+  	font-weight: 600;
+  	color: #d97706;
+  	line-height: 150%;
+}
+.modalButtons {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	justify-content: flex-end;
+  	gap: 12px;
+  	font-size: 13px;
+}
+.frame18 {
+  	border-radius: 6px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 10px 16px;
+}
+.frame19 {
+  	border-radius: 6px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 10px 16px;
+  	color: #fff;
+}
+
