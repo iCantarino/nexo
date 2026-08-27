@@ -1,0 +1,441 @@
+.homeCatalog {
+  	width: 100%;
+  	position: relative;
+  	background-color: #faf9f6;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	min-height: 1024px;
+  	text-align: left;
+  	font-size: 32px;
+  	color: #0f172a;
+  	font-family: Inter;
+}
+.navbar {
+  	align-self: stretch;
+  	height: 80px;
+  	background-color: #fff;
+  	border-bottom: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	padding: 0px 80px;
+  	gap: 20px;
+  	color: #475569;
+}
+.brand {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+  	color: #0f172a;
+  	font-family: Newsreader;
+}
+.logo {
+  	position: relative;
+}
+.brandDot {
+  	height: 6px;
+  	width: 6px;
+  	position: relative;
+  	border-radius: 3px;
+  	background-color: #d97706;
+}
+.navLinks {
+  	display: flex;
+  	align-items: center;
+  	gap: 32px;
+  	font-size: 14px;
+}
+.navItemCatalog {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	justify-content: center;
+  	gap: 4px;
+  	color: #0f172a;
+}
+.catlogo {
+  	position: relative;
+  	text-transform: uppercase;
+  	font-weight: 600;
+}
+.activeLine {
+  	width: 16px;
+  	height: 2px;
+  	position: relative;
+  	background-color: #d97706;
+}
+.navItemPhilosophy {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	justify-content: center;
+}
+.filosofia {
+  	position: relative;
+  	text-transform: uppercase;
+  	font-weight: 500;
+}
+.navActions {
+  	display: flex;
+  	align-items: center;
+  	gap: 24px;
+  	font-size: 13px;
+}
+.searchBar {
+  	width: 280px;
+  	border-radius: 6px;
+  	background-color: #faf9f6;
+  	display: flex;
+  	align-items: center;
+  	padding: 8px 16px;
+  	box-sizing: border-box;
+  	gap: 8px;
+}
+.searchIcon {
+  	height: 16px;
+  	width: 16px;
+  	position: relative;
+}
+.searchPlaceholder {
+  	flex: 1;
+  	position: relative;
+}
+.userMenu {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+  	font-size: 14px;
+  	color: #0f172a;
+}
+.userRoundIcon {
+  	height: 20px;
+  	width: 20px;
+  	position: relative;
+}
+.userName {
+  	position: relative;
+  	font-weight: 500;
+}
+.cartBtn {
+  	border-radius: 6px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: center;
+  	padding: 8px 12px;
+  	gap: 8px;
+  	font-size: 11px;
+  	color: #fff;
+}
+.shoppingBagIcon {
+  	height: 18px;
+  	width: 18px;
+  	position: relative;
+}
+.badge {
+  	border-radius: 10px;
+  	background-color: #d97706;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 2px 6px;
+}
+.heroBanner {
+  	align-self: stretch;
+  	height: 380px;
+  	display: flex;
+  	align-items: center;
+  	padding: 80px;
+  	box-sizing: border-box;
+  	background-size: cover;
+  	background-repeat: no-repeat;
+  	background-position: top;
+  	font-size: 11px;
+}
+.heroContent {
+  	width: 640px;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 20px;
+  	flex-shrink: 0;
+}
+.eyebrow {
+  	border-radius: 100px;
+  	background-color: #d97706;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 6px 12px;
+}
+.edioExclusivaDo {
+  	position: relative;
+  	text-transform: uppercase;
+}
+.sabedoriaCincia {
+  	align-self: stretch;
+  	position: relative;
+  	font-size: 56px;
+  	line-height: 110%;
+  	font-family: Newsreader;
+  	color: #fff;
+}
+.exploreNossaNova {
+  	align-self: stretch;
+  	position: relative;
+  	font-size: 16px;
+  	line-height: 160%;
+  	color: #cbd5e1;
+}
+.heroCta {
+  	border-radius: 6px;
+  	background-color: #d97706;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 14px 24px;
+  	font-size: 15px;
+}
+.explorarColeo {
+  	position: relative;
+  	font-weight: 600;
+}
+.mainSection {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 80px;
+  	gap: 40px;
+  	font-family: Newsreader;
+}
+.browseHeader {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 24px;
+}
+.diretrioDoConhecimento {
+  	align-self: stretch;
+  	position: relative;
+}
+.filtersRow {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	flex-wrap: wrap;
+  	align-content: flex-start;
+  	gap: 12px;
+  	font-size: 14px;
+  	color: #475569;
+  	font-family: Inter;
+}
+.subj0 {
+  	border-radius: 100px;
+  	background-color: #0f172a;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 10px 16px;
+  	color: #fff;
+}
+.subj1 {
+  	border-radius: 100px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 10px 16px;
+}
+.grid {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 32px;
+  	font-size: 18px;
+}
+.row1 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 32px;
+}
+.bookCard {
+  	flex: 1;
+  	border-radius: 8px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 16px;
+  	gap: 16px;
+}
+.coverWrapperIcon {
+  	align-self: stretch;
+  	height: 280px;
+  	border-radius: 4px;
+  	max-width: 100%;
+  	overflow: hidden;
+  	flex-shrink: 0;
+  	object-fit: cover;
+}
+.metadata {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 6px;
+}
+.stars {
+  	display: flex;
+  	align-items: center;
+  	gap: 4px;
+}
+.starIcon {
+  	height: 14px;
+  	width: 14px;
+  	position: relative;
+}
+.title {
+  	align-self: stretch;
+  	position: relative;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+  	white-space: nowrap;
+}
+.author {
+  	align-self: stretch;
+  	position: relative;
+  	font-size: 13px;
+  	font-family: Inter;
+  	color: #475569;
+}
+.actionRow {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	gap: 20px;
+  	font-size: 16px;
+  	font-family: Inter;
+}
+.addBtn {
+  	border-radius: 4px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: center;
+  	padding: 6px 12px;
+  	font-size: 12px;
+  	color: #fff;
+}
+.pagination {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	padding: 24px 0px 0px;
+  	gap: 20px;
+  	font-size: 14px;
+  	color: #475569;
+  	font-family: Inter;
+}
+.pages {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+}
+.pageActive {
+  	border-radius: 6px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 10px 14px;
+  	color: #fff;
+}
+.page {
+  	border-radius: 6px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 10px 14px;
+}
+.footer {
+  	align-self: stretch;
+  	background-color: #0f172a;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 64px 80px 40px;
+  	gap: 48px;
+  	font-size: 28px;
+  	color: #fff;
+  	font-family: Newsreader;
+}
+.footerTop {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	justify-content: space-between;
+  	gap: 20px;
+}
+.footerBrand {
+  	width: 360px;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 16px;
+}
+.nexoUma {
+  	align-self: stretch;
+  	position: relative;
+  	font-size: 14px;
+  	line-height: 160%;
+  	font-family: Inter;
+  	color: #94a3b8;
+}
+.footerLinksRow {
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 80px;
+  	font-size: 14px;
+  	color: #cbd5e1;
+  	font-family: Inter;
+}
+.colHelp {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 12px;
+}
+.atendimento {
+  	position: relative;
+  	font-size: 12px;
+  	text-transform: uppercase;
+  	color: #d97706;
+}
+.line {
+  	align-self: stretch;
+  	height: 0px;
+  	position: relative;
+  	border-top: 1px solid #334155;
+  	box-sizing: border-box;
+}
+.footerBottom {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	gap: 20px;
+  	font-size: 12px;
+  	color: #64748b;
+  	font-family: Inter;
+}
+.socials {
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 16px;
+}
+

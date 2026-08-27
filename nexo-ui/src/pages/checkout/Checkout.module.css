@@ -1,0 +1,574 @@
+.checkout {
+  	width: 100%;
+  	position: relative;
+  	background-color: #faf9f6;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	min-height: 1024px;
+  	text-align: left;
+  	font-size: 32px;
+  	color: #475569;
+  	font-family: Inter;
+}
+.navbar {
+  	align-self: stretch;
+  	height: 80px;
+  	background-color: #fff;
+  	border-bottom: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	padding: 0px 80px;
+  	gap: 20px;
+}
+.brand {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+  	color: #0f172a;
+  	font-family: Newsreader;
+}
+.logo {
+  	position: relative;
+}
+.brandDot {
+  	height: 6px;
+  	width: 6px;
+  	position: relative;
+  	border-radius: 3px;
+  	background-color: #d97706;
+}
+.navLinks {
+  	display: flex;
+  	align-items: center;
+  	gap: 32px;
+  	font-size: 14px;
+}
+.navItemCatalog {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	justify-content: center;
+  	gap: 4px;
+  	color: #0f172a;
+}
+.catlogo {
+  	position: relative;
+  	text-transform: uppercase;
+  	font-weight: 600;
+}
+.activeLine {
+  	width: 16px;
+  	height: 2px;
+  	position: relative;
+  	background-color: #d97706;
+}
+.navItemPhilosophy {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	justify-content: center;
+}
+.filosofia {
+  	position: relative;
+  	text-transform: uppercase;
+  	font-weight: 500;
+}
+.navActions {
+  	display: flex;
+  	align-items: center;
+  	gap: 24px;
+  	font-size: 13px;
+}
+.searchBar {
+  	width: 280px;
+  	border-radius: 6px;
+  	background-color: #faf9f6;
+  	display: flex;
+  	align-items: center;
+  	padding: 8px 16px;
+  	box-sizing: border-box;
+  	gap: 8px;
+}
+.searchIcon {
+  	height: 16px;
+  	width: 16px;
+  	position: relative;
+}
+.searchPlaceholder {
+  	flex: 1;
+  	position: relative;
+}
+.userMenu {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+  	font-size: 14px;
+  	color: #0f172a;
+}
+.userRoundIcon {
+  	height: 20px;
+  	width: 20px;
+  	position: relative;
+}
+.userName {
+  	position: relative;
+  	font-weight: 500;
+}
+.cartBtn {
+  	border-radius: 6px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: center;
+  	padding: 8px 12px;
+  	gap: 8px;
+  	font-size: 11px;
+  	color: #fff;
+}
+.shoppingBagIcon {
+  	height: 18px;
+  	width: 18px;
+  	position: relative;
+}
+.badge {
+  	border-radius: 10px;
+  	background-color: #d97706;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 2px 6px;
+}
+.checkoutBody {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	padding: 80px;
+  	gap: 48px;
+  	color: #0f172a;
+}
+.checkoutLeft {
+  	width: 760px;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 32px;
+}
+.checkoutSeguro {
+  	align-self: stretch;
+  	position: relative;
+  	font-family: Newsreader;
+}
+.deliveryAddress {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 16px;
+  	font-size: 22px;
+}
+.addressGrid {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 16px;
+  	font-size: 13px;
+  	color: #475569;
+}
+.addrCard1 {
+  	flex: 1;
+  	border-radius: 8px;
+  	background-color: #fff;
+  	border: 2px solid #d97706;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 16px;
+  	gap: 8px;
+}
+.frame {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	gap: 20px;
+  	font-size: 14px;
+  	color: #0f172a;
+}
+.arthurSchopenhauer {
+  	align-self: stretch;
+  	position: relative;
+}
+.addrCard2 {
+  	flex: 1;
+  	border-radius: 8px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 16px;
+  	gap: 8px;
+}
+.frame2 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	font-size: 14px;
+  	color: #0f172a;
+}
+.escritrio {
+  	position: relative;
+  	font-weight: 600;
+}
+.newAddrBox {
+  	align-self: stretch;
+  	border-radius: 8px;
+  	border: 1px dashed #e2e8f0;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 20px;
+  	font-size: 14px;
+}
+.frame3 {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+}
+.plusIcon {
+  	height: 14px;
+  	width: 14px;
+  	position: relative;
+}
+.line {
+  	align-self: stretch;
+  	height: 0px;
+  	position: relative;
+  	border-top: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+}
+.paymentMethod {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 16px;
+  	font-size: 14px;
+}
+.formaDePagamento {
+  	align-self: stretch;
+  	position: relative;
+  	font-size: 22px;
+  	font-family: Newsreader;
+}
+.cardsList {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 12px;
+}
+.cardOption1 {
+  	align-self: stretch;
+  	border-radius: 8px;
+  	background-color: #fff;
+  	border: 2px solid #d97706;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	padding: 16px;
+  	gap: 20px;
+}
+.frame4 {
+  	display: flex;
+  	align-items: center;
+  	gap: 12px;
+}
+.creditCardIcon {
+  	height: 20px;
+  	width: 32px;
+  	position: relative;
+}
+.frame5 {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 2px;
+}
+.val1230 {
+  	position: relative;
+  	font-size: 12px;
+  	color: #475569;
+}
+.cardOption2 {
+  	align-self: stretch;
+  	border-radius: 8px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	padding: 16px;
+}
+.splitPayment {
+  	align-self: stretch;
+  	border-radius: 8px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 16px;
+  	gap: 12px;
+}
+.frame8 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+}
+.checkbox {
+  	height: 16px;
+  	width: 16px;
+  	border-radius: 4px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.checkIcon {
+  	height: 10px;
+  	width: 10px;
+  	position: relative;
+}
+.frame9 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 16px;
+  	font-size: 13px;
+}
+.fieldCard1Amount {
+  	flex: 1;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 6px;
+}
+.frame10 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+}
+.inputBox {
+  	align-self: stretch;
+  	border-radius: 6px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: center;
+  	padding: 12px 16px;
+  	font-size: 14px;
+}
+.newCardBox {
+  	display: flex;
+  	align-items: center;
+  	padding: 8px 0px;
+  	gap: 8px;
+}
+.checkoutRight {
+  	flex: 1;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	font-size: 22px;
+}
+.checkoutSummary {
+  	align-self: stretch;
+  	border-radius: 8px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 24px;
+  	gap: 20px;
+}
+.itemsMini {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 12px;
+  	font-size: 13px;
+}
+.frame12 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	gap: 0px;
+}
+.aOrdemDo {
+  	flex: 1;
+  	position: relative;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+  	white-space: nowrap;
+}
+.appliedCoupons {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 8px;
+  	font-size: 12px;
+}
+.cuponsAplicados {
+  	position: relative;
+  	text-transform: uppercase;
+}
+.frame14 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	gap: 20px;
+  	font-size: 13px;
+  	color: #15803d;
+}
+.frame15 {
+  	display: flex;
+  	align-items: center;
+  	gap: 4px;
+}
+.tagIcon {
+  	height: 12px;
+  	width: 12px;
+  	position: relative;
+}
+.totalsColumn {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 12px;
+  	font-size: 14px;
+  	color: #475569;
+}
+.r21470 {
+  	position: relative;
+  	font-weight: 600;
+  	color: #0f172a;
+}
+.r25002 {
+  	position: relative;
+  	font-weight: 600;
+  	color: #15803d;
+}
+.frame19 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	gap: 20px;
+  	font-size: 20px;
+  	color: #0f172a;
+  	font-family: Newsreader;
+}
+.r21220 {
+  	position: relative;
+  	font-size: 24px;
+  	font-family: Inter;
+}
+.confirmCta {
+  	align-self: stretch;
+  	border-radius: 6px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 14px 0px;
+  	font-size: 16px;
+  	color: #fff;
+}
+.footer {
+  	align-self: stretch;
+  	background-color: #0f172a;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 64px 80px 40px;
+  	gap: 48px;
+  	font-size: 28px;
+  	color: #fff;
+  	font-family: Newsreader;
+}
+.footerTop {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	justify-content: space-between;
+  	gap: 20px;
+}
+.footerBrand {
+  	width: 360px;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 16px;
+}
+.nexoUma {
+  	align-self: stretch;
+  	position: relative;
+  	font-size: 14px;
+  	line-height: 160%;
+  	font-family: Inter;
+  	color: #94a3b8;
+}
+.footerLinksRow {
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 80px;
+  	font-size: 14px;
+  	color: #cbd5e1;
+  	font-family: Inter;
+}
+.colHelp {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 12px;
+}
+.atendimento {
+  	position: relative;
+  	font-size: 12px;
+  	text-transform: uppercase;
+  	color: #d97706;
+}
+.line5 {
+  	align-self: stretch;
+  	height: 0px;
+  	position: relative;
+  	border-top: 1px solid #334155;
+  	box-sizing: border-box;
+}
+.footerBottom {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	gap: 20px;
+  	font-size: 12px;
+  	color: #64748b;
+  	font-family: Inter;
+}
+.socials {
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 16px;
+}
+

@@ -1,0 +1,428 @@
+.registration {
+  	width: 100%;
+  	position: relative;
+  	background-color: #faf9f6;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	min-height: 1024px;
+  	text-align: left;
+  	font-size: 32px;
+  	color: #475569;
+  	font-family: Inter;
+}
+.navbar {
+  	align-self: stretch;
+  	height: 80px;
+  	background-color: #fff;
+  	border-bottom: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	padding: 0px 80px;
+  	gap: 20px;
+}
+.brand {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+  	color: #0f172a;
+  	font-family: Newsreader;
+}
+.logo {
+  	position: relative;
+}
+.brandDot {
+  	height: 6px;
+  	width: 6px;
+  	position: relative;
+  	border-radius: 3px;
+  	background-color: #d97706;
+}
+.navLinks {
+  	display: flex;
+  	align-items: center;
+  	gap: 32px;
+  	font-size: 14px;
+}
+.navItemCatalog {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	justify-content: center;
+  	gap: 4px;
+  	color: #0f172a;
+}
+.catlogo {
+  	position: relative;
+  	text-transform: uppercase;
+  	font-weight: 600;
+}
+.activeLine {
+  	width: 16px;
+  	height: 2px;
+  	position: relative;
+  	background-color: #d97706;
+}
+.navItemPhilosophy {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	justify-content: center;
+}
+.filosofia {
+  	position: relative;
+  	text-transform: uppercase;
+  	font-weight: 500;
+}
+.navActions {
+  	display: flex;
+  	align-items: center;
+  	gap: 24px;
+  	font-size: 13px;
+}
+.searchBar {
+  	width: 280px;
+  	border-radius: 6px;
+  	background-color: #faf9f6;
+  	display: flex;
+  	align-items: center;
+  	padding: 8px 16px;
+  	box-sizing: border-box;
+  	gap: 8px;
+}
+.searchIcon {
+  	height: 16px;
+  	width: 16px;
+  	position: relative;
+}
+.searchPlaceholder {
+  	flex: 1;
+  	position: relative;
+}
+.userMenu {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+  	font-size: 14px;
+  	color: #0f172a;
+}
+.userRoundIcon {
+  	height: 20px;
+  	width: 20px;
+  	position: relative;
+}
+.userName {
+  	position: relative;
+  	font-weight: 500;
+}
+.cartBtn {
+  	border-radius: 6px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: center;
+  	padding: 8px 12px;
+  	gap: 8px;
+  	font-size: 11px;
+  	color: #fff;
+}
+.shoppingBagIcon {
+  	height: 18px;
+  	width: 18px;
+  	position: relative;
+}
+.badge {
+  	border-radius: 10px;
+  	background-color: #d97706;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 2px 6px;
+}
+.registrationBody {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: center;
+  	padding: 80px 0px;
+  	font-size: 13px;
+  	color: #0f172a;
+}
+.registrationCard {
+  	width: 640px;
+  	border-radius: 12px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 40px;
+  	gap: 32px;
+}
+.regHeader {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: center;
+  	gap: 8px;
+  	text-align: center;
+  	font-size: 32px;
+  	font-family: Newsreader;
+}
+.junteSeAoCrculo {
+  	align-self: stretch;
+  	position: relative;
+}
+.crieUmaConta {
+  	align-self: stretch;
+  	position: relative;
+  	font-size: 14px;
+  	font-family: Inter;
+  	color: #475569;
+}
+.regForm {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 20px;
+}
+.fieldFullName {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 6px;
+}
+.frame {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	gap: 4px;
+}
+.nomeCompleto {
+  	position: relative;
+  	font-weight: 600;
+}
+.div {
+  	position: relative;
+  	color: #b91c1c;
+}
+.inputBox {
+  	align-self: stretch;
+  	border-radius: 6px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: center;
+  	padding: 12px 16px;
+  	font-size: 14px;
+  	color: #475569;
+}
+.exArthurSchopenhauer {
+  	flex: 1;
+  	position: relative;
+  	opacity: 0.6;
+}
+.frame3 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 16px;
+}
+.fieldPassword {
+  	flex: 1;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 6px;
+}
+.frame12 {
+  	align-self: stretch;
+  	border-radius: 6px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	padding: 12px 16px;
+  	gap: 20px;
+  	font-size: 14px;
+}
+.chevronDownIcon {
+  	height: 12px;
+  	width: 12px;
+  	position: relative;
+}
+.preferencesSection {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 12px;
+  	font-size: 14px;
+}
+.prefsCheckboxes {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	flex-wrap: wrap;
+  	align-content: flex-start;
+  	gap: 10px;
+  	font-size: 13px;
+}
+.pref0 {
+  	border-radius: 6px;
+  	background-color: #fff;
+  	border: 1px solid #d97706;
+  	display: flex;
+  	align-items: center;
+  	padding: 8px 12px;
+  	gap: 8px;
+}
+.checkbox {
+  	height: 14px;
+  	width: 14px;
+  	border-radius: 3px;
+  	background-color: #d97706;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.checkIcon {
+  	height: 10px;
+  	width: 10px;
+  	position: relative;
+}
+.pref2 {
+  	border-radius: 6px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	display: flex;
+  	align-items: center;
+  	padding: 8px 12px;
+  	gap: 8px;
+  	color: #475569;
+}
+.checkbox3 {
+  	height: 14px;
+  	width: 14px;
+  	border-radius: 3px;
+  	background-color: rgba(0, 0, 0, 0);
+  	border: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.termsAcceptance {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 10px;
+  	color: #475569;
+}
+.checkbox7 {
+  	height: 16px;
+  	width: 16px;
+  	border-radius: 4px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+}
+.aceitoOsTermos {
+  	flex: 1;
+  	position: relative;
+  	line-height: 140%;
+}
+.registerCta {
+  	align-self: stretch;
+  	border-radius: 6px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 14px 0px;
+  	font-size: 16px;
+  	color: #fff;
+}
+.footer {
+  	align-self: stretch;
+  	background-color: #0f172a;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	padding: 64px 80px 40px;
+  	gap: 48px;
+  	font-size: 28px;
+  	color: #fff;
+  	font-family: Newsreader;
+}
+.footerTop {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	justify-content: space-between;
+  	gap: 20px;
+}
+.footerBrand {
+  	width: 360px;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 16px;
+}
+.nexoUma {
+  	align-self: stretch;
+  	position: relative;
+  	font-size: 14px;
+  	line-height: 160%;
+  	font-family: Inter;
+  	color: #94a3b8;
+}
+.footerLinksRow {
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 80px;
+  	font-size: 14px;
+  	color: #cbd5e1;
+  	font-family: Inter;
+}
+.colHelp {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 12px;
+}
+.atendimento {
+  	position: relative;
+  	font-size: 12px;
+  	text-transform: uppercase;
+  	color: #d97706;
+}
+.line {
+  	align-self: stretch;
+  	height: 0px;
+  	position: relative;
+  	border-top: 1px solid #334155;
+  	box-sizing: border-box;
+}
+.footerBottom {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	gap: 20px;
+  	font-size: 12px;
+  	color: #64748b;
+  	font-family: Inter;
+}
+.socials {
+  	display: flex;
+  	align-items: flex-start;
+  	gap: 16px;
+}
+
