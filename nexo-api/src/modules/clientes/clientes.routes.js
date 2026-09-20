@@ -5,7 +5,11 @@ import { z } from "zod";
 import { asyncHandler, HttpError } from "../../utils/asyncHandler.js";
 import { hashPassword, verifyPassword } from "../../utils/security.js";
 import { requireCliente, requireFuncionario, requirePerfil } from "../../middlewares/auth.js";
-import { Cliente } from "../../models/index.js";
+import { Cliente, Endereco, CartaoCredito, BandeiraCartao } from "../../models/index.js";
+
+// RNF0031: Senha forte — mínimo 8 chars, ao menos 1 maiúscula, 1 minúscula e 1 especial
+const senhaForteRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+const senhaForteMsg = "A senha deve ter pelo menos 8 caracteres, letras maiúsculas, minúsculas e caracteres especiais.";
 
 const router = Router();
 
@@ -18,7 +22,7 @@ const clienteCreateSchema = z.object({
   telefone_ddd: z.string().min(1),
   telefone_numero: z.string().min(1),
   email: z.string().email(),
-  senha: z.string().min(8),
+  senha: z.string().min(8).regex(senhaForteRegex, senhaForteMsg),
 });
 
 const clienteUpdateSchema = z.object({
@@ -28,12 +32,36 @@ const clienteUpdateSchema = z.object({
   telefone_ddd: z.string().optional(),
   telefone_numero: z.string().optional(),
   email: z.string().email().optional(),
-  senha: z.string().min(8).optional(),
+  senha: z.string().min(8).regex(senhaForteRegex, senhaForteMsg).optional(),
 });
 
 const senhaUpdateSchema = z.object({
   senha_atual: z.string().min(1),
-  nova_senha: z.string().min(8),
+  nova_senha: z.string().min(8).regex(senhaForteRegex, senhaForteMsg),
+});
+
+const enderecoAdminSchema = z.object({
+  nome_identificador: z.string().min(1),
+  tipo: z.enum(["ENTREGA", "COBRANCA", "AMBOS"]),
+  tipo_residencia: z.string().min(1),
+  tipo_logradouro: z.string().min(1),
+  logradouro: z.string().min(1),
+  numero: z.string().min(1),
+  bairro: z.string().min(1),
+  cep: z.string().min(1),
+  cidade: z.string().min(1),
+  estado: z.string().min(1),
+  pais: z.string().min(1),
+  observacoes: z.string().optional().nullable(),
+  padrao: z.boolean().optional().default(false),
+});
+
+const cartaoAdminSchema = z.object({
+  id_bandeira: z.number().int(),
+  numero_cartao: z.string().min(1),
+  nome_impresso: z.string().min(1),
+  codigo_seguranca: z.string().min(3).max(4),
+  preferencial: z.boolean().optional().default(false),
 });
 
 function toResponse(cliente) {
@@ -177,6 +205,104 @@ router.patch(
     const cliente = await Cliente.findByPk(req.params.idCliente);
     if (!cliente) throw new HttpError(404, "Cliente não encontrado.");
     await cliente.update({ ativo: true, data_inativacao: null });
+    res.status(204).send();
+  })
+);
+
+// ═══════════════════════════════════════════════════════════════
+// Rotas Admin para Endereços (RF0026) — admin gerencia endereços de um cliente
+// ═══════════════════════════════════════════════════════════════
+
+// GET /clientes/:idCliente/enderecos — listar endereços de um cliente
+router.get(
+  "/:idCliente/enderecos",
+  requireFuncionario,
+  requirePerfil("ADMIN"),
+  asyncHandler(async (req, res) => {
+    const cliente = await Cliente.findByPk(req.params.idCliente);
+    if (!cliente) throw new HttpError(404, "Cliente não encontrado.");
+    const enderecos = await Endereco.findAll({ where: { id_cliente: req.params.idCliente } });
+    res.json(enderecos);
+  })
+);
+
+// POST /clientes/:idCliente/enderecos — criar endereço para um cliente
+router.post(
+  "/:idCliente/enderecos",
+  requireFuncionario,
+  requirePerfil("ADMIN"),
+  asyncHandler(async (req, res) => {
+    const cliente = await Cliente.findByPk(req.params.idCliente);
+    if (!cliente) throw new HttpError(404, "Cliente não encontrado.");
+    const payload = enderecoAdminSchema.parse(req.body);
+    const endereco = await Endereco.create({ id_cliente: Number(req.params.idCliente), ...payload });
+    res.status(201).json(endereco);
+  })
+);
+
+// DELETE /clientes/:idCliente/enderecos/:idEndereco — remover endereço de um cliente
+router.delete(
+  "/:idCliente/enderecos/:idEndereco",
+  requireFuncionario,
+  requirePerfil("ADMIN"),
+  asyncHandler(async (req, res) => {
+    const endereco = await Endereco.findByPk(req.params.idEndereco);
+    if (!endereco || endereco.id_cliente !== Number(req.params.idCliente)) {
+      throw new HttpError(404, "Endereço não encontrado.");
+    }
+    await endereco.destroy();
+    res.status(204).send();
+  })
+);
+
+// ═══════════════════════════════════════════════════════════════
+// Rotas Admin para Cartões de Crédito (RF0027)
+// ═══════════════════════════════════════════════════════════════
+
+// GET /clientes/:idCliente/cartoes — listar cartões de um cliente
+router.get(
+  "/:idCliente/cartoes",
+  requireFuncionario,
+  requirePerfil("ADMIN"),
+  asyncHandler(async (req, res) => {
+    const cliente = await Cliente.findByPk(req.params.idCliente);
+    if (!cliente) throw new HttpError(404, "Cliente não encontrado.");
+    const cartoes = await CartaoCredito.findAll({
+      where: { id_cliente: req.params.idCliente },
+      include: [{ model: BandeiraCartao, attributes: ["nome"] }],
+    });
+    res.json(cartoes);
+  })
+);
+
+// POST /clientes/:idCliente/cartoes — criar cartão para um cliente
+router.post(
+  "/:idCliente/cartoes",
+  requireFuncionario,
+  requirePerfil("ADMIN"),
+  asyncHandler(async (req, res) => {
+    const cliente = await Cliente.findByPk(req.params.idCliente);
+    if (!cliente) throw new HttpError(404, "Cliente não encontrado.");
+    const payload = cartaoAdminSchema.parse(req.body);
+    if (payload.preferencial) {
+      await CartaoCredito.update({ preferencial: false }, { where: { id_cliente: req.params.idCliente } });
+    }
+    const cartao = await CartaoCredito.create({ id_cliente: Number(req.params.idCliente), ...payload });
+    res.status(201).json(cartao);
+  })
+);
+
+// DELETE /clientes/:idCliente/cartoes/:idCartao — remover cartão de um cliente
+router.delete(
+  "/:idCliente/cartoes/:idCartao",
+  requireFuncionario,
+  requirePerfil("ADMIN"),
+  asyncHandler(async (req, res) => {
+    const cartao = await CartaoCredito.findByPk(req.params.idCartao);
+    if (!cartao || cartao.id_cliente !== Number(req.params.idCliente)) {
+      throw new HttpError(404, "Cartão não encontrado.");
+    }
+    await cartao.destroy();
     res.status(204).send();
   })
 );
