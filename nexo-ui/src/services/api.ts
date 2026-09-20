@@ -195,6 +195,25 @@ export const cartoesApi = {
   criar: (data: any) =>
     api.post<CartaoCredito>('/cartoes', data),
 };
+// APIs de Endereços (Admin)
+export const enderecosAdminApi = {
+  listar: (idCliente: number) =>
+    api.get<Endereco[]>(`/clientes/${idCliente}/enderecos`),
+  criar: (idCliente: number, data: any) =>
+    api.post<Endereco>(`/clientes/${idCliente}/enderecos`, data),
+  excluir: (idCliente: number, idEndereco: number) =>
+    api.delete(`/clientes/${idCliente}/enderecos/${idEndereco}`),
+};
+
+// APIs de Cartões de Crédito (Admin)
+export const cartoesAdminApi = {
+  listar: (idCliente: number) =>
+    api.get<CartaoCredito[]>(`/clientes/${idCliente}/cartoes`),
+  criar: (idCliente: number, data: any) =>
+    api.post<CartaoCredito>(`/clientes/${idCliente}/cartoes`, data),
+  excluir: (idCliente: number, idCartao: number) =>
+    api.delete(`/clientes/${idCliente}/cartoes/${idCartao}`),
+};
 
 export default api;
 

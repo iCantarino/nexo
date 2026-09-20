@@ -52,6 +52,19 @@ export default function CadastroPublico() {
       return;
     }
 
+// RNF0031: Senha forte — letras maiúsculas, minúsculas e caracteres especiais
+    if (!/(?=.*[a-z])/.test(formData.senha)) {
+      setErro("A senha deve conter pelo menos uma letra minúscula");
+      return;
+    }
+    if (!/(?=.*[A-Z])/.test(formData.senha)) {
+      setErro("A senha deve conter pelo menos uma letra maiúscula");
+      return;
+    }
+    if (!/(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/.test(formData.senha)) {
+      setErro("A senha deve conter pelo menos um caractere especial (!@#$%^&* etc.)");
+      return;
+    }
     if (!formData.aceitoTermos) {
       setErro("Você deve aceitar os termos de serviço");
       return;
