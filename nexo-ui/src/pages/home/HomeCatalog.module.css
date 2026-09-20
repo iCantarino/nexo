@@ -84,7 +84,8 @@
   	font-size: 13px;
 }
 .searchBar {
-  	width: 280px;
+  	width: 320px;
+  	margin-left: -20px;
   	border-radius: 6px;
   	background-color: #faf9f6;
   	display: flex;
@@ -94,29 +95,78 @@
   	gap: 8px;
 }
 .searchIcon {
-  	height: 16px;
-  	width: 16px;
-  	position: relative;
+    height: 16px;
+    width: 16px;
+    background-color: currentColor;
+    -webkit-mask-image: url('/images/icons/search.svg');
+    mask-image: url('/images/icons/search.svg');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    flex-shrink: 0;
 }
-.searchPlaceholder {
-  	flex: 1;
-  	position: relative;
+.searchInput {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    color: inherit;
+}
+
+.searchInput::placeholder {
+    color: #888580; /* Ou a cor exata do placeholder gerada pelo Figma */
+    opacity: 1;
 }
 .userMenu {
+   position: relative;
   	display: flex;
   	align-items: center;
   	gap: 8px;
   	font-size: 14px;
   	color: #0f172a;
+  	cursor: pointer;
+  	user-select: none;
 }
 .userRoundIcon {
-  	height: 20px;
-  	width: 20px;
-  	position: relative;
+	height: 20px;
+    width: 20px;
+    background-color: currentColor;
+    -webkit-mask-image: url('/images/icons/user-round.svg');
+    mask-image: url('/images/icons/user-round.svg');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
 }
 .userName {
   	position: relative;
   	font-weight: 500;
+}
+.userDropdown {
+	position: absolute;
+	top: calc(100% + 10px);
+	right: 0;
+	min-width: 120px;
+	padding: 8px 0;
+	border: 1px solid #e2e8f0;
+	border-radius: 6px;
+	background-color: #fff;
+	box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+	z-index: 10;
+}
+.userDropdown a {
+	display: block;
+	padding: 8px 14px;
+	color: #0f172a;
+	font-size: 14px;
+	text-decoration: none;
+}
+.userDropdown a:hover,
+.userDropdown a:focus-visible {
+	background-color: #faf9f6;
+	outline: none;
 }
 .cartBtn {
   	border-radius: 6px;
@@ -131,7 +181,13 @@
 .shoppingBagIcon {
   	height: 18px;
   	width: 18px;
-  	position: relative;
+  	background-color: currentColor;
+    -webkit-mask-image: url('/images/icons/shopping-bag.svg');
+    mask-image: url('/images/icons/shopping-bag.svg');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
 }
 .badge {
   	border-radius: 10px;
@@ -152,15 +208,18 @@
   	background-repeat: no-repeat;
   	background-position: top;
   	font-size: 11px;
+	background-image: url('/images/images/hero-banner.png');
+    background-size: cover;
+    background-position: center; 
+    background-repeat: no-repeat;
 }
 .heroContent {
-  	width: 640px;
+  	width: 100%;
   	display: flex;
   	flex-direction: column;
   	align-items: flex-start;
   	gap: 20px;
-  	flex-shrink: 0;
-}
+  	flex-shrink: 0;}
 .eyebrow {
   	border-radius: 100px;
   	background-color: #d97706;
@@ -238,6 +297,8 @@
   	align-items: flex-start;
   	padding: 10px 16px;
   	color: #fff;
+	cursor: pointer;
+	font: inherit;
 }
 .subj1 {
   	border-radius: 100px;
@@ -246,6 +307,9 @@
   	display: flex;
   	align-items: flex-start;
   	padding: 10px 16px;
+	color: #475569;
+	cursor: pointer;
+	font: inherit;
 }
 .grid {
   	align-self: stretch;
@@ -296,7 +360,13 @@
 .starIcon {
   	height: 14px;
   	width: 14px;
-  	position: relative;
+  	background-color: #D97706;
+    -webkit-mask-image: url('/images/icons/star.svg');
+    mask-image: url('/images/icons/star.svg');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
 }
 .title {
   	align-self: stretch;
@@ -439,3 +509,20 @@
   	gap: 16px;
 }
 
+
+
+
+.userDropdownItem {
+	display: block;
+	padding: 8px 14px;
+	color: #0f172a;
+	font-size: 14px;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.userDropdownItem:hover,
+.userDropdownItem:focus-visible {
+	background-color: #faf9f6;
+	outline: none;
+}

@@ -1,7 +1,33 @@
-import type { FunctionComponent } from 'react';
+import { useState, useRef, useEffect, type FunctionComponent } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import styles from './HomeCatalog.module.css';
 
 const HomeCatalog: FunctionComponent = () => {
+	const { user, logout } = useAuth();
+	const [searchTerm, setSearchTerm] = useState('');
+	const [selectedFilter, setSelectedFilter] = useState(0);
+	const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+	const menuRef = useRef<HTMLDivElement>(null);
+	const filters = [
+		'Todos os Assuntos',
+		'Filosofia',
+		'Ciência & Tecnologia',
+		'Arte & Arquitetura',
+		'Literatura Clássica',
+		'História & Sociologia',
+	];
+	
+	useEffect(() => {
+		function handleClickOutside(event: MouseEvent) {
+			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+				setIsUserMenuOpen(false);
+			}
+		}
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => document.removeEventListener('mousedown', handleClickOutside);
+	}, []);
+
   	return (
     		<div className={styles.homeCatalog}>
       			<div className={styles.navbar}>
@@ -29,12 +55,38 @@ const HomeCatalog: FunctionComponent = () => {
         				</div>
         				<div className={styles.navActions}>
           					<div className={styles.searchBar}>
-            						<img className={styles.searchIcon} alt="" />
-            						<div className={styles.searchPlaceholder}>Buscar títulos, autores, editoras...</div>
+            						<span className={styles.searchIcon} />
+            						<input 
+										type="text"
+										className={styles.searchInput} // Nova classe CSS que vamos usar
+										placeholder="Buscar títulos, autores, editoras..."
+										value={searchTerm}
+										onChange={(e) => setSearchTerm(e.target.value)}
+									/>
           					</div>
-          					<div className={styles.userMenu}>
-            						<img className={styles.userRoundIcon} alt="" />
-            						<div className={styles.userName}>Arthur S.</div>
+					<div
+						className={styles.userMenu}
+						role="button"
+						tabIndex={0}
+						aria-expanded={isUserMenuOpen}
+						onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+						onKeyDown={(event) => {
+							if (event.key === 'Enter' || event.key === ' ') {
+								event.preventDefault();
+								setIsUserMenuOpen(!isUserMenuOpen);
+							}
+						}}
+					ref={menuRef}
+					style={{ position: 'relative' }}
+					>
+						<img className={styles.userRoundIcon} alt="" />
+						<div className={styles.userName}>{(user as any)?.nome || 'Usuário'}</div>
+								{isUserMenuOpen && (
+									<div className={styles.userDropdown}>
+										<Link to="/perfil" className={styles.userDropdownItem} onClick={(event) => event.stopPropagation()}>Perfil</Link>
+										<div className={styles.userDropdownItem} onClick={(event) => { event.stopPropagation(); logout(); }}>Sair</div>
+									</div>
+								)}
           					</div>
           					<div className={styles.cartBtn}>
             						<img className={styles.shoppingBagIcon} alt="" />
@@ -60,24 +112,16 @@ const HomeCatalog: FunctionComponent = () => {
         				<div className={styles.browseHeader}>
           					<b className={styles.diretrioDoConhecimento}>Diretório do Conhecimento</b>
           					<div className={styles.filtersRow}>
-            						<div className={styles.subj0}>
-              							<div className={styles.userName}>Todos os Assuntos</div>
-            						</div>
-            						<div className={styles.subj1}>
-              							<div className={styles.userName}>Filosofia</div>
-            						</div>
-            						<div className={styles.subj1}>
-              							<div className={styles.userName}>{`Ciência & Tecnologia`}</div>
-            						</div>
-            						<div className={styles.subj1}>
-              							<div className={styles.userName}>{`Arte & Arquitetura`}</div>
-            						</div>
-            						<div className={styles.subj1}>
-              							<div className={styles.userName}>Literatura Clássica</div>
-            						</div>
-            						<div className={styles.subj1}>
-              							<div className={styles.userName}>{`História & Sociologia`}</div>
-            						</div>
+									{filters.map((filter, index) => (
+										<button
+											className={index === selectedFilter ? styles.subj0 : styles.subj1}
+											type="button"
+											onClick={() => setSelectedFilter(index)}
+											key={filter}
+										>
+											<span className={styles.userName}>{filter}</span>
+										</button>
+									))}
           					</div>
         				</div>
         				<div className={styles.grid}>
@@ -92,8 +136,8 @@ const HomeCatalog: FunctionComponent = () => {
                   									<img className={styles.starIcon} alt="" />
                   									<img className={styles.starIcon} alt="" />
                 								</div>
-                								<b className={styles.title}>The Order of Time</b>
-                								<div className={styles.author}>Carlo Rovelli</div>
+                								<b className={styles.title}>Livro</b>
+                								<div className={styles.author}>Autor</div>
               							</div>
               							<div className={styles.actionRow}>
                 								<b className={styles.logo}>R$ 94,90</b>
@@ -112,8 +156,8 @@ const HomeCatalog: FunctionComponent = () => {
                   									<img className={styles.starIcon} alt="" />
                   									<img className={styles.starIcon} alt="" />
                 								</div>
-                								<b className={styles.title}>Beyond Good and Evil</b>
-                								<div className={styles.author}>Friedrich Nietzsche</div>
+                								<b className={styles.title}>Livro</b>
+                								<div className={styles.author}>Autor</div>
               							</div>
               							<div className={styles.actionRow}>
                 								<b className={styles.logo}>R$ 72,50</b>
@@ -132,8 +176,8 @@ const HomeCatalog: FunctionComponent = () => {
                   									<img className={styles.starIcon} alt="" />
                   									<img className={styles.starIcon} alt="" />
                 								</div>
-                								<b className={styles.title}>Mimesis</b>
-                								<div className={styles.author}>Erich Auerbach</div>
+                								<b className={styles.title}>Livro</b>
+                								<div className={styles.author}>Autor</div>
               							</div>
               							<div className={styles.actionRow}>
                 								<b className={styles.logo}>R$ 149,90</b>
@@ -152,8 +196,8 @@ const HomeCatalog: FunctionComponent = () => {
                   									<img className={styles.starIcon} alt="" />
                   									<img className={styles.starIcon} alt="" />
                 								</div>
-                								<b className={styles.title}>Design and Form</b>
-                								<div className={styles.author}>Johannes Itten</div>
+                								<b className={styles.title}>Livro</b>
+                								<div className={styles.author}>Autor</div>
               							</div>
               							<div className={styles.actionRow}>
                 								<b className={styles.logo}>R$ 119,90</b>
@@ -174,8 +218,8 @@ const HomeCatalog: FunctionComponent = () => {
                   									<img className={styles.starIcon} alt="" />
                   									<img className={styles.starIcon} alt="" />
                 								</div>
-                								<b className={styles.title}>A Estrutura das Revoluções Científicas</b>
-                								<div className={styles.author}>Thomas S. Kuhn</div>
+                								<b className={styles.title}>Livro</b>
+                								<div className={styles.author}>Autor</div>
               							</div>
               							<div className={styles.actionRow}>
                 								<b className={styles.logo}>R$ 99,90</b>
@@ -194,8 +238,8 @@ const HomeCatalog: FunctionComponent = () => {
                   									<img className={styles.starIcon} alt="" />
                   									<img className={styles.starIcon} alt="" />
                 								</div>
-                								<b className={styles.title}>A República</b>
-                								<div className={styles.author}>Platão</div>
+                								<b className={styles.title}>Livro</b>
+                								<div className={styles.author}>Autor</div>
               							</div>
               							<div className={styles.actionRow}>
                 								<b className={styles.logo}>R$ 59,90</b>
@@ -214,8 +258,8 @@ const HomeCatalog: FunctionComponent = () => {
                   									<img className={styles.starIcon} alt="" />
                   									<img className={styles.starIcon} alt="" />
                 								</div>
-                								<b className={styles.title}>O Retrato de Dorian Gray</b>
-                								<div className={styles.author}>Oscar Wilde</div>
+                								<b className={styles.title}>Livro</b>
+                								<div className={styles.author}>Autor</div>
               							</div>
               							<div className={styles.actionRow}>
                 								<b className={styles.logo}>R$ 54,90</b>
@@ -234,8 +278,8 @@ const HomeCatalog: FunctionComponent = () => {
                   									<img className={styles.starIcon} alt="" />
                   									<img className={styles.starIcon} alt="" />
                 								</div>
-                								<b className={styles.title}>Gödel, Escher, Bach</b>
-                								<div className={styles.author}>Douglas R. Hofstadter</div>
+                								<b className={styles.title}>Livro</b>
+                								<div className={styles.author}>Autor</div>
               							</div>
               							<div className={styles.actionRow}>
                 								<b className={styles.logo}>R$ 172,90</b>
@@ -304,3 +348,5 @@ const HomeCatalog: FunctionComponent = () => {
 };
 
 export default HomeCatalog ;
+
+

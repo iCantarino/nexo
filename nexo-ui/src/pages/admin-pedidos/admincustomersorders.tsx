@@ -1,9 +1,25 @@
-import type { FunctionComponent } from 'react';
-import styles from './AdminCustomersOrders.module.css';
+import { useState, useRef, useEffect, type FunctionComponent } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import styles from './AdminCustomerOrders.module.css';
 
 
 const AdminCustomersOrders: FunctionComponent = () => {
-  	return (
+  const { user, logout } = useAuth();
+  const [menuPerfilAberto, setMenuPerfilAberto] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuPerfilAberto(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
     		<div className={styles.adminCustomersOrders}>
       			<div className={styles.sidebar}>
         				<div className={styles.brand}>
@@ -14,47 +30,54 @@ const AdminCustomersOrders: FunctionComponent = () => {
           					</div>
         				</div>
         				<div className={styles.navList}>
-          					<div className={styles.navItemDashboard}>
+          					<Link to="/admin-dashboard" className={styles.navItemDashboard}>
             						<div className={styles.iconWrapper}>
-              							<img className={styles.layoutGridIcon} alt="" />
+              							<img src="/images/icons/layout-grid.svg" className={styles.layoutGridIcon} alt="" />
             						</div>
             						<div className={styles.dashboard}>Dashboard</div>
-          					</div>
-          					<div className={styles.navItemClientes}>
+          					</Link>
+          					<Link to="/admin-usuarios" className={styles.navItemDashboard}>
             						<div className={styles.iconWrapper}>
-              							<img className={styles.layoutGridIcon} alt="" />
+              							<img src="/images/icons/users.svg" className={styles.layoutGridIcon} alt="" />
             						</div>
             						<div className={styles.clientes}>Clientes</div>
-          					</div>
-          					<div className={styles.navItemDashboard}>
+          					</Link>
+          					<Link to="/admin-pedidos" className={styles.navItemPedidos}>
             						<div className={styles.iconWrapper}>
-              							<img className={styles.layoutGridIcon} alt="" />
+              							<img src="/images/icons/shopping-bag.svg" className={styles.layoutGridIcon} alt="" />
             						</div>
             						<div className={styles.dashboard}>Pedidos</div>
-          					</div>
-          					<div className={styles.navItemDashboard}>
+          					</Link>
+          					<Link to="/admin-trocas" className={styles.navItemDashboard}>
             						<div className={styles.iconWrapper}>
-              							<img className={styles.layoutGridIcon} alt="" />
+              							<img src="/images/icons/arrow-right-left.svg" className={styles.layoutGridIcon} alt="" />
             						</div>
             						<div className={styles.dashboard}>Trocas</div>
-          					</div>
-          					<div className={styles.navItemDashboard}>
+          					</Link>
+          					<Link to="/admin-analise" className={styles.navItemDashboard}>
             						<div className={styles.iconWrapper}>
-              							<img className={styles.layoutGridIcon} alt="" />
+              							<img src="/images/icons/chart-line.svg" className={styles.layoutGridIcon} alt="" />
             						</div>
             						<div className={styles.dashboard}>Análises</div>
-          					</div>
+          					</Link>
         				</div>
         				<div className={styles.sidebarFooter}>
           					<div className={styles.line} />
-          					<div className={styles.userProfile}>
+          					<div className={styles.userProfile} onClick={() => setMenuPerfilAberto(!menuPerfilAberto)} style={{ cursor: 'pointer', position: 'relative' }} ref={menuRef}>
             						<div className={styles.avatar}>
-              							<b className={styles.logo}>AS</b>
+              							<b className={styles.logo}>{(user as any)?.nome?.charAt(0)?.toUpperCase() || 'A'}</b>
             						</div>
             						<div className={styles.userInfo}>
-              							<div className={styles.arthurSchopenhauer}>Arthur Schopenhauer</div>
-              							<div className={styles.curadorMaster}>Curador Master</div>
+              							<div className={styles.arthurSchopenhauer}>{(user as any)?.nome || 'Administrador'}</div>
+              							<div className={styles.curadorMaster}>{(user as any)?.perfil || 'ADMIN'}</div>
             						</div>
+            						{menuPerfilAberto && (
+              							<div style={{ position: 'absolute', bottom: '100%', left: 0, right: 0, backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '8px', zIndex: 50, boxShadow: '0 -4px 6px rgba(0,0,0,0.1)' }}>
+                							<div onClick={logout} style={{ cursor: 'pointer', padding: '8px 12px', borderRadius: '6px', color: '#ef4444', fontWeight: 500 }}>
+                  								Sair
+                							</div>
+              							</div>
+            						)}
           					</div>
         				</div>
       			</div>
@@ -219,3 +242,4 @@ const AdminCustomersOrders: FunctionComponent = () => {
 };
 
 export default AdminCustomersOrders ;
+

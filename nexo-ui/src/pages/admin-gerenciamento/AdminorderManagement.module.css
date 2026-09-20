@@ -5,13 +5,16 @@
   	display: flex;
   	align-items: flex-start;
   	isolation: isolate;
-  	min-height: 900px;
+  	min-height: 100vh;
   	text-align: left;
   	font-size: 14px;
   	color: #0f172a;
   	font-family: Inter;
 }
 .sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
   	align-self: stretch;
   	width: 260px;
   	background-color: #fff;
@@ -636,4 +639,5 @@
   	padding: 10px 16px;
   	color: #fff;
 }
+
 

@@ -1,0 +1,211 @@
+.login {
+    width: 100vw;            /* Garante exatamente a largura da tela */
+    min-height: 100vh;       /* Ocupa pelo menos a altura inteira da tela */
+    height: 100vh;           /* Trava na altura exata da tela */
+    position: relative;
+    background-color: #faf9f6;
+    display: flex;
+    align-items: stretch;    /* Faz com que os blocos filhos ocupem toda a altura */
+    text-align: left;
+    font-size: 40px;
+    color: #fff;
+    font-family: Newsreader;
+    box-sizing: border-box;  /* Evita que paddings aumentem o tamanho */
+    overflow: hidden;        /* Impede qualquer barra de rolagem indesejada */
+}
+.frame {
+	align-self: stretch;
+    width: 45%;             /* Trocado de 600px fixo para 100% da largura */
+    min-height: 100vh;       /* Garante que ocupe pelo menos a altura inteira da tela */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 60px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    
+    background-image: url('/images/images/frame.jpg');
+    background-size: cover;          /* Cobre todo o espaço disponível */
+    background-position: center;     /* Centraliza a imagem */
+    background-repeat: no-repeat;
+}
+.frame2 {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 16px;
+}
+.frame3 {
+  	display: flex;
+  	align-items: center;
+  	gap: 8px;
+}
+.nexo {
+  	position: relative;
+}
+.rectangle {
+  	height: 8px;
+  	width: 8px;
+  	position: relative;
+  	border-radius: 4px;
+  	background-color: #d97706;
+}
+.line {
+  	align-self: stretch;
+  	height: 0px;
+  	position: relative;
+  	border-top: 1px solid rgba(255, 255, 255, 0.25);
+  	box-sizing: border-box;
+}
+.conhecimentoCuradoPara {
+  	align-self: stretch;
+  	position: relative;
+  	font-size: 24px;
+  	line-height: 140%;
+  	color: #e2e8f0;
+}
+.frame4 {
+  	align-self: stretch;
+  	flex: 1;
+	height: 100%;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 80px;
+  	font-size: 36px;
+  	color: #0f172a;
+}
+.frame5 {
+  	width: 400px;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 32px;
+}
+.frame6 {
+  	display: flex;
+  	align-items: center;
+  	gap: 6px;
+}
+.rectangle2 {
+  	height: 6px;
+  	width: 6px;
+  	position: relative;
+  	border-radius: 3px;
+  	background-color: #d97706;
+}
+.frame7 {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 8px;
+  	font-size: 32px;
+}
+.entreNaSua {
+  	align-self: stretch;
+  	position: relative;
+  	font-size: 14px;
+  	line-height: 150%;
+  	font-family: Inter;
+  	color: #475569;
+}
+.frame8 {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 20px;
+  	font-size: 13px;
+  	font-family: Inter;
+}
+.frame9 {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 6px;
+}
+.eMail {
+  	position: relative;
+  	font-weight: 600;
+}
+.frame10 {
+  	align-self: stretch;
+  	height: 40px;
+  	border-radius: 6px;
+  	background-color: #fff;
+  	border: 1px solid #e2e8f0;
+  	box-sizing: border-box;
+  	display: flex;
+  	align-items: center;
+  	padding: 10px 14px;
+  	font-size: 14px;
+  	color: #94a3b8;
+}
+.seuemailexemplocom {
+  	flex: 1;
+  	position: relative;
+	min-width: 0;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	font: inherit;
+	color: #0f172a;
+}
+.seuemailexemplocom::placeholder {
+	color: #94a3b8;
+	opacity: 1;
+}
+.frame11 {
+  	align-self: stretch;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 12px;
+}
+.frame14 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	justify-content: flex-end;
+  	color: #d97706;
+}
+.esqueceuASenha {
+  	position: relative;
+  	font-weight: 500;
+  	color: inherit;
+  	text-decoration: none;
+}
+.frame15 {
+  	align-self: stretch;
+  	height: 42px;
+  	border-radius: 6px;
+  	background-color: #0f172a;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 12px 20px;
+  	box-sizing: border-box;
+  	font-size: 14px;
+  	color: #fff;
+}
+.frame16 {
+  	align-self: stretch;
+  	display: flex;
+  	align-items: flex-start;
+  	justify-content: center;
+  	font-size: 14px;
+  	color: #475569;
+  	font-family: Inter;
+}
+.cadastreSe {
+  	color: #d97706;
+}
+.cadastreSe2 {
+  	font-weight: 600;
+}
+

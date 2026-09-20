@@ -93,13 +93,28 @@
   	gap: 8px;
 }
 .searchIcon {
-  	height: 16px;
-  	width: 16px;
-  	position: relative;
+    height: 16px;
+    width: 16px;
+    background-color: currentColor;
+    -webkit-mask-image: url('/images/icons/search.svg');
+    mask-image: url('/images/icons/search.svg');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    flex-shrink: 0;
 }
-.searchPlaceholder {
-  	flex: 1;
-  	position: relative;
+.searchInput {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    color: inherit;
+}
+.searchInput::placeholder {
+    color: #888580;
+    opacity: 1;
 }
 .userMenu {
   	display: flex;
@@ -109,9 +124,16 @@
   	color: #0f172a;
 }
 .userRoundIcon {
-  	height: 20px;
-  	width: 20px;
-  	position: relative;
+    height: 20px;
+    width: 20px;
+    background-color: currentColor;
+    -webkit-mask-image: url('/images/icons/user-round.svg');
+    mask-image: url('/images/icons/user-round.svg');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    flex-shrink: 0;
 }
 .userName {
   	position: relative;

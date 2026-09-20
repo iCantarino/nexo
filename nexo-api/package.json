@@ -1,0 +1,30 @@
+{
+  "name": "nexo-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Backend do e-commerce de livros Nexo (Node.js + Express + Sequelize + MySQL).",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "setup-db": "node scripts/setupDb.js",
+    "test": "node --test tests/unit",
+    "test:functional": "playwright test"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.11.4",
+    "sequelize": "^6.37.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "nodemon": "^3.1.7"
+  }
+}
