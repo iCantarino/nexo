@@ -28,6 +28,7 @@ const clienteUpdateSchema = z.object({
   telefone_ddd: z.string().optional(),
   telefone_numero: z.string().optional(),
   email: z.string().email().optional(),
+  senha: z.string().min(8).optional(),
 });
 
 const senhaUpdateSchema = z.object({
@@ -130,6 +131,7 @@ router.patch(
     const cliente = await Cliente.findByPk(req.params.idCliente);
     if (!cliente) throw new HttpError(404, "Cliente não encontrado.");
     const payload = clienteUpdateSchema.parse(req.body);
+    if (payload.senha) { payload.senha_hash = await hashPassword(payload.senha); delete payload.senha; }
     if (payload.email && payload.email !== cliente.email) {
       if (await Cliente.findOne({ where: { email: payload.email } })) {
         throw new HttpError(409, "E-mail já cadastrado.");

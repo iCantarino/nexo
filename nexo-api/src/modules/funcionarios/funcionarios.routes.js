@@ -22,6 +22,7 @@ const funcionarioUpdateSchema = z.object({
   email: z.string().email().optional(),
   perfil: z.enum(["ADMIN", "GERENTE_VENDAS", "ESTOQUISTA", "ATENDENTE"]).optional(),
   ativo: z.boolean().optional(),
+  senha: z.string().min(6).optional(),
 });
 
 function toResponse(funcionario) {
