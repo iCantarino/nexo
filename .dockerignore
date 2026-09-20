@@ -1,19 +1,23 @@
 # =====================================================================
-# Nexo — Gitignore
+# .dockerignore — Nexo
 # =====================================================================
 
-# Ambiente (contém senhas e segredos!)
-.env
-nexo-api/.env
-nexo-ui/.env
-
-# Dependências
+# Dependências (cada projeto instala as suas no container)
 node_modules/
 nexo-api/node_modules/
 nexo-ui/node_modules/
 
+# Arquivos de ambiente (contém senhas!)
+.env
+nexo-api/.env
+nexo-ui/.env
+
 # Build local
 nexo-ui/dist/
+
+# Git
+.git/
+.gitignore
 
 # Logs
 *.log
@@ -29,4 +33,3 @@ nexo-api/test-results/
 # Sistema
 .DS_Store
 Thumbs.db
-.vscode/

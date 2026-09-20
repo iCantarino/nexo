@@ -1,0 +1,79 @@
+# =====================================================================
+# Docker Compose — Nexo E-commerce
+#
+# Subir com MySQL local:
+#   docker compose --profile local up --build
+#
+# Subir sem MySQL (ex: Railway com MySQL externo):
+#   docker compose up --build
+# =====================================================================
+
+services:
+  # ─── Banco de Dados (MySQL 8+) ───────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: nexo-mysql
+    profiles: ["local"] # Só sobe com --profile local
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-nexo_root_pass}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # Scripts de inicialização (cria DB + schema + seeds)
+      - ./docker-entrypoint-initdb:/docker-entrypoint-initdb.d
+      # Schema completo com seeds (montado para o script de init)
+      - ./nexo-design/bdd/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      # Dados de exemplo (opcional, pode falhar se for UTF-16)
+      - ./nexo-design/backup.sql:/docker-entrypoint-initdb.d/backup.sql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # ─── Backend (Express API) ──────────────────────────────────────
+  nexo-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: nexo-api
+    environment:
+      # Database
+      DB_HOST: ${DB_HOST:-mysql}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_USER: ${DB_USER:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-nexo_root_pass}
+      DB_NAME: ${DB_NAME:-nexo_db}
+      # JWT
+      JWT_SECRET: ${JWT_SECRET:-change-this-secret-in-production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-1h}
+      # App
+      NODE_ENV: ${NODE_ENV:-production}
+      APP_PORT: ${APP_PORT:-8000}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost,http://localhost:5173,http://127.0.0.1}
+    ports:
+      - "${APP_PORT:-8000}:${APP_PORT:-8000}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ─── Frontend (React + Nginx) ───────────────────────────────────
+  nexo-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui.prod
+      args:
+        VITE_API_URL: ${VITE_API_URL:-/api/v1}
+    container_name: nexo-ui
+    ports:
+      - "${UI_PORT:-80}:80"
+    depends_on:
+      - nexo-api
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
