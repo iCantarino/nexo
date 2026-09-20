@@ -464,6 +464,14 @@ const AdminUsuarios: FunctionComponent = () => {
                   <div className={styles.ellipse2} />
                 </div>
               </div>
+              {usuarioEditando && (
+                <div className={styles.frame88}>
+                  <div className={styles.cadastrarNovoUsurio}>Nova Senha (opcional)</div>
+                  <div className={styles.frame89}>
+                    <input type="password" value={formData.senha} onChange={(e) => setFormData({ ...formData, senha: e.target.value })} placeholder="********" style={{ border: "none", outline: "none", width: "100%", background: "transparent" }} />
+                  </div>
+                </div>
+              )}
             </div>
             <div className={styles.line} />
             <div className={styles.frame110}>
@@ -481,6 +489,7 @@ const AdminUsuarios: FunctionComponent = () => {
 };
 
 export default AdminUsuarios;
+
 
 
 
