@@ -14,7 +14,7 @@
     "migrate": "node scripts/migrar.js",
     "seed:analise": "node scripts/seedAnalise.js",
     "ia:treinar": "node scripts/treinarModeloIA.js",
-    "test": "node --test tests/unit",
+    "test": "node --test tests/unit/*.test.js",
     "test:functional": "playwright test",
     "test:analise-ui": "playwright test -c playwright-analise-ui.config.js",
     "test:compra-ui": "playwright test -c playwright-compra-ui.config.js",

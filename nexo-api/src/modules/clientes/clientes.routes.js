@@ -170,18 +170,8 @@ router.patch(
   })
 );
 
-// Excluir cliente (hard delete - admin)
-router.delete(
-  "/:idCliente",
-  requireFuncionario,
-  requirePerfil("ADMIN"),
-  asyncHandler(async (req, res) => {
-    const cliente = await Cliente.findByPk(req.params.idCliente);
-    if (!cliente) throw new HttpError(404, "Cliente não encontrado.");
-    await cliente.destroy();
-    res.status(204).send();
-  })
-);
+// Excluir cliente: hard delete removido para evitar perda de dados.
+// Use PATCH /:idCliente/inativar para desativar um cliente.
 
 // RF0023: inativar cadastro de cliente (admin)
 router.patch(
@@ -192,6 +182,16 @@ router.patch(
     const cliente = await Cliente.findByPk(req.params.idCliente);
     if (!cliente) throw new HttpError(404, "Cliente não encontrado.");
     await cliente.update({ ativo: false, data_inativacao: new Date() });
+    res.status(204).send();
+  })
+);
+
+// RF0023: cliente inativa a própria conta
+router.patch(
+  "/me/inativar",
+  requireCliente,
+  asyncHandler(async (req, res) => {
+    await req.cliente.update({ ativo: false, data_inativacao: new Date() });
     res.status(204).send();
   })
 );

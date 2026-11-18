@@ -15,6 +15,8 @@ import {
 const OPENROUTER_URL = env.ia.openRouterUrl;
 const OPENROUTER_MODEL = env.ia.openRouterModel;
 const OPENROUTER_API_KEY = env.ia.openRouterApiKey;
+const OPENROUTER_REFERER = env.ia.openRouterReferer;
+const OPENROUTER_TIMEOUT_MS = env.ia.openRouterTimeoutMs;
 
 function formatarPreco(valor) {
   return `R$ ${Number(valor).toFixed(2).replace(".", ",")}`;
@@ -209,21 +211,29 @@ export async function gerarRespostaIA(mensagem, idCliente) {
 
   const { messages, perfil, catalogo } = await montarPrompt(mensagem, idCliente);
 
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+    "X-Title": "Nexo E-commerce de Livros",
+  };
+  if (OPENROUTER_REFERER) {
+    headers["HTTP-Referer"] = OPENROUTER_REFERER;
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), OPENROUTER_TIMEOUT_MS);
+
   const response = await fetch(OPENROUTER_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-      "HTTP-Referer": "http://localhost:5173",
-      "X-Title": "Nexo E-commerce de Livros",
-    },
+    headers,
     body: JSON.stringify({
       model: OPENROUTER_MODEL,
       messages,
       temperature: 0.7,
       max_tokens: 1200,
     }),
-  });
+    signal: controller.signal,
+  }).finally(() => clearTimeout(timeoutId));
 
   if (!response.ok) {
     const err = await response.text();

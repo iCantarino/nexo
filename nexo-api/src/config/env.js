@@ -10,6 +10,14 @@ function required(name, fallback) {
   return value;
 }
 
+function requiredNoFallback(name) {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Variável de ambiente obrigatória não definida ou vazia: ${name}`);
+  }
+  return value;
+}
+
 export const env = {
   db: {
     host: required("DB_HOST", "127.0.0.1"),
@@ -19,7 +27,7 @@ export const env = {
     name: required("DB_NAME", "nexo_db"),
   },
   jwt: {
-    secret: required("JWT_SECRET", "change-this-secret"),
+    secret: requiredNoFallback("JWT_SECRET"),
     expiresIn: required("JWT_EXPIRES_IN", "1h"),
   },
   app: {
@@ -35,6 +43,8 @@ export const env = {
     openRouterApiKey: required("OPENROUTER_API_KEY"),
     openRouterModel: required("OPENROUTER_MODEL", "openai/gpt-5.6-luna"),
     openRouterUrl: required("OPENROUTER_URL", "https://openrouter.ai/api/v1/chat/completions"),
+    openRouterReferer: required("OPENROUTER_REFERER", ""),
+    openRouterTimeoutMs: Number(required("OPENROUTER_TIMEOUT_MS", "30000")),
   },
   corsOrigins: required("CORS_ORIGINS", "http://localhost:5173")
     .split(",")

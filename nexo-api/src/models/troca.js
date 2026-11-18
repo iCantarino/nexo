@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database.js";
 
-export const STATUS_TROCA = ["SOLICITADA", "ACEITA", "NEGADA", "ITEM_ENVIADO", "ITEM_RECEBIDO", "PROCESSADA"];
+export const STATUS_TROCA = ["SOLICITADA", "ACEITA", "PROCESSADA"];
 
 export const Troca = sequelize.define("troca", {
   id_troca: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
