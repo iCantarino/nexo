@@ -366,7 +366,13 @@ router.get(
   asyncHandler(async (req, res) => {
     const pedidos = await Pedido.findAll({
       where: { id_cliente: req.cliente.id_cliente },
-      include: [{ model: ItemPedido, as: "itens" }],
+      include: [
+        {
+          model: ItemPedido,
+          as: "itens",
+          include: [{ model: Livro }],
+        },
+      ],
       order: [["id_pedido", "DESC"]],
     });
     res.json(pedidos);
@@ -393,7 +399,31 @@ router.get(
   "/:idPedido",
   requireCliente,
   asyncHandler(async (req, res) => {
-    const pedido = await Pedido.findByPk(req.params.idPedido, { include: [{ model: ItemPedido, as: "itens" }] });
+    const pedido = await Pedido.findByPk(req.params.idPedido, {
+      include: [
+        { model: Endereco },
+        {
+          model: ItemPedido,
+          as: "itens",
+          include: [{ model: Livro }],
+        },
+        {
+          model: PedidoCupom,
+          as: "cupons_utilizados",
+          include: [{ model: Cupom }, { model: CupomCatalogo }],
+        },
+        {
+          model: PedidoCartao,
+          as: "pagamentos_cartao",
+          include: [{ model: CartaoCredito, include: [{ model: BandeiraCartao }] }],
+        },
+        {
+          model: PedidoStatusHistorico,
+          as: "historico",
+          include: [{ model: Funcionario }],
+        },
+      ],
+    });
     if (!pedido || pedido.id_cliente !== req.cliente.id_cliente) throw new HttpError(404, "Pedido não encontrado.");
     res.json(pedido);
   })

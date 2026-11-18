@@ -11,7 +11,11 @@ import Profile from './pages/perfil/perfil';
 import ShoppingCart from './pages/carrinho/carrinho';
 import Checkout from './pages/checkout/checkout';
 import MyOrders from './pages/pedidos/pedidos';
+import OrderDetail from './pages/pedido-detalhe/orderdetail';
+import MyCoupons from './pages/meus-cupons/mycoupons';
 import AiChatbot from './pages/ai-chatbot/aichatbot';
+import ExchangeRequest from './pages/solicitar-troca/exchangerequest';
+import ItemDispatch from './pages/despacho-item/itemdispatch';
 
 // Páginas do admin
 import AdminDashboard from './pages/admin-dashboard/admindashboard';
@@ -136,6 +140,42 @@ function App() {
         element={
           <ProtectedClientRoute>
             <MyOrders />
+          </ProtectedClientRoute>
+        }
+      />
+
+      <Route
+        path="/pedido-detalhe/:id"
+        element={
+          <ProtectedClientRoute>
+            <OrderDetail />
+          </ProtectedClientRoute>
+        }
+      />
+
+      <Route
+        path="/meus-cupons"
+        element={
+          <ProtectedClientRoute>
+            <MyCoupons />
+          </ProtectedClientRoute>
+        }
+      />
+
+      <Route
+        path="/solicitar-troca/:id"
+        element={
+          <ProtectedClientRoute>
+            <ExchangeRequest />
+          </ProtectedClientRoute>
+        }
+      />
+
+      <Route
+        path="/despacho-item/:id"
+        element={
+          <ProtectedClientRoute>
+            <ItemDispatch />
           </ProtectedClientRoute>
         }
       />

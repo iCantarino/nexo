@@ -2,6 +2,7 @@ import axios from 'axios';
 import type { AxiosInstance, AxiosError } from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+export const API_BASE = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:8000';
 
 // Cliente axios configurado
 const api: AxiosInstance = axios.create({
@@ -212,6 +213,7 @@ export interface ItemPedido {
   quantidade_trocada: number;
   valor_unitario: string;
   valor_total_item: string;
+  livro?: Livro;
 }
 
 export interface Pedido {
@@ -226,12 +228,45 @@ export interface Pedido {
   data_pedido: string;
   observacao?: string | null;
   itens?: ItemPedido[];
+  endereco?: Endereco;
+  cupons_utilizados?: PedidoCupom[];
+  pagamentos_cartao?: PedidoCartao[];
+  historico?: PedidoStatusHistorico[];
+}
+
+export interface PedidoCupom {
+  id_pedido_cupom: number;
+  id_pedido: number;
+  id_cupom?: number | null;
+  id_cupom_catalogo?: number | null;
+  valor_utilizado: string;
+  cupom?: Cupom;
+  cupom_catalogo?: CupomCatalogo;
+}
+
+export interface PedidoCartao {
+  id_pedido_cartao: number;
+  id_pedido: number;
+  id_cartao: number;
+  valor_pago: string;
+  cartao_credito?: CartaoCredito;
+}
+
+export interface PedidoStatusHistorico {
+  id_historico: number;
+  id_pedido: number;
+  id_funcionario?: number | null;
+  status_anterior?: string | null;
+  status_novo: string;
+  data_alteracao: string;
+  funcionario?: Funcionario;
 }
 
 export interface ItemTroca {
   id_item_troca: number;
   id_item_pedido: number;
   quantidade: number;
+  item_pedido?: ItemPedido;
 }
 
 export interface Troca {
@@ -304,6 +339,18 @@ export interface Cupom {
   valido_ate?: string;
 }
 
+export interface CupomCatalogo {
+  id_cupom_catalogo: number;
+  codigo_cupom: string;
+  descricao: string;
+  tipo: 'PROMOCIONAL' | 'TROCA';
+  percentual?: string | null;
+  valor_fixo?: string | null;
+  apenas_primeira_compra: boolean;
+  uso_unico_por_cliente: boolean;
+  ativo: boolean;
+}
+
 /** Valor em reais que o cupom abate (percentual incide sobre os itens, não sobre o frete). */
 export function valorDoCupom(cupom: Cupom, subtotalItens: number): number {
   if (cupom.percentual) {
@@ -374,6 +421,12 @@ export const clientesApi = {
   
   alterarSenha: (data: { senha_atual: string; nova_senha: string }) =>
     api.patch('/clientes/me/senha', data),
+
+  listarPreferencias: () =>
+    api.get<{ id_preferencia: number; categoria: string; origem: string }[]>('/clientes/me/preferencias'),
+
+  salvarPreferencias: (categorias: string[]) =>
+    api.post('/clientes/me/preferencias', { categorias }),
 };
 
 // APIs de Funcionários
@@ -399,6 +452,7 @@ export const enderecosApi = {
   listar: () => api.get<Endereco[]>('/enderecos'),
   criar: (data: CreateEnderecoData) =>
     api.post<Endereco>('/enderecos', data),
+  excluir: (id: number) => api.delete(`/enderecos/${id}`),
 };
 
 // APIs de Cartões de Crédito
@@ -406,6 +460,7 @@ export const cartoesApi = {
   listar: () => api.get<CartaoCredito[]>('/cartoes'),
   criar: (data: CreateCartaoData) =>
     api.post<CartaoCredito>('/cartoes', data),
+  excluir: (id: number) => api.delete(`/cartoes/${id}`),
 };
 // APIs de Endereços (Admin)
 export const enderecosAdminApi = {
@@ -516,6 +571,7 @@ export const trocasApi = {
     itens?: { id_item_pedido: number; quantidade: number }[];
   }) => api.post<Troca>('/trocas', data),
   minhas: () => api.get<Troca[]>('/trocas/minhas'),
+  detalhe: (idTroca: number) => api.get<Troca>(`/trocas/${idTroca}`),
   adminPendentes: () => api.get<Troca[]>('/trocas/admin/pendentes'),
   adminTodas: () => api.get<Troca[]>('/trocas/admin/todas'),
   autorizar: (idTroca: number) => api.patch<Troca>(`/trocas/${idTroca}/autorizar`, {}),

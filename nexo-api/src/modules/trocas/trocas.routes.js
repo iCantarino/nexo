@@ -8,6 +8,7 @@ import { sequelize } from "../../config/database.js";
 import {
   Pedido,
   ItemPedido,
+  Livro,
   PedidoStatusHistorico,
   Troca,
   ItemTroca,
@@ -43,6 +44,11 @@ async function mudarStatusPedido(pedido, novoStatus, t, idFuncionario = null) {
 }
 
 const incluirItens = [{ model: ItemTroca, as: "itens" }];
+
+const incluirDetalhe = [
+  { model: ItemTroca, as: "itens", include: [{ model: ItemPedido, include: [{ model: Livro }] }] },
+  { model: Pedido },
+];
 
 // RF0040 / RN0041 / RN0043: somente pedidos ENTREGUE podem gerar troca; o pedido passa a EM_TROCA.
 router.post(
@@ -124,6 +130,18 @@ router.get(
       order: [["id_troca", "DESC"]],
     });
     res.json(trocas);
+  })
+);
+
+router.get(
+  "/:idTroca",
+  requireCliente,
+  asyncHandler(async (req, res) => {
+    const troca = await Troca.findByPk(req.params.idTroca, { include: incluirDetalhe });
+    if (!troca || troca.id_cliente !== req.cliente.id_cliente) {
+      throw new HttpError(404, "Troca não encontrada.");
+    }
+    res.json(troca);
   })
 );
 

@@ -7,6 +7,8 @@ import Navbar from '../../components/Navbar/Navbar';
 
 import styles from './ShoppingCart.module.css';
 
+const API_BASE = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:8000';
+
 const ShoppingCart: FunctionComponent = () => {
   useAuth();
   const navigate = useNavigate();
@@ -156,7 +158,15 @@ const ShoppingCart: FunctionComponent = () => {
                 const totalItem = valorUnit * item.quantidade;
                 return (
                   <div className={styles.item0} key={item.id_item_carrinho} data-testid={`item-carrinho-${item.id_item_carrinho}`}>
-                    <div style={{ width: 64, height: 96, background: '#e2e8f0', borderRadius: 4, flexShrink: 0 }} />
+                    {item.livro?.imagem_principal_url ? (
+                      <img
+                        src={`${API_BASE}${item.livro.imagem_principal_url}`}
+                        alt={item.livro?.titulo || 'Capa'}
+                        style={{ width: 64, height: 96, borderRadius: 4, flexShrink: 0, objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <div style={{ width: 64, height: 96, background: '#e2e8f0', borderRadius: 4, flexShrink: 0 }} />
+                    )}
                     <div className={styles.itemDetails}>
                       <b className={styles.aOrdemDo}>{item.livro?.titulo || 'Livro'}</b>
                       <div className={styles.porCarloRovelli}>{item.livro?.autor?.nome || ''}</div>
@@ -181,17 +191,22 @@ const ShoppingCart: FunctionComponent = () => {
               })}
             </div>
           )}
+          {itensValidos.length > 0 && (
+            <Link to="/home" className={styles.backToShop} style={{ color: '#0f172a', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 8, fontSize: 14, fontFamily: 'Inter' }}>
+              <span>←</span> Continuar Comprando
+            </Link>
+          )}
         </div>
 <div className={styles.cartRight}>
           <b className={styles.resumoDoPedido}>Resumo do Pedido</b>
           <div className={styles.orderSummary}>
             <div className={styles.frame}>
-              <div className={styles.logo}>Subtotal dos Itens</div>
+              <div className={styles.logo}>Subtotal</div>
               <div className={styles.r21470} data-testid="subtotal">R$ {subtotal.toFixed(2).replace('.', ',')}</div>
             </div>
             {valorDesconto > 0 && (
               <div className={styles.frame}>
-                <div className={styles.logo}>Desconto</div>
+                <div className={styles.logo}>Descontos Aplicados</div>
                 <div className={styles.r2500} data-testid="desconto">-R$ {valorDesconto.toFixed(2).replace('.', ',')}</div>
               </div>
             )}
@@ -291,9 +306,9 @@ const ShoppingCart: FunctionComponent = () => {
         <div className={styles.footerBottom}>
           <div className={styles.logo}>© 2026 Nexo Inc. Conhecimento curado para mentes curiosas.</div>
           <div className={styles.socials}>
-            <span className={styles.shoppingBagIcon} />
-            <span className={styles.shoppingBagIcon} />
-            <span className={styles.shoppingBagIcon} />
+            <span style={{ fontSize: 18, cursor: 'pointer' }}>📷</span>
+            <span style={{ fontSize: 18, cursor: 'pointer' }}>🐦</span>
+            <span style={{ fontSize: 18, cursor: 'pointer' }}>💼</span>
           </div>
         </div>
       </div>

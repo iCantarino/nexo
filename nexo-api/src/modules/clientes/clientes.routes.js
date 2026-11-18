@@ -5,7 +5,7 @@ import { z } from "zod";
 import { asyncHandler, HttpError } from "../../utils/asyncHandler.js";
 import { hashPassword, verifyPassword } from "../../utils/security.js";
 import { requireCliente, requireFuncionario, requirePerfil } from "../../middlewares/auth.js";
-import { Cliente, Endereco, CartaoCredito, BandeiraCartao } from "../../models/index.js";
+import { Cliente, Endereco, CartaoCredito, BandeiraCartao, PreferenciaCliente } from "../../models/index.js";
 
 // RNF0031: Senha forte — mínimo 8 chars, ao menos 1 maiúscula, 1 minúscula e 1 especial
 const senhaForteRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
@@ -193,6 +193,44 @@ router.patch(
   asyncHandler(async (req, res) => {
     await req.cliente.update({ ativo: false, data_inativacao: new Date() });
     res.status(204).send();
+  })
+);
+
+// Preferências de leitura do cliente
+router.get(
+  "/me/preferencias",
+  requireCliente,
+  asyncHandler(async (req, res) => {
+    const preferencias = await PreferenciaCliente.findAll({
+      where: { id_cliente: req.cliente.id_cliente },
+      order: [["data_cadastro", "DESC"]],
+    });
+    res.json(preferencias);
+  })
+);
+
+router.post(
+  "/me/preferencias",
+  requireCliente,
+  asyncHandler(async (req, res) => {
+    const schema = z.object({
+      categorias: z.array(z.string().min(1)).min(1),
+    });
+    const { categorias } = schema.parse(req.body);
+    const idCliente = req.cliente.id_cliente;
+
+    await PreferenciaCliente.destroy({
+      where: { id_cliente: idCliente, origem: "EXPLICITO" },
+    });
+
+    const criadas = await PreferenciaCliente.bulkCreate(
+      categorias.map((c) => ({
+        id_cliente: idCliente,
+        categoria: c,
+        origem: "EXPLICITO",
+      }))
+    );
+    res.status(201).json(criadas);
   })
 );
 

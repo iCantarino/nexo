@@ -12,7 +12,7 @@ import Navbar from '../../components/Navbar/Navbar';
 import styles from './Checkout.module.css';
 
 const Checkout: FunctionComponent = () => {
-  useAuth();
+  const { user } = useAuth();
   // const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [carrinho, setCarrinho] = useState<CarrinhoData | null>(null);
@@ -98,15 +98,6 @@ const Checkout: FunctionComponent = () => {
   const rotuloCupom = (c: Cupom) =>
     c.percentual ? `${c.codigo_cupom} - ${Number(c.percentual)}% de desconto` : `${c.codigo_cupom} - ${fmt(Number(c.valor))}`;
 
-  const calcularFrete = async (idEndereco: number) => {
-    try {
-      const res = await pedidosApi.calcularFrete(idEndereco);
-      setValorFrete(res.data.valor_frete);
-    } catch (e: any) {
-      setMensagem(e.response?.data?.detail || 'Erro ao calcular frete.');
-    }
-  };
-
   // O frete faz parte do total, então é recalculado sempre que o endereço muda.
   const handleSelecionarEndereco = async (idEndereco: number) => {
     setEnderecoSelecionado(idEndereco);
@@ -116,11 +107,6 @@ const Checkout: FunctionComponent = () => {
     } catch (e: any) {
       setMensagem(e.response?.data?.detail || 'Erro ao calcular frete.');
     }
-  };
-
-  const handleCalcularFrete = () => {
-    if (!enderecoSelecionado) { setMensagem('Selecione um endereço primeiro.'); return; }
-    calcularFrete(enderecoSelecionado);
   };
 
   // Atalho: coloca o que falta pagar no cartão informado.
@@ -285,28 +271,25 @@ if (pedidoCriado) {
                   className={enderecoSelecionado === addr.id_endereco ? styles.addrCard1 : styles.addrCard2}
                   onClick={() => handleSelecionarEndereco(addr.id_endereco)}
                   role="button" tabIndex={0}
-                  style={{ cursor: 'pointer', border: enderecoSelecionado === addr.id_endereco ? '2px solid #d97706' : '2px solid transparent' }}>
+                  style={{ cursor: 'pointer', border: enderecoSelecionado === addr.id_endereco ? '2px solid #d97706' : '1px solid #e2e8f0', position: 'relative' }}>
+                  {enderecoSelecionado === addr.id_endereco && (
+                    <span style={{ position: 'absolute', top: 12, right: 12, color: '#d97706', fontSize: 16 }}>✓</span>
+                  )}
                   <div className={styles.frame}>
                     <b className={styles.logo}>{addr.nome_identificador}{addr.padrao ? ' (Padrão)' : ''}</b>
                   </div>
-                  <div className={styles.arthurSchopenhauer}>{addr.logradouro}, {addr.numero}</div>
-                  <div className={styles.arthurSchopenhauer}>{addr.bairro}</div>
+                  <div className={styles.arthurSchopenhauer}>{user?.nome || 'Cliente'}</div>
+                  <div className={styles.arthurSchopenhauer}>{addr.logradouro}, {addr.numero}{addr.observacoes ? ` - ${addr.observacoes}` : ''}</div>
                   <div className={styles.arthurSchopenhauer}>{addr.cidade}, {addr.estado} - {addr.cep}</div>
                 </div>
               ))}
             </div>
             <div style={{ marginTop: 8 }}>
               <button onClick={() => setModalNovoEndereco(true)} data-testid="novo-endereco"
-                style={{ cursor: 'pointer', padding: '8px 16px', borderRadius: 6, border: '1px dashed #d97706', background: 'transparent', color: '#d97706', fontSize: 13 }}>
-                + Novo Endereço
+                style={{ cursor: 'pointer', padding: '10px 16px', borderRadius: 6, border: '1px dashed #cbd5e1', background: 'transparent', color: '#0f172a', fontSize: 14, fontWeight: 600 }}>
+                + Adicionar Novo Endereço de Entrega
               </button>
             </div>
-            {enderecoSelecionado && (
-              <button onClick={handleCalcularFrete}
-                style={{ marginTop: 8, cursor: 'pointer', padding: '8px 16px', borderRadius: 6, background: '#0f172a', color: '#fff', border: 'none', fontSize: 13 }}>
-                Calcular Frete
-              </button>
-            )}
             {valorFrete > 0 && (
               <div style={{ marginTop: 8, fontSize: 14, color: '#15803d' }}>
                 Frete: {fmt(valorFrete)}
@@ -317,67 +300,80 @@ if (pedidoCriado) {
           {/* 2. Forma de Pagamento */}
           <div className={styles.paymentMethod} style={{ marginTop: 24 }}>
             <b className={styles.checkoutSeguro}>2. Forma de Pagamento</b>
-<div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <b style={{ fontSize: 13, textTransform: 'uppercase' }}>Cartões Selecionados</b>
-              {cartoesSelecionados.length === 0 && <div style={{ fontSize: 13, color: '#94a3b8' }}>Nenhum cartão selecionado</div>}
-              {cartoesSelecionados.map(cs => {
-                const cartao = cartoes.find(c => c.id_cartao === cs.id_cartao);
+            <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {cartoes.filter(c => c.ativo !== false).map(cartao => {
+                const selecionado = cartoesSelecionados.some(c => c.id_cartao === cartao.id_cartao);
+                const cs = cartoesSelecionados.find(c => c.id_cartao === cartao.id_cartao);
                 return (
-                  <div key={cs.id_cartao} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
-                    <span>{cartao?.bandeira?.nome || 'Cartão'} Final {(cartao?.numero_cartao || '').slice(-4)}</span>
-                    <span>R$</span>
-                    <input type="number" min="0" step="0.01" value={cs.valor_pago} data-testid={`cartao-valor-${cs.id_cartao}`}
-                      onChange={(e) => handleValorCartao(cs.id_cartao, Number(e.target.value))}
-                      style={{ width: 90, padding: '4px 8px', border: '1px solid #e2e8f0', borderRadius: 4, fontSize: 13 }} />
-                    <span onClick={() => preencherRestante(cs.id_cartao)} role="button" tabIndex={0}
-                      style={{ cursor: 'pointer', color: '#d97706', fontSize: 12, textDecoration: 'underline' }}>usar restante</span>
-                    <span onClick={() => handleRemoverCartao(cs.id_cartao)} role="button" tabIndex={0}
-                      style={{ cursor: 'pointer', color: '#dc2626', fontSize: 16 }}>✕</span>
+                  <div
+                    key={cartao.id_cartao}
+                    data-testid={`chip-cartao-${cartao.id_cartao}`}
+                    onClick={() => { if (selecionado) handleRemoverCartao(cartao.id_cartao); else handleAdicionarCartao(cartao.id_cartao); }}
+                    role="button"
+                    tabIndex={0}
+                    style={{
+                      cursor: 'pointer',
+                      borderRadius: 8,
+                      border: selecionado ? '2px solid #d97706' : '1px solid #e2e8f0',
+                      background: '#fff',
+                      padding: 16,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 12,
+                      position: 'relative',
+                    }}
+                  >
+                    {selecionado && <span style={{ position: 'absolute', top: 12, right: 12, color: '#d97706', fontSize: 16 }}>✓</span>}
+                    <span style={{ fontSize: 20 }}>💳</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>
+                        {cartao.bandeira?.nome || 'Cartão'} Final {(cartao.numero_cartao || '').slice(-4)}
+                        {cartao.preferencial && <span style={{ color: '#d97706', marginLeft: 6 }}>★</span>}
+                      </div>
+                      <div style={{ fontSize: 13, color: '#475569' }}>Val: 12/30</div>
+                    </div>
+                    {selecionado && cs && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }} onClick={(e) => e.stopPropagation()}>
+                        <span style={{ fontSize: 13, color: '#475569' }}>R$</span>
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={cs.valor_pago}
+                          data-testid={`cartao-valor-${cs.id_cartao}`}
+                          onChange={(e) => handleValorCartao(cs.id_cartao, Number(e.target.value))}
+                          style={{ width: 80, padding: '4px 8px', border: '1px solid #e2e8f0', borderRadius: 4, fontSize: 13 }}
+                        />
+                        <span onClick={(e) => { e.stopPropagation(); preencherRestante(cs.id_cartao); }} role="button" tabIndex={0}
+                          style={{ cursor: 'pointer', color: '#d97706', fontSize: 12, textDecoration: 'underline' }}>restante</span>
+                      </div>
+                    )}
                   </div>
                 );
               })}
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4 }}>
-                {cartoes.filter(c => c.ativo !== false).map(cartao => (
-                  <div key={cartao.id_cartao} data-testid={`chip-cartao-${cartao.id_cartao}`} onClick={() => handleAdicionarCartao(cartao.id_cartao)}
-                    role="button" tabIndex={0}
-                    style={{ cursor: 'pointer', padding: '6px 12px', borderRadius: 6, border: '1px solid #e2e8f0', fontSize: 12,
-                      background: cartoesSelecionados.some(c => c.id_cartao === cartao.id_cartao) ? '#fef3c7' : '#fff' }}>
-                    {cartao.bandeira?.nome || 'Cartão'} Final {(cartao.numero_cartao || '').slice(-4)}
-                    {cartao.preferencial && ' ★'}
-                  </div>
-                ))}
-              </div>
               <button onClick={() => setModalNovoCartao(true)} data-testid="novo-cartao"
-                style={{ cursor: 'pointer', padding: '6px 12px', borderRadius: 6, border: '1px dashed #d97706', background: 'transparent', color: '#d97706', fontSize: 12, alignSelf: 'flex-start' }}>
-                + Novo Cartão
+                style={{ cursor: 'pointer', padding: '10px 16px', borderRadius: 6, border: '1px dashed #cbd5e1', background: 'transparent', color: '#0f172a', fontSize: 14, fontWeight: 600, alignSelf: 'flex-start' }}>
+                + Adicionar Novo Cartão de Crédito
               </button>
 
-              <div style={{ borderTop: '1px solid #e2e8f0', marginTop: 8, paddingTop: 12 }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, cursor: 'pointer' }}>
-                  <input type="checkbox" checked={usarPix} data-testid="pix-checkbox"
-                    onChange={(e) => { setUsarPix(e.target.checked); if (!e.target.checked) setValorPix(0); }} />
-                  <b style={{ textTransform: 'uppercase' }}>Pagar parte com PIX</b>
-                </label>
-                {usarPix && (
-                  <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
-                    <span>R$</span>
-                    <input type="number" min="0" step="0.01" value={valorPix} data-testid="pix-valor"
-                      onChange={(e) => setValorPix(Number(e.target.value))}
-                      style={{ width: 90, padding: '4px 8px', border: '1px solid #e2e8f0', borderRadius: 4, fontSize: 13 }} />
-                    <span role="button" tabIndex={0} style={{ cursor: 'pointer', color: '#d97706', fontSize: 12, textDecoration: 'underline' }}
-                      onClick={() => setValorPix(Math.max(arred(aPagar - totalCartoes), 0))}>usar restante</span>
-                  </div>
-                )}
-                {usarPix && valorPix > 0 && (
-                  <div style={{ marginTop: 8, fontSize: 12, color: '#475569', lineHeight: 1.5 }}>
-                    Simulação: o QR Code e o código "copia e cola" seriam gerados após a confirmação do pedido.
-                    Nenhuma cobrança real é feita.
-                  </div>
-                )}
-              </div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, cursor: 'pointer', marginTop: 8 }}>
+                <input type="checkbox" checked={usarPix} data-testid="pix-checkbox"
+                  onChange={(e) => { setUsarPix(e.target.checked); if (!e.target.checked) setValorPix(0); }} />
+                <b style={{ textTransform: 'uppercase' }}>Pagar parte com PIX</b>
+              </label>
+              {usarPix && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
+                  <span>R$</span>
+                  <input type="number" min="0" step="0.01" value={valorPix} data-testid="pix-valor"
+                    onChange={(e) => setValorPix(Number(e.target.value))}
+                    style={{ width: 90, padding: '4px 8px', border: '1px solid #e2e8f0', borderRadius: 4, fontSize: 13 }} />
+                  <span role="button" tabIndex={0} style={{ cursor: 'pointer', color: '#d97706', fontSize: 12, textDecoration: 'underline' }}
+                    onClick={() => setValorPix(Math.max(arred(aPagar - totalCartoes), 0))}>usar restante</span>
+                </div>
+              )}
 
               <div data-testid="pagamento-status"
-              style={{ marginTop: 4, fontSize: 13, fontWeight: 600, color: Math.abs(faltaPagar) < 0.005 ? '#15803d' : '#dc2626' }}>
+                style={{ marginTop: 4, fontSize: 13, fontWeight: 600, color: Math.abs(faltaPagar) < 0.005 ? '#15803d' : '#dc2626' }}>
                 {Math.abs(faltaPagar) < 0.005
                   ? 'Pagamento completo.'
                   : faltaPagar > 0
@@ -425,19 +421,36 @@ if (pedidoCriado) {
         </div>
 
         <div className={styles.checkoutRight}>
-          <b className={styles.checkoutSeguro}>Resumo</b>
+          <b className={styles.checkoutSeguro}>Resumo do Pedido</b>
           <div className={styles.orderSummary}>
             <div className={styles.orderedItems}>
               {itensValidos.map(item => (
                 <div key={item.id_item_carrinho} className={styles.frame12}>
-                  <div className={styles.aOrdemDo}>{item.livro?.titulo || 'Livro'} x{item.quantidade}</div>
-                  <div className={styles.arthurSchopenhauer}>R$ {Number(item.livro?.valor_venda || 0).toFixed(2).replace('.', ',')}</div>
+                  <div className={styles.aOrdemDo}>{item.livro?.titulo || 'Livro'} (x{item.quantidade})</div>
+                  <div className={styles.arthurSchopenhauer}>R$ {(Number(item.livro?.valor_venda || 0) * item.quantidade).toFixed(2).replace('.', ',')}</div>
                 </div>
               ))}
             </div>
+            {(cupomPromoCheckout || cupomTrocaCheckout) && (
+              <div style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: 12, marginBottom: 12 }}>
+                <div style={{ fontSize: 12, textTransform: 'uppercase', fontWeight: 600, color: '#0f172a', marginBottom: 8 }}>Cupons Aplicados</div>
+                {cupomPromoCheckout && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#15803d' }}>
+                    <span>{cupomPromoCheckout}</span>
+                    <span>-{fmt(valorDoCupom(cuponsDisponiveis.find(c => c.codigo_cupom === cupomPromoCheckout && c.tipo === 'PROMOCIONAL')!, subtotal) || 0)}</span>
+                  </div>
+                )}
+                {cupomTrocaCheckout && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#15803d' }}>
+                    <span>{cupomTrocaCheckout}</span>
+                    <span>-{fmt(valorDoCupom(cuponsDisponiveis.find(c => c.codigo_cupom === cupomTrocaCheckout && c.tipo === 'TROCA')!, subtotal) || 0)}</span>
+                  </div>
+                )}
+              </div>
+            )}
             <div className={styles.totalsColumn}>
               <div className={styles.footerTop}>
-                <div className={styles.logo}>Subtotal</div>
+                <div className={styles.logo}>Subtotal dos Itens</div>
                 <div className={styles.r21470} data-testid="resumo-subtotal">R$ {subtotal.toFixed(2).replace('.', ',')}</div>
               </div>
               {valorDesconto > 0 && (
@@ -452,7 +465,7 @@ if (pedidoCriado) {
               </div>
               <div className={styles.line} />
               <div className={styles.frame19}>
-                <b className={styles.logo}>Total a pagar</b>
+                <b className={styles.logo}>Total Geral</b>
                 <b className={styles.r21220} data-testid="resumo-total">{fmt(aPagar)}</b>
               </div>
               {trocoCupom > 0 && (

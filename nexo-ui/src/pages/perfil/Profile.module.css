@@ -448,6 +448,16 @@
   	padding: 10px 16px;
   	color: #fff;
 }
+.secondaryBtn {
+  	cursor: pointer;
+  	padding: 6px 12px;
+  	font-size: 12px;
+  	border: 1px solid #e2e8f0;
+  	border-radius: 6px;
+  	background: #fff;
+  	color: #0f172a;
+  	font-family: Inter;
+}
 .footer {
   	align-self: stretch;
   	background-color: #0f172a;
