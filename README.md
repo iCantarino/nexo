@@ -90,6 +90,32 @@ No serviço **nexo-api** no Railway, adicione:
 | `NODE_ENV` | production |
 | `APP_PORT` | 8000 |
 | `CORS_ORIGINS` | URL do serviço nexo-ui (ex: `https://nexo-ui-production-xxxx.up.railway.app`) |
+| `OPENROUTER_API_KEY` | Chave da API da OpenRouter (RNF0044) |
+| `OPENROUTER_MODEL` | Modelo OpenRouter: `openai/gpt-5.6-luna` |
+| `OPENROUTER_URL` | `https://openrouter.ai/api/v1/chat/completions` |
+
+#### Chatbot IA (RNF0044)
+O chatbot utiliza a OpenRouter (`openai/gpt-5.6-luna`) para recomendações personalizadas. Para rodar localmente:
+
+1. Crie uma conta em [openrouter.ai](https://openrouter.ai) e gere uma API key.
+2. Adicione ao `nexo-api/.env`:
+   ```env
+   OPENROUTER_API_KEY=sk-or-v1-sua-chave-aqui
+   OPENROUTER_MODEL=openai/gpt-5.6-luna
+   OPENROUTER_URL=https://openrouter.ai/api/v1/chat/completions
+   ```
+3. Para ajustar continuamente os scores e gerar o dataset de treinamento:
+   ```bash
+   cd nexo-api
+   npm run ia:treinar
+   ```
+
+Rotas disponíveis (autenticadas, perfil CLIENTE):
+- `POST /api/v1/chatbot/mensagem` — enviar mensagem ao assistente
+- `GET /api/v1/chatbot/historico` — histórico de conversas
+- `POST /api/v1/chatbot/mensagem/:id/feedback` — avaliar resposta (`UTIL`/`NAO_UTIL`)
+- `GET /api/v1/chatbot/perfil-leitura` — perfil de leitura do cliente
+- `GET /api/v1/chatbot/recomendacoes` — recomendações personalizadas
 
 ### 6. Inicializar o banco de dados
 

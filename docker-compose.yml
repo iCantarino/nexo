@@ -54,6 +54,10 @@ services:
       NODE_ENV: ${NODE_ENV:-production}
       APP_PORT: ${APP_PORT:-8000}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost,http://localhost:5173,http://127.0.0.1}
+      # IA Generativa (RNF0044)
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-openai/gpt-5.6-luna}
+      OPENROUTER_URL: ${OPENROUTER_URL:-https://openrouter.ai/api/v1/chat/completions}
     ports:
       - "${APP_PORT:-8000}:${APP_PORT:-8000}"
     depends_on:
