@@ -74,6 +74,41 @@ cd nexo-api && npm test
 cd nexo-ui && npm run build
 ```
 
+## Rotas administrativas principais
+
+As telas admin (`/admin-*`) compartilham a sidebar `AdminSidebar` e consomem os endpoints abaixo (todos exigem token de funcionário com perfil `ADMIN`):
+
+### Pedidos
+- `GET /api/v1/pedidos/admin/todos?status_filtro=<STATUS>` — lista todos os pedidos.
+- `PATCH /api/v1/pedidos/:idPedido/despachar` — APROVADA → EM_TRANSITO.
+- `PATCH /api/v1/pedidos/:idPedido/confirmar-entrega` — EM_TRANSITO → ENTREGUE.
+
+### Trocas
+- `GET /api/v1/trocas/admin/todas` — lista todas as solicitações de troca.
+- `GET /api/v1/trocas/admin/pendentes` — lista trocas com status `SOLICITADA`.
+- `PATCH /api/v1/trocas/:idTroca/autorizar` — SOLICITADA → ACEITA.
+- `PATCH /api/v1/trocas/:idTroca/negar` — SOLICITADA → NEGADA.
+- `PATCH /api/v1/trocas/:idTroca/enviar` — ACEITA → ITEM_ENVIADO.
+- `PATCH /api/v1/trocas/:idTroca/receber` — ITEM_ENVIADO → ITEM_RECEBIDO.
+- `PATCH /api/v1/trocas/:idTroca/processar` — ITEM_RECEBIDO → PROCESSADA (gera cupom e reentra estoque).
+
+Fluxo completo: **SOLICITADA → ACEITA → ITEM_ENVIADO → ITEM_RECEBIDO → PROCESSADA**.
+
+### Livros (catálogo)
+- `GET /api/v1/livros` — lista pública do catálogo (com filtros).
+- `GET /api/v1/livros/admin/todos` — lista completa para admin.
+- `GET /api/v1/livros/:idLivro` — detalhes de um livro.
+- `POST /api/v1/livros` — cria um novo livro.
+- `PATCH /api/v1/livros/:idLivro` — edita um livro existente.
+- `PATCH /api/v1/livros/:idLivro/ativar` — ativa um livro.
+- `PATCH /api/v1/livros/:idLivro/inativar` — inativa um livro.
+- `DELETE /api/v1/livros/:idLivro` — exclui um livro definitivamente.
+- `POST /api/v1/livros/:idLivro/imagens` — faz upload de imagem (capa/galeria).
+- `DELETE /api/v1/livros/:idLivro/imagens/:idImagem` — remove uma imagem.
+- `GET /api/v1/livros/opcoes/autores|editoras|categorias|grupos-precificacao` — listagens para selects.
+
+As imagens são armazenadas em `nexo-api/public/uploads/livros/` e seus caminhos ficam no MySQL (`livro.imagem_principal_url` e `livro_imagem.url_imagem`).
+
 ## Variáveis de ambiente
 
 As configurações estão no arquivo `.env` na raiz do projeto. Ele já foi criado a partir do `.env.example`.

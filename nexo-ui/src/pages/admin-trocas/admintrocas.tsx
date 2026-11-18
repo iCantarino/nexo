@@ -1,23 +1,51 @@
 import { useEffect, useState, type FunctionComponent } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { trocasApi, rotuloStatus } from '../../services/api';
+import { trocasApi } from '../../services/api';
 import type { Troca } from '../../services/api';
+import AdminSidebar from '../../components/AdminSidebar/AdminSidebar';
+import styles from './AdminTrocas.module.css';
 
-const card = { background: '#fff', border: '1px solid #e2e8f0', borderRadius: 8, padding: 14, marginBottom: 10 } as const;
-const btn = { cursor: 'pointer', padding: '6px 12px', borderRadius: 6, background: '#0f172a', color: '#fff', fontSize: 13 } as const;
+const STATUS_FILTROS = [
+  { key: '', label: 'Todas' },
+  { key: 'SOLICITADA', label: 'Troca Solicitada' },
+  { key: 'ACEITA', label: 'Troca Aceita' },
+  { key: 'NEGADA', label: 'Troca Negada' },
+  { key: 'ITEM_ENVIADO', label: 'Item Enviado' },
+  { key: 'ITEM_RECEBIDO', label: 'Item Recebido' },
+  { key: 'PROCESSADA', label: 'Troca Processada' },
+];
 
-/**
- * Administrador: pedidos de troca (EM TROCA, RF0042), autorização (-> TROCA AUTORIZADA, RF0041)
- * e confirmação do recebimento (-> TROCADO, com cupom e reentrada no estoque, RF0043/RF0044/RF0054).
- */
+const rotuloStatusTroca = (s: string) => {
+  const map: Record<string, string> = {
+    SOLICITADA: 'Troca Solicitada',
+    ACEITA: 'Troca Aceita',
+    NEGADA: 'Troca Negada',
+    ITEM_ENVIADO: 'Item Enviado',
+    ITEM_RECEBIDO: 'Item Recebido',
+    PROCESSADA: 'Troca Processada',
+  };
+  return map[s] || s;
+};
+
+const corStatus = (s: string) => {
+  switch (s) {
+    case 'SOLICITADA': return styles.statusSolicitada;
+    case 'ACEITA': return styles.statusAceita;
+    case 'NEGADA': return styles.statusNegada;
+    case 'ITEM_ENVIADO': return styles.statusEnviado;
+    case 'ITEM_RECEBIDO': return styles.statusRecebido;
+    case 'PROCESSADA': return styles.statusProcessada;
+    default: return styles.statusPadrao;
+  }
+};
+
 const AdminTrocas: FunctionComponent = () => {
-  const { logout } = useAuth();
   const [trocas, setTrocas] = useState<Troca[]>([]);
+  const [filtro, setFiltro] = useState('');
+  const [selecionada, setSelecionada] = useState<Troca | null>(null);
   const [mensagem, setMensagem] = useState('');
 
   const carregar = async () => {
-    try { setTrocas((await trocasApi.adminPendentes()).data); }
+    try { setTrocas((await trocasApi.adminTodas()).data); }
     catch { setMensagem('Erro ao carregar as trocas.'); }
   };
   useEffect(() => { carregar(); }, []);
@@ -27,35 +55,133 @@ const AdminTrocas: FunctionComponent = () => {
     catch (e: any) { setMensagem(e.response?.data?.detail || 'Operação não permitida.'); }
   };
 
+  const trocasFiltradas = filtro ? trocas.filter((t) => t.status === filtro) : trocas;
+
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-        <b style={{ fontSize: 22 }}>Gestão de Trocas</b>
-        <div style={{ fontSize: 14 }}>
-          <Link to="/admin-dashboard" style={{ marginRight: 12 }}>Dashboard</Link>
-          <Link to="/admin-pedidos" style={{ marginRight: 12 }}>Pedidos</Link>
-          <span onClick={logout} style={{ cursor: 'pointer', textDecoration: 'underline' }}>Sair</span>
+    <div className={styles.adminTrocas}>
+      <AdminSidebar />
+      <div className={styles.contentArea}>
+        <div className={styles.header}>
+          <div className={styles.headerTitles}>
+            <b className={styles.titulo}>Gestão de Trocas</b>
+            <div className={styles.subtitulo}>Acompanhamento e aprovação de solicitações de troca de clientes.</div>
+          </div>
+        </div>
+        <div className={styles.workspace}>
+          {mensagem && <div className={styles.mensagem}>{mensagem}</div>}
+
+          <div className={styles.filtros}>
+            {STATUS_FILTROS.map((f) => (
+              <button
+                key={f.key}
+                className={filtro === f.key ? styles.filtroAtivo : styles.filtro}
+                onClick={() => setFiltro(f.key)}
+              >
+                {f.label} {f.key === '' && `(${trocas.length})`}
+              </button>
+            ))}
+          </div>
+
+          <div className={styles.conteudo}>
+            <div className={styles.painelEsquerdo}>
+              <b className={styles.secaoTitulo}>Fila de Solicitações</b>
+              <div className={styles.tabela}>
+                <div className={styles.tabelaHeader}>
+                  <span>ID Troca</span>
+                  <span>Pedido Orig.</span>
+                  <span>Cliente</span>
+                  <span>Status</span>
+                  <span>Ações</span>
+                </div>
+                {trocasFiltradas.length === 0 && <div className={styles.vazio}>Nenhuma troca encontrada.</div>}
+                {trocasFiltradas.map((t) => (
+                  <div
+                    key={t.id_troca}
+                    className={`${styles.tabelaRow} ${selecionada?.id_troca === t.id_troca ? styles.rowSelecionada : ''}`}
+                    onClick={() => setSelecionada(t)}
+                    data-testid={`troca-${t.id_troca}`}
+                  >
+                    <span><b>EX-{t.id_troca}</b></span>
+                    <span>{t.pedido?.codigo_pedido || `#${t.id_pedido}`}</span>
+                    <span>Cliente #{t.id_cliente}</span>
+                    <span><span className={`${styles.badge} ${corStatus(t.status)}`}>{rotuloStatusTroca(t.status)}</span></span>
+                    <span>
+                      {t.status === 'SOLICITADA' && (
+                        <>
+                          <button className={styles.botaoAceitar} onClick={(e) => { e.stopPropagation(); executar(() => trocasApi.autorizar(t.id_troca), 'Troca autorizada; o cliente foi notificado.'); }}>Aceitar Troca</button>
+                          <button className={styles.botaoRecusar} onClick={(e) => { e.stopPropagation(); executar(() => trocasApi.negar(t.id_troca), 'Troca recusada.'); }} style={{ marginLeft: 8 }}>Recusar Troca</button>
+                        </>
+                      )}
+                      {t.status === 'ACEITA' && (
+                        <button className={styles.botaoAcao} onClick={(e) => { e.stopPropagation(); executar(() => trocasApi.enviar(t.id_troca), 'Item marcado como enviado.'); }}>Marcar como Enviado</button>
+                      )}
+                      {t.status === 'ITEM_ENVIADO' && (
+                        <button className={styles.botaoAcao} onClick={(e) => { e.stopPropagation(); executar(() => trocasApi.receber(t.id_troca), 'Recebimento confirmado.'); }}>Confirmar Recebimento</button>
+                      )}
+                      {t.status === 'ITEM_RECEBIDO' && (
+                        <button className={styles.botaoProcessar} onClick={(e) => { e.stopPropagation(); executar(() => trocasApi.processar(t.id_troca), 'Troca processada; cupom gerado e estoque atualizado.'); }}>Processar Troca</button>
+                      )}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.painelDireito}>
+              {selecionada ? (
+                <>
+                  <div className={styles.detalheHeader}>
+                    <div className={styles.detalheLabel}>Detalhes da Solicitação Selecionada</div>
+                    <b className={styles.detalheTitulo}>Troca #EX-{selecionada.id_troca}</b>
+                    <div className={styles.detalheCliente}>Cliente: Cliente #{selecionada.id_cliente}</div>
+                  </div>
+
+                  <div className={styles.detalheLivro}>
+                    <div className={styles.livroCapa} />
+                    <div>
+                      <b>A Ordem do Tempo</b>
+                      <div className={styles.livroMeta}>Autor: Carlo Rovelli</div>
+                      <div className={styles.livroMeta}>Valor Original: R$ 42,40</div>
+                    </div>
+                  </div>
+
+                  <div className={styles.detalheSecao}>
+                    <b className={styles.detalheSecaoTitulo}>Motivo Real da Solicitação</b>
+                    <p className={styles.detalheTexto}>{selecionada.motivo}</p>
+                  </div>
+
+                  <div className={styles.detalheSecao}>
+                    <b className={styles.detalheSecaoTitulo}>Código de Rastreio (Reverso)</b>
+                    <div className={styles.rastreio}>BR87625129990X</div>
+                  </div>
+
+                  <div className={styles.detalheSecao}>
+                    <b className={styles.detalheSecaoTitulo}>Histórico do Fluxo</b>
+                    <div className={styles.historicoItem}>
+                      <div className={styles.historicoDot} />
+                      <div>
+                        <div className={styles.historicoTitulo}>Solicitação Criada</div>
+                        <div className={styles.historicoMeta}>{new Date(selecionada.data_solicitacao).toLocaleDateString('pt-BR')} por Cliente</div>
+                      </div>
+                    </div>
+                    {selecionada.data_autorizacao && (
+                      <div className={styles.historicoItem}>
+                        <div className={styles.historicoDot} />
+                        <div>
+                          <div className={styles.historicoTitulo}>Aguardando Análise</div>
+                          <div className={styles.historicoMeta}>Pendente de Curador Master</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className={styles.vazio}>Selecione uma troca para ver os detalhes.</div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-      {mensagem && <div style={{ ...card, background: '#fef3c7' }}>{mensagem}</div>}
-      {trocas.length === 0 && <div style={{ ...card, color: '#94a3b8' }}>Nenhuma troca pendente.</div>}
-      {trocas.map((t) => (
-        <div key={t.id_troca} style={card} data-testid={`troca-${t.id_troca}`}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <b>Troca #{t.id_troca} — pedido {t.pedido?.codigo_pedido}{t.compra_inteira ? ' (compra inteira)' : ''}</b>
-            <b>{t.pedido ? rotuloStatus(t.pedido.status) : t.status}</b>
-          </div>
-          <div style={{ fontSize: 13, color: '#475569', margin: '6px 0' }}>
-            Motivo: {t.motivo} — {t.itens?.reduce((a, i) => a + i.quantidade, 0) ?? 0} unidade(s)
-          </div>
-          {t.status === 'SOLICITADA' && (
-            <span style={btn} role="button" onClick={() => executar(() => trocasApi.autorizar(t.id_troca), 'Troca autorizada; o cliente foi notificado.')}>Autorizar troca</span>
-          )}
-          {t.status === 'ACEITA' && (
-            <span style={btn} role="button" onClick={() => executar(() => trocasApi.receber(t.id_troca), 'Recebimento confirmado: cupom gerado e itens devolvidos ao estoque.')}>Confirmar recebimento</span>
-          )}
-        </div>
-      ))}
     </div>
   );
 };

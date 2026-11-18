@@ -59,6 +59,7 @@ export const Livro = sequelize.define("livro", {
   ativo: { type: DataTypes.BOOLEAN, defaultValue: true },
   id_motivo_status: { type: DataTypes.INTEGER, allowNull: true },
   justificativa_status: { type: DataTypes.TEXT, allowNull: true },
+  imagem_principal_url: { type: DataTypes.STRING(500), allowNull: true },
   data_cadastro: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
 });
 

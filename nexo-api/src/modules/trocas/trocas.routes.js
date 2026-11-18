@@ -224,4 +224,143 @@ router.patch(
   })
 );
 
+// Lista todas as trocas (admin).
+router.get(
+  "/admin/todas",
+  requireFuncionario,
+  requirePerfil("ADMIN"),
+  asyncHandler(async (req, res) => {
+    const trocas = await Troca.findAll({
+      include: incluirItens,
+      order: [["id_troca", "DESC"]],
+    });
+    res.json(trocas);
+  })
+);
+
+// RF0043: nega a troca (SOLICITADA -> NEGADA).
+router.patch(
+  "/:idTroca/negar",
+  requireFuncionario,
+  requirePerfil("ADMIN"),
+  asyncHandler(async (req, res) => {
+    const troca = await Troca.findByPk(req.params.idTroca);
+    if (!troca) throw new HttpError(404, "Troca não encontrada.");
+    if (troca.status !== "SOLICITADA") throw new HttpError(400, "Somente trocas solicitadas podem ser negadas.");
+    const pedido = await Pedido.findByPk(troca.id_pedido);
+
+    await sequelize.transaction(async (t) => {
+      await troca.update(
+        { status: "NEGADA", id_funcionario_autorizacao: req.funcionario.id_funcionario, data_autorizacao: new Date() },
+        { transaction: t }
+      );
+      await mudarStatusPedido(pedido, "ENTREGUE", t, req.funcionario.id_funcionario);
+      await Notificacao.create(
+        {
+          id_cliente: troca.id_cliente,
+          tipo: "TROCA_NEGADA",
+          mensagem: `A troca do pedido ${pedido.codigo_pedido} foi recusada.`,
+          id_pedido: pedido.id_pedido,
+          id_troca: troca.id_troca,
+        },
+        { transaction: t }
+      );
+    });
+
+    res.json(await Troca.findByPk(troca.id_troca, { include: incluirItens }));
+  })
+);
+
+// RF0042: admin marca que o item da troca foi enviado pelo cliente (ACEITA -> ITEM_ENVIADO).
+router.patch(
+  "/:idTroca/enviar",
+  requireFuncionario,
+  requirePerfil("ADMIN"),
+  asyncHandler(async (req, res) => {
+    const troca = await Troca.findByPk(req.params.idTroca);
+    if (!troca) throw new HttpError(404, "Troca não encontrada.");
+    if (troca.status !== "ACEITA") throw new HttpError(400, "Somente trocas aceitas podem ser marcadas como enviadas.");
+
+    await troca.update({ status: "ITEM_ENVIADO" });
+    res.json(await Troca.findByPk(troca.id_troca, { include: incluirItens }));
+  })
+);
+
+// RF0043: confirma o recebimento do item enviado (ITEM_ENVIADO -> ITEM_RECEBIDO).
+router.patch(
+  "/:idTroca/receber",
+  requireFuncionario,
+  requirePerfil("ADMIN"),
+  asyncHandler(async (req, res) => {
+    const troca = await Troca.findByPk(req.params.idTroca);
+    if (!troca) throw new HttpError(404, "Troca não encontrada.");
+    if (troca.status !== "ITEM_ENVIADO") throw new HttpError(400, "Troca não está aguardando recebimento.");
+
+    await troca.update({ status: "ITEM_RECEBIDO", data_processamento: new Date() });
+    res.json(await Troca.findByPk(troca.id_troca, { include: incluirItens }));
+  })
+);
+
+// RF0043 / RF0044 / RF0054: processa a troca (ITEM_RECEBIDO -> PROCESSADA), gera cupom e reentra estoque.
+router.patch(
+  "/:idTroca/processar",
+  requireFuncionario,
+  requirePerfil("ADMIN"),
+  asyncHandler(async (req, res) => {
+    const troca = await Troca.findByPk(req.params.idTroca, { include: incluirItens });
+    if (!troca) throw new HttpError(404, "Troca não encontrada.");
+    if (troca.status !== "ITEM_RECEBIDO") throw new HttpError(400, "Somente trocas com item recebido podem ser processadas.");
+    const pedido = await Pedido.findByPk(troca.id_pedido);
+
+    await sequelize.transaction(async (t) => {
+      let valorTotalTroca = 0;
+      const paraEstoque = [];
+      for (const itemTroca of troca.itens) {
+        const itemPedido = await ItemPedido.findByPk(itemTroca.id_item_pedido, { transaction: t });
+        valorTotalTroca += Number(itemPedido.valor_unitario) * itemTroca.quantidade;
+        await itemPedido.update(
+          { quantidade_trocada: itemPedido.quantidade_trocada + itemTroca.quantidade },
+          { transaction: t }
+        );
+        paraEstoque.push({ id_livro: itemPedido.id_livro, quantidade: itemTroca.quantidade });
+      }
+      await reentradaEstoque(pedido.id_pedido, troca.id_troca, paraEstoque, t);
+
+      const hoje = new Date();
+      const validoAte = new Date(hoje);
+      validoAte.setFullYear(validoAte.getFullYear() + 1);
+      const cupom = await Cupom.create(
+        {
+          codigo_cupom: `TROCA-${randomUUID().slice(0, 8).toUpperCase()}`,
+          tipo: "TROCA",
+          valor: Math.round(valorTotalTroca * 100) / 100,
+          id_cliente: troca.id_cliente,
+          id_pedido_origem: troca.id_pedido,
+          valido_de: hoje,
+          valido_ate: validoAte,
+        },
+        { transaction: t }
+      );
+
+      await troca.update(
+        { status: "PROCESSADA", retorna_estoque: true, data_processamento: new Date(), id_cupom_gerado: cupom.id_cupom },
+        { transaction: t }
+      );
+      await mudarStatusPedido(pedido, "TROCADO", t, req.funcionario.id_funcionario);
+      await Notificacao.create(
+        {
+          id_cliente: troca.id_cliente,
+          tipo: "CUPOM_TROCA",
+          mensagem: `Troca processada: o cupom ${cupom.codigo_cupom} (R$ ${Number(cupom.valor).toFixed(2)}) já está disponível.`,
+          id_pedido: pedido.id_pedido,
+          id_troca: troca.id_troca,
+        },
+        { transaction: t }
+      );
+    });
+
+    res.json(await Troca.findByPk(troca.id_troca, { include: incluirItens }));
+  })
+);
+
 export default router;

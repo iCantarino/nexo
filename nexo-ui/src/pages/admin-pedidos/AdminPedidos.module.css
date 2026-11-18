@@ -1,0 +1,249 @@
+.adminPedidos {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #faf9f6;
+  display: flex;
+  align-items: flex-start;
+  text-align: left;
+  font-size: 14px;
+  color: #0f172a;
+  font-family: Inter;
+}
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.header {
+  align-self: stretch;
+  background-color: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 40px;
+}
+.headerTitles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.titulo {
+  font-size: 32px;
+  font-family: Newsreader;
+  font-weight: 700;
+}
+.subtitulo {
+  font-size: 14px;
+  color: #64748b;
+}
+.workspace {
+  padding: 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.mensagem {
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #92400e;
+}
+.secao {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+}
+.secaoTitulo {
+  font-size: 20px;
+  font-family: Newsreader;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: block;
+}
+.filtros {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.filtro,
+.filtroAtivo {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+.filtroAtivo {
+  background: #0f172a;
+  color: #fff;
+  border-color: #0f172a;
+}
+.tabela {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.tabelaHeader,
+.tabelaRow {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr 0.6fr 1fr 1fr 2fr;
+  gap: 12px;
+  padding: 14px 16px;
+  align-items: center;
+}
+.tabelaHeader {
+  background: #f8fafc;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+}
+.tabelaRow {
+  border-top: 1px solid #e2e8f0;
+  font-size: 13px;
+}
+.vazio {
+  padding: 24px;
+  color: #94a3b8;
+  text-align: center;
+}
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.botaoAcao {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  background: #0f172a;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.semAcao {
+  color: #94a3b8;
+}
+.trocaCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+.badgeTroca {
+  margin-left: 8px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #fee2e2;
+  color: #991b1b;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.trocaDesc {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 6px;
+}
+.trocaAcoes {
+  display: flex;
+  gap: 8px;
+}
+.botaoAceitar {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #16a34a;
+  background: #f0fdf4;
+  color: #166534;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.botaoRecusar {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #dc2626;
+  background: #fef2f2;
+  color: #991b1b;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  width: 480px;
+  box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+}
+.modalHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+.modalIcon {
+  font-size: 24px;
+}
+.modalText {
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+.destaque {
+  color: #d97706;
+}
+.modalBotoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.botaoCancelar {
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.botaoConfirmar {
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: none;
+  background: #0f172a;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}

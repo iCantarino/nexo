@@ -164,6 +164,7 @@ CREATE TABLE livro (
     ativo                   BOOLEAN NOT NULL DEFAULT TRUE,
     id_motivo_status        INT NULL,
     justificativa_status    TEXT NULL,
+    imagem_principal_url    VARCHAR(500) NULL,
     data_cadastro           DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_livro_autor FOREIGN KEY (id_autor)
         REFERENCES autor (id_autor) ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -190,6 +191,22 @@ CREATE TABLE livro_categoria (
     CONSTRAINT fk_livrocat_categoria FOREIGN KEY (id_categoria)
         REFERENCES categoria (id_categoria) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
+-- RF0013 / RNF0021: imagens do livro (capa e galeria)
+CREATE TABLE livro_imagem (
+    id_imagem       INT AUTO_INCREMENT PRIMARY KEY,
+    id_livro        INT NOT NULL,
+    tipo            ENUM('CAPA', 'GALERIA') NOT NULL DEFAULT 'GALERIA',
+    ordem           INT NOT NULL DEFAULT 0,
+    url_imagem      VARCHAR(500) NOT NULL,
+    nome_arquivo    VARCHAR(255) NOT NULL,
+    ativo           BOOLEAN NOT NULL DEFAULT TRUE,
+    data_cadastro   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_livroimg_livro FOREIGN KEY (id_livro)
+        REFERENCES livro (id_livro) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE INDEX idx_livroimg_livro ON livro_imagem (id_livro);
 
 -- RF0051 / RN0050-51 / RN0061-62 / RNF0064: entrada em estoque
 CREATE TABLE entrada_estoque (

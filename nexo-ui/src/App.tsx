@@ -20,6 +20,7 @@ import AdminCustomersOrders from './pages/admin-pedidos/admincustomersorders';
 import AdminTrocas from './pages/admin-trocas/admintrocas';
 import AdminAnalytics from './pages/admin-analise/adminanalise';
 import AdminFluxo from './pages/admin-fluxo/adminfluxo';
+import AdminLivros from './pages/admin-livros/adminlivros';
 
 // Componente de rota protegida para clientes
 function ProtectedClientRoute({ children }: { children: React.ReactNode }) {
@@ -193,6 +194,14 @@ function App() {
         element={
           <ProtectedAdminRoute>
             <AdminFluxo />
+          </ProtectedAdminRoute>
+        } 
+      />
+      <Route 
+        path="/admin-livros" 
+        element={
+          <ProtectedAdminRoute>
+            <AdminLivros />
           </ProtectedAdminRoute>
         } 
       />

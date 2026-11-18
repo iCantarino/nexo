@@ -1,0 +1,310 @@
+.adminLivros {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #faf9f6;
+  display: flex;
+  align-items: flex-start;
+  text-align: left;
+  font-size: 14px;
+  color: #0f172a;
+  font-family: Inter;
+}
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.header {
+  align-self: stretch;
+  background-color: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 40px;
+}
+.headerTitles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.titulo {
+  font-size: 32px;
+  font-family: Newsreader;
+  font-weight: 700;
+}
+.subtitulo {
+  font-size: 14px;
+  color: #64748b;
+}
+.botaoAdicionar {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  background: #0f172a;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.workspace {
+  padding: 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.mensagem {
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #92400e;
+}
+.busca {
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  max-width: 400px;
+}
+.tabela {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+.tabelaHeader,
+.tabelaRow {
+  display: grid;
+  grid-template-columns: 60px 1fr 2fr 1fr 1fr 1fr 0.8fr 0.8fr 2fr;
+  gap: 12px;
+  padding: 14px 16px;
+  align-items: center;
+}
+.tabelaHeader {
+  background: #f8fafc;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+}
+.tabelaRow {
+  border-top: 1px solid #e2e8f0;
+  font-size: 13px;
+}
+.thumb {
+  width: 48px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.thumbPlaceholder {
+  width: 48px;
+  height: 64px;
+  background: #e2e8f0;
+  border-radius: 4px;
+}
+.badgeAtivo,
+.badgeInativo {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.badgeAtivo {
+  background: #dcfce7;
+  color: #166534;
+}
+.badgeInativo {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.acoes {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.botaoAcao,
+.botaoAtivar,
+.botaoInativar,
+.botaoExcluir {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.botaoAcao {
+  background: #0f172a;
+  color: #fff;
+}
+.botaoAtivar {
+  background: #f0fdf4;
+  color: #166534;
+  border-color: #16a34a;
+}
+.botaoInativar {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #d97706;
+}
+.botaoExcluir {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #dc2626;
+}
+.vazio {
+  padding: 24px;
+  color: #94a3b8;
+  text-align: center;
+}
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 720px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+}
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 18px;
+}
+.botaoFechar {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #64748b;
+}
+.abas {
+  display: flex;
+  gap: 4px;
+  padding: 12px 24px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+.aba,
+.abaAtiva {
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  border-bottom: 2px solid transparent;
+}
+.abaAtiva {
+  color: #0f172a;
+  border-bottom-color: #d97706;
+}
+.modalBody {
+  padding: 24px;
+  overflow-y: auto;
+}
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.campo,
+.campoFull {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+}
+.campoFull {
+  grid-column: 1 / -1;
+}
+.campo input,
+.campo select,
+.campo textarea,
+.campoFull input,
+.campoFull select,
+.campoFull textarea {
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #0f172a;
+  text-transform: none;
+  font-weight: 400;
+}
+.checkboxGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #0f172a;
+  text-transform: none;
+}
+.preview {
+  margin-top: 16px;
+}
+.preview img {
+  max-width: 200px;
+  max-height: 280px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+.modalBotoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e2e8f0;
+}
+.botaoCancelar {
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.botaoConfirmar {
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: none;
+  background: #0f172a;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.botaoConfirmar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef, type FunctionComponent } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useState, useEffect, type FunctionComponent } from 'react';
 import { clientesApi, funcionariosApi, enderecosAdminApi, cartoesAdminApi } from '../../services/api';
 import type { CreateFuncionarioData } from '../../services/api';
+import AdminSidebar from '../../components/AdminSidebar/AdminSidebar';
 import styles from './AdminUsuarios.module.css';
 
 interface Usuario {
@@ -59,20 +58,6 @@ function validarSenhaForte(senha: string): string | null {
 }
 
 const AdminUsuarios: FunctionComponent = () => {
-  const { user } = useAuth();
-  const [_menuPerfilAberto, setMenuPerfilAberto] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setMenuPerfilAberto(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [carregando, setCarregando] = useState(false);
   const [filtroTipo, setFiltroTipo] = useState('todos');
@@ -246,52 +231,12 @@ const inputS: React.CSSProperties = {
 
   return (
     <div className={styles.adminUsuarios}>
-      {/* Sidebar */}
-      <div className={styles.frame}>
-        <Link to="/admin-dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <div className={styles.frame2}>
-            <b className={styles.nexo}>Nexo</b><div className={styles.rectangle} /><div className={styles.frame3}>v0.7</div>
-          </div>
-        </Link>
-        <div className={styles.frame4}>
-          <Link to="/admin-dashboard" className={styles.frame5} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className={styles.frame6}><img className={styles.vectorIcon} alt="" src="/images/icons/layout-dashboard.svg" /></div>
-            <div className={styles.dashboard}>Dashboard</div>
-          </Link>
-          <div className={styles.frame7}>
-            <div className={styles.frame6}><img className={styles.vectorIcon} alt="" src="/images/icons/users.svg" /></div>
-            <div className={styles.clientes}>Usuários</div>
-          </div>
-          <Link to="/admin-gerenciamento" className={styles.frame5} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className={styles.frame6}><img className={styles.vectorIcon} alt="" src="/images/icons/package.svg" /></div>
-            <div className={styles.dashboard}>Pedidos</div>
-          </Link>
-          <Link to="/admin-trocas" className={styles.frame5} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className={styles.frame6}><img className={styles.vectorIcon} alt="" src="/images/icons/repeat.svg" /></div>
-            <div className={styles.dashboard}>Trocas</div>
-          </Link>
-          <Link to="/admin-analise" className={styles.frame5} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className={styles.frame6}><img className={styles.vectorIcon} alt="" src="/images/icons/bar-chart.svg" /></div>
-            <div className={styles.dashboard}>Análise</div>
-          </Link>
-        </div>
-        <div className={styles.frame15}>
-          <div className={styles.line} />
-          <div className={styles.frame16}>
-            <div className={styles.frame17}><img className={styles.vectorIcon} alt="" src="/images/icons/user-round.svg" /></div>
-            <div className={styles.frame18}>
-              <div className={styles.arthurSchopenhauer}>{user?.nome || 'Admin'}</div>
-              <div className={styles.curadorMaster}>{user?.perfil || 'ADMIN'}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <AdminSidebar />
       {/* Main content */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '32px 48px', gap: '24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ fontSize: '28px', fontFamily: 'Newsreader', fontWeight: 700, color: '#0f172a' }}>Gestão de Usuários</div>
+            <div style={{ fontSize: '28px', fontFamily: 'Newsreader', fontWeight: 700, color: '#0f172a' }}>Gestão de Clientes</div>
             <div style={{ fontSize: '13px', color: '#475569', fontFamily: 'Inter', marginTop: '4px' }}>{usuarios.length} usuários cadastrados</div>
           </div>
           <div onClick={() => abrirModal()} style={{ cursor: 'pointer', borderRadius: '6px', background: '#0f172a', display: 'flex', alignItems: 'center', padding: '10px 16px', gap: '8px', color: '#fff', fontSize: '13px', fontWeight: 600 }}>

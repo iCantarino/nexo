@@ -126,18 +126,63 @@ export interface LoginResponse {
   nome?: string;
 }
 
+export interface LivroImagem {
+  id_imagem: number;
+  id_livro: number;
+  tipo: 'CAPA' | 'GALERIA';
+  ordem: number;
+  url_imagem: string;
+  nome_arquivo: string;
+  ativo: boolean;
+}
+
 export interface Livro {
   id_livro: number;
   codigo_livro: string;
   titulo: string;
   isbn: string;
+  id_autor?: number;
+  id_editora?: number;
+  ano_publicacao: number;
+  edicao: string;
+  num_paginas: number;
+  sinopse: string;
+  altura: string;
+  largura: string;
+  peso: string;
+  profundidade: string;
+  codigo_barras: string;
+  id_grupo_precificacao: number;
+  valor_custo: string;
   valor_venda: string;
   quantidade_estoque: number;
   ativo: boolean;
-  sinopse: string;
-  autor?: { nome: string };
-  editora?: { nome: string };
+  imagem_principal_url?: string | null;
+  autor?: { id_autor: number; nome: string };
+  editora?: { id_editora: number; nome: string };
   categorias?: { id_categoria: number; nome: string }[];
+  imagens?: LivroImagem[];
+}
+
+export interface Autor {
+  id_autor: number;
+  nome: string;
+}
+
+export interface Editora {
+  id_editora: number;
+  nome: string;
+}
+
+export interface Categoria {
+  id_categoria: number;
+  nome: string;
+}
+
+export interface GrupoPrecificacao {
+  id_grupo: number;
+  nome: string;
+  margem_lucro_percentual: string;
 }
 
 export interface CarrinhoItem {
@@ -197,6 +242,8 @@ export interface Troca {
   motivo: string;
   compra_inteira: boolean;
   data_solicitacao: string;
+  data_autorizacao?: string | null;
+  data_processamento?: string | null;
   itens?: ItemTroca[];
   pedido?: Pedido;
 }
@@ -389,6 +436,38 @@ export const carrinhoApi = {
     api.post<CarrinhoData>('/carrinho/reincluir-expirados'),
 };
 
+// APIs de Livros
+export const livrosApi = {
+  listar: (params?: { titulo?: string; ativo?: boolean }) =>
+    api.get<Livro[]>('/livros', { params }),
+  adminTodos: (params?: { titulo?: string; ativo?: boolean }) =>
+    api.get<Livro[]>('/livros/admin/todos', { params }),
+  detalhe: (idLivro: number) => api.get<Livro>(`/livros/${idLivro}`),
+  criar: (data: Partial<Livro> & { novo_autor?: string; nova_editora?: string; categorias?: number[] }) =>
+    api.post<Livro>('/livros', data),
+  atualizar: (idLivro: number, data: Partial<Livro> & { novo_autor?: string; nova_editora?: string; categorias?: number[] }) =>
+    api.patch<Livro>(`/livros/${idLivro}`, data),
+  ativar: (idLivro: number, id_motivo: number, justificativa: string) =>
+    api.patch<Livro>(`/livros/${idLivro}/ativar`, { id_motivo, justificativa }),
+  inativar: (idLivro: number, id_motivo: number, justificativa: string) =>
+    api.patch<Livro>(`/livros/${idLivro}/inativar`, { id_motivo, justificativa }),
+  deletar: (idLivro: number) => api.delete(`/livros/${idLivro}`),
+  uploadImagem: (idLivro: number, formData: FormData) =>
+    api.post<LivroImagem>(`/livros/${idLivro}/imagens`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+  removerImagem: (idLivro: number, idImagem: number) =>
+    api.delete(`/livros/${idLivro}/imagens/${idImagem}`),
+};
+
+// APIs de apoio ao catálogo
+export const catalogoApi = {
+  autores: () => api.get<Autor[]>('/livros/opcoes/autores'),
+  editoras: () => api.get<Editora[]>('/livros/opcoes/editoras'),
+  categorias: () => api.get<Categoria[]>('/livros/opcoes/categorias'),
+  gruposPrecificacao: () => api.get<GrupoPrecificacao[]>('/livros/opcoes/grupos-precificacao'),
+};
+
 // APIs de Pedidos
 export const pedidosApi = {
   calcularFrete: (id_endereco_entrega: number) =>
@@ -428,8 +507,12 @@ export const trocasApi = {
   }) => api.post<Troca>('/trocas', data),
   minhas: () => api.get<Troca[]>('/trocas/minhas'),
   adminPendentes: () => api.get<Troca[]>('/trocas/admin/pendentes'),
+  adminTodas: () => api.get<Troca[]>('/trocas/admin/todas'),
   autorizar: (idTroca: number) => api.patch<Troca>(`/trocas/${idTroca}/autorizar`, {}),
+  enviar: (idTroca: number) => api.patch<Troca>(`/trocas/${idTroca}/enviar`, {}),
   receber: (idTroca: number) => api.patch<Troca>(`/trocas/${idTroca}/receber`, {}),
+  processar: (idTroca: number) => api.patch<Troca>(`/trocas/${idTroca}/processar`, {}),
+  negar: (idTroca: number) => api.patch<Troca>(`/trocas/${idTroca}/negar`, {}),
 };
 
 // APIs de Notificações (RNF0046)

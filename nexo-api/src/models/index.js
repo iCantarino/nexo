@@ -11,6 +11,7 @@ import {
   Fornecedor,
   EntradaEstoque,
 } from "./livro.js";
+import { LivroImagem } from "./livro_imagem.js";
 import { Carrinho, ItemCarrinho } from "./carrinho.js";
 import {
   Pedido,
@@ -44,6 +45,9 @@ Livro.belongsTo(MotivoStatusLivro, { foreignKey: "id_motivo_status" });
 
 Livro.belongsToMany(Categoria, { through: LivroCategoria, foreignKey: "id_livro", otherKey: "id_categoria" });
 Categoria.belongsToMany(Livro, { through: LivroCategoria, foreignKey: "id_categoria", otherKey: "id_livro" });
+
+Livro.hasMany(LivroImagem, { foreignKey: "id_livro", as: "imagens" });
+LivroImagem.belongsTo(Livro, { foreignKey: "id_livro" });
 
 EntradaEstoque.belongsTo(Livro, { foreignKey: "id_livro" });
 EntradaEstoque.belongsTo(Fornecedor, { foreignKey: "id_fornecedor" });
@@ -123,6 +127,7 @@ export {
   MotivoStatusLivro,
   Livro,
   LivroCategoria,
+  LivroImagem,
   Fornecedor,
   EntradaEstoque,
   Carrinho,

@@ -27,7 +27,7 @@ test.describe("CRUD Completo - Frontend UI", () => {
     await page.click("a[href=\"/admin-usuarios\"]");
     await page.waitForURL(/\/admin-usuarios/, { timeout: 10000 });
     await page.waitForTimeout(1000);
-    await expect(page.locator("text=Gestão de Usuários")).toBeVisible({ timeout: 8000 });
+    await expect(page.locator("text=Gestão de Clientes")).toBeVisible({ timeout: 8000 });
 
     await page.click("text=+ Cadastrar Novo Usuário");
     await page.waitForTimeout(500);

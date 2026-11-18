@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
+import path from "path";
+import { fileURLToPath } from "url";
 import { env } from "./config/env.js";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler.js";
 
@@ -20,6 +22,8 @@ import avaliacoesRoutes from "./modules/avaliacoes/avaliacoes.routes.js";
 import chatbotRoutes from "./modules/chatbot/chatbot.routes.js";
 import analiseRoutes from "./modules/analise/analise.routes.js";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 export const app = express();
 
 app.use(
@@ -32,6 +36,9 @@ app.use(express.json());
 if (env.app.nodeEnv !== "test") {
   app.use(morgan("dev"));
 }
+
+// Servir arquivos estáticos de upload
+app.use("/uploads", express.static(path.join(__dirname, "..", "public", "uploads")));
 
 app.get("/health", (req, res) => {
   res.json({ status: "ok", ambiente: env.app.nodeEnv });
