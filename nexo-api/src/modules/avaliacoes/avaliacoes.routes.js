@@ -3,7 +3,7 @@ import { Op } from "sequelize";
 import { z } from "zod";
 import { asyncHandler, HttpError } from "../../utils/asyncHandler.js";
 import { requireCliente } from "../../middlewares/auth.js";
-import { Avaliacao, Livro, Pedido, ItemPedido } from "../../models/index.js";
+import { Avaliacao, Livro, Pedido, ItemPedido, Cliente } from "../../models/index.js";
 
 const router = Router({ mergeParams: true });
 
@@ -33,7 +33,11 @@ router.get(
   asyncHandler(async (req, res) => {
     const livro = await Livro.findByPk(req.params.idLivro);
     if (!livro) throw new HttpError(404, "Livro não encontrado.");
-    const avaliacoes = await Avaliacao.findAll({ where: { id_livro: req.params.idLivro } });
+    const avaliacoes = await Avaliacao.findAll({
+      where: { id_livro: req.params.idLivro },
+      include: [{ model: Cliente, attributes: ["nome"] }],
+      order: [["data_avaliacao", "DESC"]],
+    });
     res.json(avaliacoes);
   })
 );

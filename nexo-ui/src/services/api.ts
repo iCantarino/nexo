@@ -266,6 +266,16 @@ export interface PerfilLeitura {
   avaliacoesPositivas: { id_livro: number; titulo: string; estrelas: number; categorias: string[] }[];
 }
 
+export interface Avaliacao {
+  id_avaliacao: number;
+  id_livro: number;
+  id_cliente: number;
+  estrelas: number;
+  comentario: string | null;
+  data_avaliacao: string;
+  cliente?: { nome: string };
+}
+
 export interface Notificacao {
   id_notificacao: number;
   tipo: string;
@@ -513,6 +523,13 @@ export const trocasApi = {
   receber: (idTroca: number) => api.patch<Troca>(`/trocas/${idTroca}/receber`, {}),
   processar: (idTroca: number) => api.patch<Troca>(`/trocas/${idTroca}/processar`, {}),
   negar: (idTroca: number) => api.patch<Troca>(`/trocas/${idTroca}/negar`, {}),
+};
+
+// APIs de Avaliações
+export const avaliacoesApi = {
+  listar: (idLivro: number) => api.get<Avaliacao[]>(`/livros/${idLivro}/avaliacoes`),
+  criar: (idLivro: number, data: { estrelas: number; comentario: string }) =>
+    api.post<Avaliacao>(`/livros/${idLivro}/avaliacoes`, data),
 };
 
 // APIs de Notificações (RNF0046)

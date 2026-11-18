@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { chatbotApi, carrinhoApi } from '../../services/api';
 import type { PerfilLeitura, Livro } from '../../services/api';
 import Navbar from '../../components/Navbar/Navbar';
+import MarkdownText from '../../components/MarkdownText/MarkdownText';
 import styles from './AiChatbot.module.css';
 
 interface Mensagem {
@@ -180,7 +181,11 @@ const AiChatbot: FunctionComponent = () => {
                 <div
                   className={`${styles.messageBubble} ${m.tipo === 'usuario' ? styles.messageBubbleUser : ''}`}
                 >
-                  {m.texto}
+                  {m.tipo === 'assistente' ? (
+                    <MarkdownText text={m.texto} />
+                  ) : (
+                    m.texto
+                  )}
                   {m.livros && m.livros.length > 0 && (
                     <div className={styles.bookCards}>
                       {m.livros.map((livro) => (

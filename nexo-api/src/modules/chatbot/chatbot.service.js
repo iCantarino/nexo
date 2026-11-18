@@ -10,6 +10,7 @@ import {
   ItemPedido,
   Pedido,
   Cliente,
+  Autor,
 } from "../../models/index.js";
 
 const OPENROUTER_URL = env.ia.openRouterUrl;
@@ -69,12 +70,12 @@ export async function construirPerfilLeitura(idCliente) {
 
   const contagens = new Map();
   for (const item of livrosComprados) {
-    for (const cat of item.livro.categoria || []) {
+    for (const cat of item.livro.categorias || []) {
       contagens.set(cat.nome, (contagens.get(cat.nome) || 0) + item.quantidade);
     }
   }
   for (const av of avaliacoesPositivas) {
-    for (const cat of av.livro.categoria || []) {
+    for (const cat of av.livro.categorias || []) {
       contagens.set(cat.nome, (contagens.get(cat.nome) || 0) + 1);
     }
   }
@@ -102,14 +103,14 @@ export async function construirPerfilLeitura(idCliente) {
       id_livro: i.livro.id_livro,
       titulo: i.livro.titulo,
       preco: formatarPreco(i.livro.valor_venda),
-      categorias: (i.livro.categoria || []).map((c) => c.nome),
+      categorias: (i.livro.categorias || []).map((c) => c.nome),
       quantidade: i.quantidade,
     })),
     avaliacoesPositivas: avaliacoesPositivas.map((a) => ({
       id_livro: a.livro.id_livro,
       titulo: a.livro.titulo,
       estrelas: a.estrelas,
-      categorias: (a.livro.categoria || []).map((c) => c.nome),
+      categorias: (a.livro.categorias || []).map((c) => c.nome),
     })),
   };
 }
@@ -127,6 +128,7 @@ async function buscarCatalogo(limite = 50) {
   return Livro.findAll({
     where: { ativo: true, quantidade_estoque: { [Op.gt]: 0 } },
     include: [
+      { model: Autor, attributes: ["id_autor", "nome"] },
       { model: Categoria, through: { attributes: [] }, attributes: ["id_categoria", "nome"] },
     ],
     limit: limite,
@@ -145,7 +147,7 @@ async function montarPrompt(mensagem, idCliente) {
 
   const catalogoTexto = catalogo
     .map((l) => {
-      const cats = (l.categoria || []).map((c) => c.nome).join(", ");
+      const cats = (l.categorias || []).map((c) => c.nome).join(", ");
       return `- ID ${l.id_livro}: "${l.titulo}" por ${l.autor?.nome || "autor desconhecido"}, ${formatarPreco(l.valor_venda)}, categorias: [${cats}], sinopse: ${l.sinopse?.slice(0, 120) || ""}`;
     })
     .join("\n");
@@ -160,11 +162,12 @@ Você atua no e-commerce Nexo e deve ajudar o cliente a encontrar livros, respon
 REGRAS:
 1. Baseie suas recomendações no perfil de leitura do cliente (histórico de compras, avaliações e preferências explícitas).
 2. Seja caloroso, mas conciso. Máximo de 3 parágrafos na resposta principal.
-3. Quando sugerir livros, use SOMENTE os IDs do catálogo fornecido.
-4. Ao final da resposta, adicione uma seção JSON no formato: {"livros_recomendados": [id1, id2, ...]}. Pode ser uma lista vazia.
+3. Quando sugerir livros, use SOMENTE os títulos do catálogo fornecido. NUNCA inclua IDs de livros, códigos internos, endpoints de API ou qualquer informação técnica na resposta ao cliente.
+4. Ao final da resposta, adicione uma seção JSON no formato: {"livros_recomendados": [id1, id2, ...]}. Pode ser uma lista vazia. Esse JSON será removido antes de exibir a resposta ao cliente.
 5. Se o cliente perguntar algo que não seja sobre livros, responda gentilmente que seu papel é ajudar com recomendações literárias.
 6. O nome do cliente é ${perfil.cliente}.
 7. NUNCA invente livros que não estejam no catálogo.
+8. Você pode usar markdown básico (negrito com **texto** e itálico com *texto*) para destacar títulos e palavras importantes.
 
 PERFIL DE LEITURA DO CLIENTE:
 - Interesses: ${interesses}
@@ -174,7 +177,7 @@ PERFIL DE LEITURA DO CLIENTE:
 EXEMPLOS DE INTERAÇÕES BEM AVALIADAS:
 ${exemplosTexto}
 
-CATÁLOGO DISPONÍVEL (use apenas esses IDs):
+CATÁLOGO DISPONÍVEL (use apenas esses títulos, nunca exponha os IDs):
 ${catalogoTexto}`;
 
   return {
@@ -201,7 +204,11 @@ function extrairLivrosRecomendados(texto) {
 }
 
 function limparResposta(texto) {
-  return texto.replace(/\{[\s\S]*"livros_recomendados"[\s\S]*\}/, "").trim();
+  return texto
+    .replace(/\{[\s\S]*"livros_recomendados"[\s\S]*\}/, "")
+    .replace(/\(?ID\s*:?\s*\d+\)?/gi, "")
+    .replace(/\b(api|endpoint|url|http)[\s\S]*?\b/gi, "")
+    .trim();
 }
 
 export async function gerarRespostaIA(mensagem, idCliente) {
@@ -230,13 +237,14 @@ export async function gerarRespostaIA(mensagem, idCliente) {
       model: OPENROUTER_MODEL,
       messages,
       temperature: 0.7,
-      max_tokens: 1200,
+      max_tokens: 2500,
     }),
     signal: controller.signal,
   }).finally(() => clearTimeout(timeoutId));
 
   if (!response.ok) {
     const err = await response.text();
+    console.error(`[OpenRouter] Erro ${response.status}:`, err);
     throw new Error(`OpenRouter retornou erro ${response.status}: ${err}`);
   }
 

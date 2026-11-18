@@ -1,4 +1,5 @@
 import { useState, useEffect, type FunctionComponent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import api, { carrinhoApi } from '../../services/api';
 import type { Livro } from '../../services/api';
@@ -7,6 +8,7 @@ import styles from './HomeCatalog.module.css';
 
 const POR_PAGINA = 8;
 const POR_LINHA = 4;
+const API_BASE = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:8000';
 
 const filters = [
   'Todos os Assuntos', 'Filosofia', 'Ciência & Tecnologia',
@@ -18,6 +20,7 @@ const formatarPreco = (valor: string | number) =>
 
 const HomeCatalog: FunctionComponent = () => {
   useAuth();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState(0);
   const [livros, setLivros] = useState<Livro[]>([]);
@@ -85,9 +88,24 @@ const HomeCatalog: FunctionComponent = () => {
   }
 
   const renderCard = (livro: Livro) => (
-    <div className={styles.bookCard} key={livro.id_livro} data-testid={`card-livro-${livro.id_livro}`}>
-      <div className={styles.coverWrapperIcon}
-        style={{ background: 'linear-gradient(135deg, #1e3a5f, #d97706)' }} />
+    <div
+      className={styles.bookCard}
+      key={livro.id_livro}
+      data-testid={`card-livro-${livro.id_livro}`}
+      onClick={() => navigate(`/produto/${livro.id_livro}`)}
+      style={{ cursor: 'pointer' }}
+    >
+      {livro.imagem_principal_url ? (
+        <img
+          className={styles.coverWrapperIcon}
+          src={`${API_BASE}${livro.imagem_principal_url}`}
+          alt={livro.titulo}
+          style={{ objectFit: 'cover' }}
+        />
+      ) : (
+        <div className={styles.coverWrapperIcon}
+          style={{ background: 'linear-gradient(135deg, #1e3a5f, #d97706)' }} />
+      )}
       <div className={styles.metadata}>
         <div className={styles.stars}>
           {[0, 1, 2, 3, 4].map((n) => <span className={styles.starIcon} key={n} />)}
@@ -100,7 +118,7 @@ const HomeCatalog: FunctionComponent = () => {
         <button type="button" className={styles.addBtn}
           style={{ border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
           data-testid={`adicionar-${livro.id_livro}`}
-          onClick={() => handleAdicionar(livro.id_livro)}>
+          onClick={(e) => { e.stopPropagation(); handleAdicionar(livro.id_livro); }}>
           + Adicionar
         </button>
       </div>

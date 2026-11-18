@@ -95,7 +95,7 @@ async function calcularValorVenda(idGrupo, valorCusto) {
 async function atualizarCategorias(livro, categorias) {
   if (categorias !== undefined) {
     const registros = await Categoria.findAll({ where: { id_categoria: categorias } });
-    await livro.setCategorias(registros);
+    await livro.setCategoria(registros);
   }
 }
 

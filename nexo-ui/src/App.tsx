@@ -21,6 +21,7 @@ import AdminTrocas from './pages/admin-trocas/admintrocas';
 import AdminAnalytics from './pages/admin-analise/adminanalise';
 import AdminFluxo from './pages/admin-fluxo/adminfluxo';
 import AdminLivros from './pages/admin-livros/adminlivros';
+import ProductDetail from './pages/produto-detalhe/productdetail';
 
 // Componente de rota protegida para clientes
 function ProtectedClientRoute({ children }: { children: React.ReactNode }) {
@@ -144,6 +145,14 @@ function App() {
         element={
           <ProtectedClientRoute>
             <AiChatbot />
+          </ProtectedClientRoute>
+        }
+      />
+      <Route
+        path="/produto/:idLivro"
+        element={
+          <ProtectedClientRoute>
+            <ProductDetail />
           </ProtectedClientRoute>
         }
       />
