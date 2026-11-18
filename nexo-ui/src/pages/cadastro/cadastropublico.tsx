@@ -61,7 +61,7 @@ export default function CadastroPublico() {
       setErro("A senha deve conter pelo menos uma letra maiúscula");
       return;
     }
-    if (!/(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/.test(formData.senha)) {
+    if (!/(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?])/.test(formData.senha)) {
       setErro("A senha deve conter pelo menos um caractere especial (!@#$%^&* etc.)");
       return;
     }

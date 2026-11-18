@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type FunctionComponent } from 'react';
+import { useState, useEffect, type FunctionComponent } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -6,12 +6,13 @@ import {
   pedidosApi, bandeirasApi, valorDoCupom, rotuloStatus,
 } from '../../services/api';
 import type {
-  CarrinhoData, Endereco, CartaoCredito, Cupom, Bandeira, Pedido,
+  CarrinhoData, Endereco, CartaoCredito, Cupom, Bandeira, Pedido, CreateEnderecoData, CreateCartaoData,
 } from '../../services/api';
+import Navbar from '../../components/Navbar/Navbar';
 import styles from './Checkout.module.css';
 
 const Checkout: FunctionComponent = () => {
-  const { user, logout } = useAuth();
+  useAuth();
   // const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [carrinho, setCarrinho] = useState<CarrinhoData | null>(null);
@@ -22,14 +23,12 @@ const Checkout: FunctionComponent = () => {
   const [loading, setLoading] = useState(true);
   const [finalizando, setFinalizando] = useState(false);
   const [mensagem, setMensagem] = useState('');
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
 
   // Seleções
   const [enderecoSelecionado, setEnderecoSelecionado] = useState<number | null>(null);
   const [cartoesSelecionados, setCartoesSelecionados] = useState<{ id_cartao: number; valor_pago: number }[]>([]);
-  const [cupomPromoCheckout, setCupomPromoCheckout] = useState<string>('');
-  const [cupomTrocaCheckout, setCupomTrocaCheckout] = useState<string>('');
+  const [cupomPromoCheckout, setCupomPromoCheckout] = useState<string>(searchParams.get('cupom_promo') || '');
+  const [cupomTrocaCheckout, setCupomTrocaCheckout] = useState<string>(searchParams.get('cupom_troca') || '');
   const [valorFrete, setValorFrete] = useState(0);
   const [usarPix, setUsarPix] = useState(false);
   const [valorPix, setValorPix] = useState(0);
@@ -42,51 +41,43 @@ const Checkout: FunctionComponent = () => {
   const [salvarCartao, setSalvarCartao] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const cupomPromoFromCart = searchParams.get('cupom_promo') || '';
-  const cupomTrocaFromCart = searchParams.get('cupom_troca') || '';
-
   useEffect(() => {
-    function h(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setIsUserMenuOpen(false);
-    }
-    document.addEventListener('mousedown', h);
-    return () => document.removeEventListener('mousedown', h);
-  }, []);
-useEffect(() => {
-    if (cupomPromoFromCart) setCupomPromoCheckout(cupomPromoFromCart);
-    if (cupomTrocaFromCart) setCupomTrocaCheckout(cupomTrocaFromCart);
-  }, [cupomPromoFromCart, cupomTrocaFromCart]);
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const [cartRes, endRes, cartaoRes, cuponsRes, bandRes] = await Promise.all([
+          carrinhoApi.listar(),
+          enderecosApi.listar(),
+          cartoesApi.listar(),
+          cuponsApi.meusCupons(),
+          bandeirasApi.listar(),
+        ]);
+        setCarrinho(cartRes.data);
+        setEnderecos(endRes.data);
+        setCartoes(cartaoRes.data);
+        setCuponsDisponiveis(cuponsRes.data.filter(c => !c.utilizado));
+        setBandeiras(bandRes.data);
 
-  useEffect(() => {
+        const padrao = endRes.data.find(e => e.padrao);
+        const enderecoId = padrao ? padrao.id_endereco : (endRes.data.length > 0 ? endRes.data[0].id_endereco : null);
+        if (enderecoId) {
+          setEnderecoSelecionado(enderecoId);
+          try {
+            const freteRes = await pedidosApi.calcularFrete(enderecoId);
+            setValorFrete(freteRes.data.valor_frete);
+          } catch (e: any) {
+            setMensagem(e.response?.data?.detail || 'Erro ao calcular frete.');
+          }
+        }
+      } catch (e: any) {
+        console.error(e);
+        setMensagem('Erro ao carregar dados.');
+      } finally {
+        setLoading(false);
+      }
+    };
     loadData();
   }, []);
-
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const [cartRes, endRes, cartaoRes, cuponsRes, bandRes] = await Promise.all([
-        carrinhoApi.listar(),
-        enderecosApi.listar(),
-        cartoesApi.listar(),
-        cuponsApi.meusCupons(),
-        bandeirasApi.listar(),
-      ]);
-      setCarrinho(cartRes.data);
-      setEnderecos(endRes.data);
-      setCartoes(cartaoRes.data);
-      setCuponsDisponiveis(cuponsRes.data.filter(c => !c.utilizado));
-      setBandeiras(bandRes.data);
-
-      const padrao = endRes.data.find(e => e.padrao);
-      if (padrao) setEnderecoSelecionado(padrao.id_endereco);
-      else if (endRes.data.length > 0) setEnderecoSelecionado(endRes.data[0].id_endereco);
-    } catch (e: any) {
-      console.error(e);
-      setMensagem('Erro ao carregar dados.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const itensValidos = carrinho?.itens.filter(i => !i.removido_por_expiracao) || [];
   const subtotal = itensValidos.reduce((acc, i) => acc + Number(i.livro?.valor_venda || 0) * i.quantidade, 0);
@@ -117,9 +108,15 @@ useEffect(() => {
   };
 
   // O frete faz parte do total, então é recalculado sempre que o endereço muda.
-  useEffect(() => {
-    if (enderecoSelecionado && carrinho) calcularFrete(enderecoSelecionado);
-  }, [enderecoSelecionado, carrinho]);
+  const handleSelecionarEndereco = async (idEndereco: number) => {
+    setEnderecoSelecionado(idEndereco);
+    try {
+      const res = await pedidosApi.calcularFrete(idEndereco);
+      setValorFrete(res.data.valor_frete);
+    } catch (e: any) {
+      setMensagem(e.response?.data?.detail || 'Erro ao calcular frete.');
+    }
+  };
 
   const handleCalcularFrete = () => {
     if (!enderecoSelecionado) { setMensagem('Selecione um endereço primeiro.'); return; }
@@ -177,41 +174,48 @@ useEffect(() => {
     setSaving(true);
     try {
       const form = e.currentTarget;
-      const data: any = {
-        nome_identificador: (form.nome_identificador as any).value,
-        tipo: (form.tipo as any).value, tipo_residencia: (form.tipo_residencia as any).value,
-        tipo_logradouro: (form.tipo_logradouro as any).value, logradouro: (form.logradouro as any).value,
-        numero: (form.numero as any).value, bairro: (form.bairro as any).value,
-        cep: (form.cep as any).value, cidade: (form.cidade as any).value,
-        estado: (form.estado as any).value, pais: (form.pais as any).value,
-        observacoes: (form.observacoes as any).value || null,
+      const val = (name: string) => (form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement)?.value;
+      const data: CreateEnderecoData = {
+        nome_identificador: val('nome_identificador'),
+        tipo: val('tipo') as 'ENTREGA' | 'COBRANCA' | 'AMBOS',
+        tipo_residencia: val('tipo_residencia'),
+        tipo_logradouro: val('tipo_logradouro'),
+        logradouro: val('logradouro'),
+        numero: val('numero'),
+        bairro: val('bairro'),
+        cep: val('cep'),
+        cidade: val('cidade'),
+        estado: val('estado'),
+        pais: val('pais'),
+        observacoes: val('observacoes') || null,
       };
       const res = salvarEndereco
         ? await enderecosApi.criar(data)
         : { data: { id_endereco: 0, ...data, padrao: false } };
       setEnderecoSelecionado(res.data.id_endereco);
-      if (salvarEndereco) setEnderecos([...enderecos, res.data]);
+      if (salvarEndereco) setEnderecos([...enderecos, res.data as Endereco]);
       setModalNovoEndereco(false);
     } catch (x: any) { alert(x.response?.data?.detail || 'Erro'); }
     finally { setSaving(false); }
   };
-const handleCriarCartao = async (e: any) => {
+  const handleCriarCartao = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
     try {
       const form = e.currentTarget;
-      const data: any = {
-        id_bandeira: Number(form.id_bandeira.value),
-        numero_cartao: form.numero_cartao.value,
-        nome_impresso: form.nome_impresso.value,
-        codigo_seguranca: form.codigo_seguranca.value,
-        preferencial: form.preferencial.checked,
+      const val = (name: string) => (form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement)?.value;
+      const data: CreateCartaoData = {
+        id_bandeira: Number(val('id_bandeira')),
+        numero_cartao: val('numero_cartao'),
+        nome_impresso: val('nome_impresso'),
+        codigo_seguranca: val('codigo_seguranca'),
+        preferencial: (form.elements.namedItem('preferencial') as HTMLInputElement)?.checked,
       };
       const res = salvarCartao
         ? await cartoesApi.criar(data)
         : { data: { id_cartao: 0, ...data } };
       handleAdicionarCartao(res.data.id_cartao);
-      if (salvarCartao) setCartoes([...cartoes, res.data]);
+      if (salvarCartao) setCartoes([...cartoes, res.data as CartaoCredito]);
       setModalNovoCartao(false);
     } catch (x: any) { alert(x.response?.data?.detail || 'Erro'); }
     finally { setSaving(false); }
@@ -220,12 +224,7 @@ const handleCriarCartao = async (e: any) => {
 if (pedidoCriado) {
     return (
       <div className={styles.checkout}>
-        <div className={styles.navbar}>
-          <div className={styles.brand}>
-            <b className={styles.logo}>Nexo</b>
-            <div className={styles.brandDot} />
-          </div>
-        </div>
+        <Navbar />
         <div className={styles.checkoutBody}>
           <div className={styles.checkoutLeft}>
             {(() => {
@@ -270,34 +269,7 @@ if (pedidoCriado) {
 
   return (
     <div className={styles.checkout}>
-      <div className={styles.navbar}>
-        <div className={styles.brand}>
-          <b className={styles.logo}>Nexo</b>
-          <div className={styles.brandDot} />
-        </div>
-        <div className={styles.navLinks}>
-          <div className={styles.navItemCatalog}><div className={styles.catlogo}>catálogo</div><div className={styles.activeLine} /></div>
-          <div className={styles.navItemPhilosophy}><div className={styles.filosofia}>filosofia</div></div>
-          <div className={styles.navItemPhilosophy}><div className={styles.filosofia}>ciência</div></div>
-          <div className={styles.navItemPhilosophy}><div className={styles.filosofia}>arte</div></div>
-          <div className={styles.navItemPhilosophy}><div className={styles.filosofia}>história</div></div>
-        </div>
-        <div className={styles.navActions}>
-          <span className={styles.searchIcon} />
-          <div className={styles.searchPlaceholder}>Buscar títulos, autores, editoras...</div>
-          <div className={styles.userMenu} ref={menuRef} role="button" tabIndex={0}
-            onClick={() => setIsUserMenuOpen(!isUserMenuOpen)} style={{ position: 'relative' }}>
-            <span className={styles.userRoundIcon} />
-            <div className={styles.userName}>{(user as any)?.nome || 'Usuário'}</div>
-            {isUserMenuOpen && (
-              <div style={{ position: 'absolute', top: '100%', right: 0, background: '#fff', border: '1px solid #e2e8f0', borderRadius: 8, boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 10, minWidth: 150 }}>
-                <Link to="/perfil" style={{ display: 'block', padding: '10px 16px', textDecoration: 'none', color: '#0f172a', fontSize: 14 }} onClick={(e) => e.stopPropagation()}>Perfil</Link>
-                <div style={{ padding: '10px 16px', cursor: 'pointer', color: '#0f172a', fontSize: 14 }} onClick={(e) => { e.stopPropagation(); logout(); }}>Sair</div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+      <Navbar />
 <div className={styles.checkoutBody}>
         <div className={styles.checkoutLeft}>
           <b className={styles.checkoutSeguro}>Checkout Seguro</b>
@@ -311,7 +283,7 @@ if (pedidoCriado) {
                 <div key={addr.id_endereco}
                   data-testid={`endereco-${addr.id_endereco}`}
                   className={enderecoSelecionado === addr.id_endereco ? styles.addrCard1 : styles.addrCard2}
-                  onClick={() => { setEnderecoSelecionado(addr.id_endereco); setValorFrete(0); }}
+                  onClick={() => handleSelecionarEndereco(addr.id_endereco)}
                   role="button" tabIndex={0}
                   style={{ cursor: 'pointer', border: enderecoSelecionado === addr.id_endereco ? '2px solid #d97706' : '2px solid transparent' }}>
                   <div className={styles.frame}>
@@ -352,7 +324,7 @@ if (pedidoCriado) {
                 const cartao = cartoes.find(c => c.id_cartao === cs.id_cartao);
                 return (
                   <div key={cs.id_cartao} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
-                    <span>{(cartao?.bandeira as any)?.nome || 'Cartão'} Final {(cartao?.numero_cartao || '').slice(-4)}</span>
+                    <span>{cartao?.bandeira?.nome || 'Cartão'} Final {(cartao?.numero_cartao || '').slice(-4)}</span>
                     <span>R$</span>
                     <input type="number" min="0" step="0.01" value={cs.valor_pago} data-testid={`cartao-valor-${cs.id_cartao}`}
                       onChange={(e) => handleValorCartao(cs.id_cartao, Number(e.target.value))}
@@ -370,7 +342,7 @@ if (pedidoCriado) {
                     role="button" tabIndex={0}
                     style={{ cursor: 'pointer', padding: '6px 12px', borderRadius: 6, border: '1px solid #e2e8f0', fontSize: 12,
                       background: cartoesSelecionados.some(c => c.id_cartao === cartao.id_cartao) ? '#fef3c7' : '#fff' }}>
-                    {(cartao.bandeira as any)?.nome || 'Cartão'} Final {(cartao.numero_cartao || '').slice(-4)}
+                    {cartao.bandeira?.nome || 'Cartão'} Final {(cartao.numero_cartao || '').slice(-4)}
                     {cartao.preferencial && ' ★'}
                   </div>
                 ))}

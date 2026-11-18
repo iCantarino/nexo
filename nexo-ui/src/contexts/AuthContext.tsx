@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const response = await authApi.loginFuncionario(email, senha);
         const { access_token, perfil, nome } = response.data;
         
-        const userData: User = buildUser(access_token, email, nome);
+        const userData: User = buildUser(access_token, email, nome, perfil);
 
         setToken(access_token);
         setUser(userData);

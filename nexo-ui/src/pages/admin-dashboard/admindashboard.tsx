@@ -1,12 +1,24 @@
 import { useState, useRef, useEffect, type FunctionComponent } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { analiseApi } from '../../services/api';
 import styles from './AdminDashboard.module.css';
 
+interface Kpis {
+  pedidos_hoje: number;
+  receita_dia: number;
+  novos_clientes: number;
+  itens_em_transito: number;
+}
+
+const fmtBr = (n: number) =>
+  'R$ ' + Number(n).toFixed(2).replace('.', ',');
 
 const AdminDashboard: FunctionComponent = () => {
   const { user, logout } = useAuth();
   const [menuPerfilAberto, setMenuPerfilAberto] = useState(false);
+  const [kpis, setKpis] = useState<Kpis | null>(null);
+  const [carregandoKpis, setCarregandoKpis] = useState(true);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -17,6 +29,20 @@ const AdminDashboard: FunctionComponent = () => {
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const carregar = async () => {
+      try {
+        const res = await analiseApi.kpis();
+        setKpis(res.data);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setCarregandoKpis(false);
+      }
+    };
+    carregar();
   }, []);
 
   return (
@@ -65,11 +91,11 @@ const AdminDashboard: FunctionComponent = () => {
           <div className={styles.line} />
           <div className={styles.userProfile} onClick={() => setMenuPerfilAberto(!menuPerfilAberto)} style={{ cursor: 'pointer', position: 'relative' }} ref={menuRef}>
             <div className={styles.avatar}>
-              <b className={styles.nexo}>{(user as any)?.nome?.charAt(0)?.toUpperCase() || 'A'}</b>
+              <b className={styles.nexo}>{user?.nome?.charAt(0)?.toUpperCase() || 'A'}</b>
             </div>
             <div className={styles.userInfo}>
-              <div className={styles.arthurSchopenhauer}>{(user as any)?.nome || 'Administrador'}</div>
-              <div className={styles.curadorMaster}>{(user as any)?.perfil || 'ADMIN'}</div>
+              <div className={styles.arthurSchopenhauer}>{user?.nome || 'Administrador'}</div>
+              <div className={styles.curadorMaster}>{user?.perfil || 'ADMIN'}</div>
             </div>
             {menuPerfilAberto && (
               <div style={{ position: 'absolute', bottom: '100%', left: 0, right: 0, backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '8px', zIndex: 50, boxShadow: '0 -4px 6px rgba(0,0,0,0.1)' }}>
@@ -103,7 +129,7 @@ const AdminDashboard: FunctionComponent = () => {
           <div className={styles.kpiStrip}>
             <div className={styles.kpiCard}>
               <div className={styles.pedidosHoje}>Pedidos Hoje</div>
-              <b className={styles.b}>34</b>
+              <b className={styles.b}>{carregandoKpis ? '—' : (kpis?.pedidos_hoje ?? 0)}</b>
               <div className={styles.trend}>
                 <div className={styles.iconWrapper7}>
                   <img className={styles.frameIcon7} alt="" />
@@ -114,7 +140,7 @@ const AdminDashboard: FunctionComponent = () => {
             </div>
             <div className={styles.kpiCard}>
               <div className={styles.pedidosHoje}>Receita do Dia</div>
-              <b className={styles.b}>R$ 4.280</b>
+              <b className={styles.b}>{carregandoKpis ? '—' : fmtBr(kpis?.receita_dia ?? 0)}</b>
               <div className={styles.trend}>
                 <div className={styles.iconWrapper7}>
                   <img className={styles.frameIcon7} alt="" />
@@ -125,7 +151,7 @@ const AdminDashboard: FunctionComponent = () => {
             </div>
             <div className={styles.kpiCard}>
               <div className={styles.pedidosHoje}>Novos Clientes</div>
-              <b className={styles.b}>12</b>
+              <b className={styles.b}>{carregandoKpis ? '—' : (kpis?.novos_clientes ?? 0)}</b>
               <div className={styles.trend}>
                 <div className={styles.iconWrapper7}>
                   <img className={styles.frameIcon7} alt="" />
@@ -136,7 +162,7 @@ const AdminDashboard: FunctionComponent = () => {
             </div>
             <div className={styles.kpiCard}>
               <div className={styles.pedidosHoje}>Itens em Trânsito</div>
-              <b className={styles.b}>87</b>
+              <b className={styles.b}>{carregandoKpis ? '—' : (kpis?.itens_em_transito ?? 0)}</b>
               <div className={styles.trend4}>
                 <div className={styles.dashboard}>Envio prioritário</div>
               </div>

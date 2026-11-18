@@ -1,50 +1,12 @@
 import type { FunctionComponent } from 'react';
+import Navbar from '../../components/Navbar/Navbar';
 import styles from './ProductDetail.module.css';
 
 
 const ProductDetail: FunctionComponent = () => {
   	return (
     		<div className={styles.productDetail}>
-      			<div className={styles.navbar}>
-        				<div className={styles.brand}>
-          					<b className={styles.logo}>Nexo</b>
-          					<div className={styles.brandDot} />
-        				</div>
-        				<div className={styles.navLinks}>
-          					<div className={styles.navItemCatalog}>
-            						<div className={styles.catlogo}>catálogo</div>
-          					</div>
-          					<div className={styles.navItemCatalog}>
-            						<div className={styles.catlogo}>filosofia</div>
-          					</div>
-          					<div className={styles.navItemScience}>
-            						<div className={styles.cincia}>ciência</div>
-            						<div className={styles.activeLine} />
-          					</div>
-          					<div className={styles.navItemCatalog}>
-            						<div className={styles.catlogo}>arte</div>
-          					</div>
-          					<div className={styles.navItemCatalog}>
-            						<div className={styles.catlogo}>história</div>
-          					</div>
-        				</div>
-        				<div className={styles.navActions}>
-          					<div className={styles.searchBar}>
-            						<img className={styles.searchIcon} alt="" />
-            						<div className={styles.searchPlaceholder}>Buscar títulos, autores, editoras...</div>
-          					</div>
-          					<div className={styles.userMenu}>
-            						<img className={styles.userRoundIcon} alt="" />
-            						<div className={styles.userName}>Arthur S.</div>
-          					</div>
-          					<div className={styles.cartBtn}>
-            						<img className={styles.shoppingBagIcon} alt="" />
-            						<div className={styles.badge}>
-              							<b className={styles.logo}>3</b>
-            						</div>
-          					</div>
-        				</div>
-      			</div>
+      			<Navbar />
       			<div className={styles.productCore}>
         				<img className={styles.mainCoverIcon} alt="" />
         				<div className={styles.infoAndBuy}>

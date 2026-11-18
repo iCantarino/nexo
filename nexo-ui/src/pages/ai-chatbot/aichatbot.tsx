@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, type FunctionComponent } from 'react';
-import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { chatbotApi, carrinhoApi } from '../../services/api';
 import type { PerfilLeitura, Livro } from '../../services/api';
+import Navbar from '../../components/Navbar/Navbar';
 import styles from './AiChatbot.module.css';
 
 interface Mensagem {
@@ -26,27 +26,15 @@ const corPorCategoria: Record<string, string> = {
 };
 
 const AiChatbot: FunctionComponent = () => {
-  const { user, logout } = useAuth();
+  useAuth();
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
   const [input, setInput] = useState('');
   const [carregando, setCarregando] = useState(false);
   const [perfil, setPerfil] = useState<PerfilLeitura | null>(null);
   const [recomendacoes, setRecomendacoes] = useState<{ livro: Livro }[]>([]);
   const [qtdCarrinho, setQtdCarrinho] = useState(0);
-  const [menuAberto, setMenuAberto] = useState(false);
   const [erro, setErro] = useState('');
-  const menuRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setMenuAberto(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -167,44 +155,9 @@ const AiChatbot: FunctionComponent = () => {
     return { background: `linear-gradient(135deg, ${cor}, #d97706)` };
   };
 
-  const primeiroNome = user?.nome?.split(' ')[0] || 'Cliente';
-  const iniciais = primeiroNome.charAt(0).toUpperCase();
-
   return (
     <div className={styles.aiChatbot}>
-      <nav className={styles.navbar}>
-        <Link to="/home" className={styles.brand}>
-          Nexo
-          <span className={styles.brandDot} />
-        </Link>
-        <div className={styles.navLinks}>
-          <Link to="/home" className={styles.navLink}>Catálogo</Link>
-          <span className={styles.navLink}>Filosofia</span>
-          <span className={styles.navLink}>Ciência</span>
-          <span className={styles.navLink}>Arte</span>
-          <span className={styles.navLink}>História</span>
-          <span className={styles.navLinkActive}>IA Assistente</span>
-        </div>
-        <div className={styles.navActions}>
-          <div className={styles.searchBar}>
-            <span>🔍</span>
-            <span>Buscar no catálogo...</span>
-          </div>
-          <div className={styles.userMenu} ref={menuRef} onClick={() => setMenuAberto(!menuAberto)}>
-            <div className={styles.userAvatar}>{iniciais}</div>
-            <span>{primeiroNome}.</span>
-            {menuAberto && (
-              <div className={styles.dropdown}>
-                <div className={styles.dropdownItem} onClick={logout}>Sair</div>
-              </div>
-            )}
-          </div>
-          <Link to="/carrinho" className={styles.cartBtn}>
-            🛒
-            <span className={styles.badge}>{qtdCarrinho}</span>
-          </Link>
-        </div>
-      </nav>
+      <Navbar activeItem="nexo-ia" cartBadge={qtdCarrinho} />
 
       <main className={styles.body}>
         <section className={styles.chatPanel}>

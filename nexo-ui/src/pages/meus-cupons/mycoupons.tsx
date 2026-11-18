@@ -16,16 +16,16 @@ const MyCoupons: FunctionComponent = () => {
             						<div className={styles.activeLine} />
           					</div>
           					<div className={styles.navItemPhilosophy}>
-            						<div className={styles.filosofia}>filosofia</div>
+            						<div className={styles.destaques}>destaques</div>
           					</div>
           					<div className={styles.navItemPhilosophy}>
-            						<div className={styles.filosofia}>ciência</div>
+            						<div className={styles.destaques}>pré-venda</div>
           					</div>
           					<div className={styles.navItemPhilosophy}>
-            						<div className={styles.filosofia}>arte</div>
+            						<div className={styles.destaques}>ofertas</div>
           					</div>
           					<div className={styles.navItemPhilosophy}>
-            						<div className={styles.filosofia}>história</div>
+            						<div className={styles.destaques}>nexo ia</div>
           					</div>
         				</div>
         				<div className={styles.navActions}>

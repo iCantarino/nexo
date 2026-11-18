@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, type FunctionComponent } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { clientesApi, funcionariosApi, enderecosAdminApi, cartoesAdminApi } from '../../services/api';
+import type { CreateFuncionarioData } from '../../services/api';
 import styles from './AdminUsuarios.module.css';
 
 interface Usuario {
@@ -53,7 +54,7 @@ function validarSenhaForte(senha: string): string | null {
   if (senha.length < 8) return 'A senha deve ter pelo menos 8 caracteres';
   if (!/(?=.*[a-z])/.test(senha)) return 'A senha deve conter pelo menos uma letra minúscula';
   if (!/(?=.*[A-Z])/.test(senha)) return 'A senha deve conter pelo menos uma letra maiúscula';
-  if (!/(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/.test(senha)) return 'A senha deve conter pelo menos um caractere especial (!@#$%^&* etc.)';
+  if (!/(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?])/.test(senha)) return 'A senha deve conter pelo menos um caractere especial (!@#$%^&* etc.)';
   return null;
 }
 
@@ -194,7 +195,7 @@ const salvarUsuario = async () => {
           const t = formData.telefone.replace(/\D/g, '');
           await clientesApi.criar({ nome: formData.nome, genero: 'Não informado', data_nascimento: formData.dataNascimento, cpf: formData.cpf, telefone_tipo: 'Celular', telefone_ddd: t.substring(0, 2), telefone_numero: t.substring(2), email: formData.email, senha: formData.senha });
         } else {
-          await funcionariosApi.criar({ nome: formData.nome, email: formData.email, senha: formData.senha, perfil: formData.perfil as any, ativo: formData.ativo });
+          await funcionariosApi.criar({ nome: formData.nome, email: formData.email, senha: formData.senha, perfil: formData.perfil as CreateFuncionarioData['perfil'], ativo: formData.ativo });
         }
       }
       setModalAberto(false); carregarUsuarios();
@@ -209,10 +210,6 @@ const salvarUsuario = async () => {
   };
   const ativarUsuario = async (usuario: Usuario) => {
     try { await (usuario.tipo === 'cliente' ? clientesApi.ativar : funcionariosApi.ativar)(usuario.id); carregarUsuarios(); } catch { alert('Erro ao ativar'); }
-  };
-  const excluirUsuario = async (usuario: Usuario) => {
-    if (!window.confirm(`Excluir permanentemente ${usuario.nome}?`)) return;
-    try { await (usuario.tipo === 'cliente' ? clientesApi.excluir : funcionariosApi.excluir)(usuario.id); carregarUsuarios(); } catch { alert('Erro ao excluir'); }
   };
 
   const adicionarEndereco = async (e: React.FormEvent) => {
@@ -352,7 +349,6 @@ const inputS: React.CSSProperties = {
                       <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
                         <span onClick={() => abrirModal(u)} title="Editar" style={{ cursor: 'pointer', color: '#d97706', fontSize: '16px' }}>✏️</span>
                         {u.ativo ? (<span onClick={() => inativarUsuario(u)} title="Inativar" style={{ cursor: 'pointer', color: '#b91c1c', fontSize: '16px' }}>⛔</span>) : (<span onClick={() => ativarUsuario(u)} title="Ativar" style={{ cursor: 'pointer', color: '#15803d', fontSize: '16px' }}>✅</span>)}
-                        <span onClick={() => excluirUsuario(u)} title="Excluir" style={{ cursor: 'pointer', color: '#b91c1c', fontSize: '16px' }}>🗑️</span>
                       </div>
                     </td>
                   </tr>
@@ -485,7 +481,7 @@ const inputS: React.CSSProperties = {
                   <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '8px', color: '#0f172a' }}>Adicionar Endereço</div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                     <input value={enderecoForm.nome_identificador} onChange={(e) => setEnderecoForm({ ...enderecoForm, nome_identificador: e.target.value })} placeholder="Nome (ex: Casa)" required style={inputS} />
-                    <select value={enderecoForm.tipo} onChange={(e) => setEnderecoForm({ ...enderecoForm, tipo: e.target.value as any })} style={inputS}>
+                    <select value={enderecoForm.tipo} onChange={(e) => setEnderecoForm({ ...enderecoForm, tipo: e.target.value as typeof enderecoForm.tipo })} style={inputS}>
                       <option value="ENTREGA">Entrega</option><option value="COBRANCA">Cobrança</option><option value="AMBOS">Ambos</option>
                     </select>
                     <input value={enderecoForm.tipo_residencia} onChange={(e) => setEnderecoForm({ ...enderecoForm, tipo_residencia: e.target.value })} placeholder="Tipo residência (Casa/Ap)" required style={inputS} />

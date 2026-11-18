@@ -3,11 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { carrinhoApi, cuponsApi, valorDoCupom } from '../../services/api';
 import type { CarrinhoData, CarrinhoItem, Cupom } from '../../services/api';
+import Navbar from '../../components/Navbar/Navbar';
 
 import styles from './ShoppingCart.module.css';
 
 const ShoppingCart: FunctionComponent = () => {
-  const { user, logout } = useAuth();
+  useAuth();
   const navigate = useNavigate();
   const [carrinho, setCarrinho] = useState<CarrinhoData | null>(null);
   const [cuponsDisponiveis, setCuponsDisponiveis] = useState<Cupom[]>([]);
@@ -18,21 +19,14 @@ const ShoppingCart: FunctionComponent = () => {
   const [loading, setLoading] = useState(true);
   const [mensagem, setMensagem] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function h(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setIsUserMenuOpen(false);
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setCupomTrocaAberto(false);
     }
     document.addEventListener('mousedown', h);
     return () => document.removeEventListener('mousedown', h);
   }, []);
-useEffect(() => {
-    loadData();
-  }, []);
-
   const loadData = async () => {
     setLoading(true);
     try {
@@ -50,6 +44,10 @@ useEffect(() => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const handleAtualizarQuantidade = async (item: CarrinhoItem, novaQtd: number) => {
     if (novaQtd < 1) return;
@@ -126,61 +124,8 @@ useEffect(() => {
 
   return (
     <div className={styles.shoppingCart}>
-      <div className={styles.navbar}>
-        <div className={styles.brand}>
-          <b className={styles.logo}>Nexo</b>
-          <div className={styles.brandDot} />
-        </div>
-        <div className={styles.navLinks}>
-          <div className={styles.navItemCatalog}>
-            <div className={styles.catlogo}>catálogo</div>
-            <div className={styles.activeLine} />
-          </div>
-          <div className={styles.navItemPhilosophy}>
-            <div className={styles.filosofia}>filosofia</div>
-          </div>
-          <div className={styles.navItemPhilosophy}>
-            <div className={styles.filosofia}>ciência</div>
-          </div>
-          <div className={styles.navItemPhilosophy}>
-            <div className={styles.filosofia}>arte</div>
-          </div>
-          <div className={styles.navItemPhilosophy}>
-            <div className={styles.filosofia}>história</div>
-          </div>
-        </div>
-        <div className={styles.navActions}>
-          <div className={styles.searchBar}>
-            <span className={styles.searchIcon} />
-            <div className={styles.searchPlaceholder}>Buscar títulos, autores, editoras...</div>
-          </div>
-          <div
-            className={styles.userMenu}
-            role="button"
-            tabIndex={0}
-            onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsUserMenuOpen(!isUserMenuOpen); } }}
-            ref={menuRef}
-            style={{ position: 'relative' }}
-          >
-            <span className={styles.userRoundIcon} />
-            <div className={styles.userName}>{(user as any)?.nome || 'Usuário'}</div>
-            {isUserMenuOpen && (
-              <div style={{ position: 'absolute', top: '100%', right: 0, background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 10, minWidth: '150px' }}>
-                <Link to="/perfil" style={{ display: 'block', padding: '10px 16px', textDecoration: 'none', color: '#0f172a', fontSize: '14px' }} onClick={(e) => e.stopPropagation()}>Perfil</Link>
-                <Link to="/pedidos" style={{ display: 'block', padding: '10px 16px', textDecoration: 'none', color: '#0f172a', fontSize: '14px' }} onClick={(e) => e.stopPropagation()}>Meus Pedidos</Link>
-                <div style={{ display: 'block', padding: '10px 16px', cursor: 'pointer', color: '#0f172a', fontSize: '14px' }} onClick={(e) => { e.stopPropagation(); logout(); }}>Sair</div>
-              </div>
-            )}
-          </div>
-          <div className={styles.cartBtn}>
-            <span className={styles.shoppingBagIcon} />
-            <div className={styles.badge}>
-              <b className={styles.logo}>{itensValidos.length}</b>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Navbar cartBadge={qtdeItens} />
+
 <div className={styles.cartBody}>
         <div className={styles.cartLeft}>
           <b className={styles.seuCarrinhoDe}>Seu Carrinho de Compras</b>

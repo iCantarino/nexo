@@ -1,17 +1,16 @@
-import { useState, useEffect, useRef, type FunctionComponent } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, type FunctionComponent } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { clientesApi, enderecosApi, cartoesApi } from '../../services/api';
+import type { Cliente, Endereco, CartaoCredito } from '../../services/api';
+import Navbar from '../../components/Navbar/Navbar';
 import styles from './Profile.module.css';
 
 const Profile: FunctionComponent = () => {
-  const { user, logout } = useAuth();
-  const [menuAberto, setMenuAberto] = useState(false);
+  const { logout } = useAuth();
   const [senhaMenuAberto, setSenhaMenuAberto] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const [cliente, setCliente] = useState<any>(null);
-  const [enderecos, setEnderecos] = useState<any[]>([]);
-  const [cartoes, setCartoes] = useState<any[]>([]);
+  const [cliente, setCliente] = useState<Cliente | null>(null);
+  const [enderecos, setEnderecos] = useState<Endereco[]>([]);
+  const [cartoes, setCartoes] = useState<CartaoCredito[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalEnd, setModalEnd] = useState(false);
   const [modalCart, setModalCart] = useState(false);
@@ -19,14 +18,6 @@ const Profile: FunctionComponent = () => {
   const [editando, setEditando] = useState(false);
   const [editForm, setEditForm] = useState({nome:'',email:'',telefone_ddd:'',telefone_numero:''});
   const [pwForm, setPwForm] = useState({atual:'',nova:'',confirmar:''});
-
-  useEffect(() => {
-    function h(e: MouseEvent) { if (menuRef.current && !menuRef.current.contains(e.target as Node)) { setMenuAberto(false); setSenhaMenuAberto(false); } }
-    document.addEventListener('mousedown', h);
-    return () => document.removeEventListener('mousedown', h);
-  }, []);
-
-  useEffect(() => { loadData(); }, []);
 
   const loadData = async () => {
     try {
@@ -36,9 +27,11 @@ const Profile: FunctionComponent = () => {
     } catch (e) { console.error(e); } finally { setLoading(false); }
   };
 
-  const fmtTel = (d: string, n: string) => !d||!n?'-':'('+d+') '+n.slice(0,4)+'-'+n.slice(4);
-  const fmtCpf = (c: string) => !c?'-':c.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'..-');
-  const maskCard = (n: string) => !n?'-':'Final '+n.slice(-4);
+  useEffect(() => { loadData(); }, []);
+
+  const fmtTel = (d?: string, n?: string) => !d||!n?'-':'('+d+') '+n.slice(0,4)+'-'+n.slice(4);
+  const fmtCpf = (c?: string) => !c?'-':c.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4');
+  const maskCard = (n?: string) => !n?'-':'Final '+n.slice(-4);
 
   const salvarPerfil = async () => {
     setSaving(true);
@@ -56,7 +49,7 @@ const Profile: FunctionComponent = () => {
   const deactivate = async () => {
     if(!cliente) return;
     if(!confirm('DESATIVAR CONTA permanentemente?')) return;
-    try { await clientesApi.inativar(cliente.id_cliente); logout(); }
+    try { await clientesApi.inativarMe(); logout(); }
     catch(x) { alert('Erro ao desativar conta'); }
   };
 
@@ -65,39 +58,7 @@ const Profile: FunctionComponent = () => {
 
   return (
     <div className={styles.profile}>
-      <div className={styles.navbar}>
-        <div className={styles.brand}>
-          <b className={styles.logo}>Nexo</b>
-          <div className={styles.brandDot} />
-        </div>
-        <div className={styles.navLinks}>
-          <div className={styles.navItemCatalog}><div className={styles.catlogo}>catalogo</div><div className={styles.activeLine} /></div>
-          <div className={styles.navItemPhilosophy}><div className={styles.filosofia}>filosofia</div></div>
-          <div className={styles.navItemPhilosophy}><div className={styles.filosofia}>ciencia</div></div>
-          <div className={styles.navItemPhilosophy}><div className={styles.filosofia}>arte</div></div>
-          <div className={styles.navItemPhilosophy}><div className={styles.filosofia}>historia</div></div>
-        </div>
-        <div className={styles.navActions}>
-          <div className={styles.searchBar}>
-            <img className={styles.searchIcon} alt='' />
-            <input className={styles.searchInput} type='text' placeholder='Buscar titulos, autores, editoras...' />
-          </div>
-          <div className={styles.userMenu} onClick={()=>setMenuAberto(!menuAberto)} style={{cursor:'pointer',position:'relative'}} ref={menuRef}>
-            <img className={styles.userRoundIcon} alt='' />
-            <div className={styles.userName}>{(user as any)?.nome||'Usuario'}</div>
-            {menuAberto&&(
-              <div style={{position:'absolute',top:'calc(100% + 10px)',right:0,minWidth:'120px',padding:'8px 0',border:'1px solid #e2e8f0',borderRadius:'6px',background:'#fff',boxShadow:'0 8px 20px rgba(15,23,42,0.12)',zIndex:10}}>
-                <Link to='/perfil' onClick={e=>e.stopPropagation()} style={{display:'block',padding:'8px 14px',color:'#0f172a',fontSize:'14px',textDecoration:'none'}}>Perfil</Link>
-                <div onClick={e=>{e.stopPropagation();logout();}} style={{display:'block',padding:'8px 14px',color:'#0f172a',fontSize:'14px',cursor:'pointer'}}>Sair</div>
-              </div>
-            )}
-          </div>
-          <div className={styles.cartBtn}>
-            <img className={styles.shoppingBagIcon} alt='' />
-            <div className={styles.badge}><b className={styles.logo}>3</b></div>
-          </div>
-        </div>
-      </div>
+      <Navbar />
 
       <div className={styles.profileBody}>
         <div className={styles.profileLeft}>
@@ -175,18 +136,23 @@ const Profile: FunctionComponent = () => {
 
       {modalEnd&&(
         <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.4)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:100}}>
-          <form onSubmit={async e=>{e.preventDefault();setSaving(true);try{await enderecosApi.criar({nome_identificador:e.target.ni.value,tipo:e.target.ti.value,logradouro:e.target.lo.value,numero:e.target.nu.value,bairro:e.target.ba.value,cep:e.target.ce.value,cidade:e.target.ci.value,estado:e.target.es.value});setModalEnd(false);loadData();}catch(x){alert('Erro')}finally{setSaving(false)}}} style={{background:'#fff',borderRadius:'12px',padding:'24px',width:'480px',boxShadow:'0 10px 20px rgba(0,0,0,0.1)'}}>
+          <form onSubmit={async e=>{e.preventDefault();setSaving(true);try{const t=e.currentTarget;await enderecosApi.criar({nome_identificador:t.ni.value,tipo:t.ti.value,tipo_residencia:t.tr.value,tipo_logradouro:t.tl.value,logradouro:t.lo.value,numero:t.nu.value,bairro:t.ba.value,cep:t.ce.value,cidade:t.ci.value,estado:t.es.value,pais:t.pa.value,observacoes:t.obs.value||null,padrao:t.pad.checked});setModalEnd(false);loadData();}catch(err:any){alert(err.response?.data?.detail||'Erro ao salvar endereco')}finally{setSaving(false)}}} style={{background:'#fff',borderRadius:'12px',padding:'24px',width:'480px',boxShadow:'0 10px 20px rgba(0,0,0,0.1)'}}>
             <b style={{fontSize:'18px',marginBottom:'20px',display:'block'}}>Adicionar Endereco</b>
             <input name='ni' placeholder='Nome (Casa, Trabalho)' required style={{width:'100%',padding:'8px 12px',border:'1px solid #e2e8f0',borderRadius:'6px',marginBottom:'8px',fontSize:'14px',boxSizing:'border-box'}} />
             <select name='ti' style={{width:'100%',padding:'8px 12px',border:'1px solid #e2e8f0',borderRadius:'6px',marginBottom:'8px',fontSize:'14px',background:'#fff'}}><option value='ENTREGA'>Entrega</option><option value='COBRANCA'>Cobranca</option><option value='AMBOS'>Ambos</option></select>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px'}}>
+              <select name='tr' required style={{width:'100%',padding:'8px 12px',border:'1px solid #e2e8f0',borderRadius:'6px',fontSize:'14px',background:'#fff'}}><option value='Casa'>Casa</option><option value='Apartamento'>Apartamento</option><option value='Comercial'>Comercial</option></select>
+              <select name='tl' required style={{width:'100%',padding:'8px 12px',border:'1px solid #e2e8f0',borderRadius:'6px',fontSize:'14px',background:'#fff'}}><option value='Rua'>Rua</option><option value='Avenida'>Avenida</option><option value='Travessa'>Travessa</option><option value='Alameda'>Alameda</option><option value='Estrada'>Estrada</option></select>
               <input name='lo' placeholder='Logradouro' required style={{width:'100%',padding:'8px 12px',border:'1px solid #e2e8f0',borderRadius:'6px',fontSize:'14px',boxSizing:'border-box'}} />
               <input name='nu' placeholder='Numero' required style={{width:'100%',padding:'8px 12px',border:'1px solid #e2e8f0',borderRadius:'6px',fontSize:'14px',boxSizing:'border-box'}} />
               <input name='ba' placeholder='Bairro' required style={{width:'100%',padding:'8px 12px',border:'1px solid #e2e8f0',borderRadius:'6px',fontSize:'14px',boxSizing:'border-box'}} />
               <input name='ce' placeholder='CEP' required style={{width:'100%',padding:'8px 12px',border:'1px solid #e2e8f0',borderRadius:'6px',fontSize:'14px',boxSizing:'border-box'}} />
               <input name='ci' placeholder='Cidade' required style={{width:'100%',padding:'8px 12px',border:'1px solid #e2e8f0',borderRadius:'6px',fontSize:'14px',boxSizing:'border-box'}} />
               <input name='es' placeholder='Estado (SP)' required style={{width:'100%',padding:'8px 12px',border:'1px solid #e2e8f0',borderRadius:'6px',fontSize:'14px',boxSizing:'border-box'}} />
+              <input name='pa' placeholder='Pais' defaultValue='Brasil' required style={{width:'100%',padding:'8px 12px',border:'1px solid #e2e8f0',borderRadius:'6px',fontSize:'14px',boxSizing:'border-box'}} />
+              <input name='obs' placeholder='Observacoes' style={{width:'100%',padding:'8px 12px',border:'1px solid #e2e8f0',borderRadius:'6px',fontSize:'14px',boxSizing:'border-box'}} />
             </div>
+            <label style={{fontSize:'14px',display:'flex',alignItems:'center',gap:'8px',marginTop:'12px'}}><input name='pad' type='checkbox' /> Endereco padrao</label>
             <div style={{display:'flex',gap:'12px',marginTop:'16px',justifyContent:'flex-end'}}>
               <button type='button' onClick={()=>setModalEnd(false)} style={{cursor:'pointer',padding:'8px 16px',borderRadius:'6px',border:'1px solid #e2e8f0',fontSize:'14px',background:'#fff',color:'#475569'}}>Cancelar</button>
               <button type='submit' disabled={saving} style={{cursor:saving?'not-allowed':'pointer',padding:'8px 16px',borderRadius:'6px',background:'#0f172a',color:'#fff',fontSize:'14px',border:'none',opacity:saving?0.7:1}}>{saving?'Salvando...':'Salvar'}</button>
@@ -198,7 +164,7 @@ const Profile: FunctionComponent = () => {
 
       {modalCart&&(
         <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.4)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:100}}>
-          <form onSubmit={async e=>{e.preventDefault();setSaving(true);try{await cartoesApi.criar({id_bandeira:Number(e.target.ib.value),numero_cartao:e.target.nc.value,nome_impresso:e.target.nm.value,codigo_seguranca:e.target.cs.value,preferencial:e.target.pr.checked});setModalCart(false);loadData();}catch(x){alert('Erro')}finally{setSaving(false)}}} style={{background:'#fff',borderRadius:'12px',padding:'24px',width:'420px',boxShadow:'0 10px 20px rgba(0,0,0,0.1)'}}>
+          <form onSubmit={async e=>{e.preventDefault();setSaving(true);try{await cartoesApi.criar({id_bandeira:Number(e.currentTarget.ib.value),numero_cartao:e.currentTarget.nc.value,nome_impresso:e.currentTarget.nm.value,codigo_seguranca:e.currentTarget.cs.value,preferencial:e.currentTarget.pr.checked});setModalCart(false);loadData();}catch(err:any){alert(err.response?.data?.detail||'Erro ao salvar cartao')}finally{setSaving(false)}}} style={{background:'#fff',borderRadius:'12px',padding:'24px',width:'420px',boxShadow:'0 10px 20px rgba(0,0,0,0.1)'}}>
             <b style={{fontSize:'18px',marginBottom:'20px',display:'block'}}>Adicionar Cartao</b>
             <select name='ib' style={{width:'100%',padding:'8px 12px',border:'1px solid #e2e8f0',borderRadius:'6px',marginBottom:'8px',fontSize:'14px',background:'#fff'}}><option value='1'>Visa</option><option value='2'>Mastercard</option><option value='3'>Amex</option></select>
             <input name='nc' placeholder='Numero do cartao' required style={{width:'100%',padding:'8px 12px',border:'1px solid #e2e8f0',borderRadius:'6px',marginBottom:'8px',fontSize:'14px',boxSizing:'border-box'}} />

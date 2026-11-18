@@ -55,7 +55,8 @@ const MyOrders: FunctionComponent = () => {
         <div style={{ fontSize: 14 }}>
           <Link to="/home" style={{ marginRight: 12 }}>Catálogo</Link>
           <Link to="/carrinho" style={{ marginRight: 12 }}>Carrinho</Link>
-          {(user as any)?.nome} <span onClick={logout} style={{ cursor: 'pointer', marginLeft: 8, textDecoration: 'underline' }}>Sair</span>
+          <Link to="/ai-chatbot" style={{ marginRight: 12 }}>Nexo IA</Link>
+          {user?.nome} <span onClick={logout} style={{ cursor: 'pointer', marginLeft: 8, textDecoration: 'underline' }}>Sair</span>
         </div>
       </div>
       {mensagem && <div style={{ ...card, background: '#fef3c7' }}>{mensagem}</div>}

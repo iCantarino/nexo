@@ -85,6 +85,30 @@ export interface CartaoCredito {
   bandeira?: { nome: string };
 }
 
+export interface CreateEnderecoData {
+  nome_identificador: string;
+  tipo: 'ENTREGA' | 'COBRANCA' | 'AMBOS';
+  tipo_residencia: string;
+  tipo_logradouro: string;
+  logradouro: string;
+  numero: string;
+  bairro: string;
+  cep: string;
+  cidade: string;
+  estado: string;
+  pais: string;
+  observacoes?: string | null;
+  padrao?: boolean;
+}
+
+export interface CreateCartaoData {
+  id_bandeira: number;
+  numero_cartao: string;
+  nome_impresso: string;
+  codigo_seguranca: string;
+  preferencial?: boolean;
+}
+
 export interface Funcionario {
   id_funcionario: number;
   codigo_funcionario: string;
@@ -279,11 +303,11 @@ export const clientesApi = {
   inativar: (id: number) =>
     api.patch(`/clientes/${id}/inativar`),
   
+  inativarMe: () =>
+    api.patch('/clientes/me/inativar'),
+  
   ativar: (id: number) =>
     api.patch(`/clientes/${id}/ativar`),
-  
-  excluir: (id: number) =>
-    api.delete(`/clientes/${id}`),
   
   meuPerfil: () =>
     api.get<Cliente>('/clientes/me'),
@@ -311,29 +335,26 @@ export const funcionariosApi = {
   
   ativar: (id: number) =>
     api.patch(`/funcionarios/${id}/ativar`),
-  
-  excluir: (id: number) =>
-    api.delete(`/funcionarios/${id}`),
 };
 
 // APIs de Endereços
 export const enderecosApi = {
   listar: () => api.get<Endereco[]>('/enderecos'),
-  criar: (data: any) =>
+  criar: (data: CreateEnderecoData) =>
     api.post<Endereco>('/enderecos', data),
 };
 
 // APIs de Cartões de Crédito
 export const cartoesApi = {
   listar: () => api.get<CartaoCredito[]>('/cartoes'),
-  criar: (data: any) =>
+  criar: (data: CreateCartaoData) =>
     api.post<CartaoCredito>('/cartoes', data),
 };
 // APIs de Endereços (Admin)
 export const enderecosAdminApi = {
   listar: (idCliente: number) =>
     api.get<Endereco[]>(`/clientes/${idCliente}/enderecos`),
-  criar: (idCliente: number, data: any) =>
+  criar: (idCliente: number, data: CreateEnderecoData) =>
     api.post<Endereco>(`/clientes/${idCliente}/enderecos`, data),
   excluir: (idCliente: number, idEndereco: number) =>
     api.delete(`/clientes/${idCliente}/enderecos/${idEndereco}`),
@@ -343,7 +364,7 @@ export const enderecosAdminApi = {
 export const cartoesAdminApi = {
   listar: (idCliente: number) =>
     api.get<CartaoCredito[]>(`/clientes/${idCliente}/cartoes`),
-  criar: (idCliente: number, data: any) =>
+  criar: (idCliente: number, data: CreateCartaoData) =>
     api.post<CartaoCredito>(`/clientes/${idCliente}/cartoes`, data),
   excluir: (idCliente: number, idCartao: number) =>
     api.delete(`/clientes/${idCliente}/cartoes/${idCartao}`),
@@ -441,6 +462,16 @@ export const chatbotApi = {
     api.get<PerfilLeitura>('/chatbot/perfil-leitura'),
   obterRecomendacoes: () =>
     api.get<{ perfil: PerfilLeitura; recomendacoes: { id_recomendacao: number; id_livro: number; score: string; origem: string; livro: Livro }[] }>('/chatbot/recomendacoes'),
+};
+
+// APIs de Análise (admin)
+export const analiseApi = {
+  categorias: () =>
+    api.get<{ id_categoria: number; nome: string }[]>('/analise/categorias'),
+  vendasPorCategoria: (params: { data_inicio: string; data_fim: string; categorias: number[] }) =>
+    api.get('/analise/vendas-por-categoria', { params }),
+  kpis: () =>
+    api.get<{ pedidos_hoje: number; receita_dia: number; novos_clientes: number; itens_em_transito: number }>('/analise/kpis'),
 };
 
 export default api;

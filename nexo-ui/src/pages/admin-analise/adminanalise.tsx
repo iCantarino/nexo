@@ -66,11 +66,11 @@ const AdminAnalytics: FunctionComponent = () => {
           					<div className={styles.line} />
           					<div className={styles.userProfile} onClick={() => setMenuPerfilAberto(!menuPerfilAberto)} style={{ cursor: 'pointer', position: 'relative' }} ref={menuRef}>
             						<div className={styles.avatar}>
-              							<b className={styles.logo}>{(user as any)?.nome?.charAt(0)?.toUpperCase() || 'A'}</b>
+              							<b className={styles.logo}>{user?.nome?.charAt(0)?.toUpperCase() || 'A'}</b>
             						</div>
             						<div className={styles.userInfo}>
-              							<div className={styles.arthurSchopenhauer}>{(user as any)?.nome || 'Administrador'}</div>
-              							<div className={styles.curadorMaster}>{(user as any)?.perfil || 'ADMIN'}</div>
+              							<div className={styles.arthurSchopenhauer}>{user?.nome || 'Administrador'}</div>
+              							<div className={styles.curadorMaster}>{user?.perfil || 'ADMIN'}</div>
             						</div>
             						{menuPerfilAberto && (
               							<div style={{ position: 'absolute', bottom: '100%', left: 0, right: 0, backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '8px', zIndex: 50, boxShadow: '0 -4px 6px rgba(0,0,0,0.1)' }}>

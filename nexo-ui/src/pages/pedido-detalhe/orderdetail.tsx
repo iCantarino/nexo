@@ -1,50 +1,12 @@
 import type { FunctionComponent } from 'react';
+import Navbar from '../../components/Navbar/Navbar';
 import styles from './OrderDetail.module.css';
 
 
 const OrderDetail: FunctionComponent = () => {
   	return (
     		<div className={styles.orderDetail}>
-      			<div className={styles.navbar}>
-        				<div className={styles.brand}>
-          					<b className={styles.logo}>Nexo</b>
-          					<div className={styles.brandDot} />
-        				</div>
-        				<div className={styles.navLinks}>
-          					<div className={styles.navItemCatalog}>
-            						<div className={styles.catlogo}>catálogo</div>
-            						<div className={styles.activeLine} />
-          					</div>
-          					<div className={styles.navItemPhilosophy}>
-            						<div className={styles.filosofia}>filosofia</div>
-          					</div>
-          					<div className={styles.navItemPhilosophy}>
-            						<div className={styles.filosofia}>ciência</div>
-          					</div>
-          					<div className={styles.navItemPhilosophy}>
-            						<div className={styles.filosofia}>arte</div>
-          					</div>
-          					<div className={styles.navItemPhilosophy}>
-            						<div className={styles.filosofia}>história</div>
-          					</div>
-        				</div>
-        				<div className={styles.navActions}>
-          					<div className={styles.searchBar}>
-            						<img className={styles.searchIcon} alt="" />
-            						<div className={styles.searchPlaceholder}>Buscar no catálogo...</div>
-          					</div>
-          					<div className={styles.userMenu}>
-            						<img className={styles.userRoundIcon} alt="" />
-            						<div className={styles.userName}>Arthur S.</div>
-          					</div>
-          					<div className={styles.cartBtn}>
-            						<img className={styles.shoppingBagIcon} alt="" />
-            						<div className={styles.badge}>
-              							<b className={styles.logo}>3</b>
-            						</div>
-          					</div>
-        				</div>
-      			</div>
+      			<Navbar />
       			<div className={styles.body}>
         				<div className={styles.backToList}>
           					<img className={styles.frameIcon} alt="" />

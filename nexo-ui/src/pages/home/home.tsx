@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect, type FunctionComponent } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, type FunctionComponent } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import api, { carrinhoApi } from '../../services/api';
 import type { Livro } from '../../services/api';
+import Navbar from '../../components/Navbar/Navbar';
 import styles from './HomeCatalog.module.css';
 
 const POR_PAGINA = 8;
@@ -17,26 +17,14 @@ const formatarPreco = (valor: string | number) =>
   'R$ ' + Number(valor).toFixed(2).replace('.', ',');
 
 const HomeCatalog: FunctionComponent = () => {
-  const { user, logout } = useAuth();
+  useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState(0);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [livros, setLivros] = useState<Livro[]>([]);
   const [loading, setLoading] = useState(true);
   const [mensagem, setMensagem] = useState('');
   const [qtdCarrinho, setQtdCarrinho] = useState(0);
   const [pagina, setPagina] = useState(1);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsUserMenuOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const atualizarBadge = async () => {
     try {
@@ -51,11 +39,25 @@ const HomeCatalog: FunctionComponent = () => {
   };
 
   useEffect(() => {
-    api.get<Livro[]>('/livros?ativo=true')
-      .then((r) => setLivros(r.data))
-      .catch(() => setMensagem('Erro ao carregar o catálogo.'))
-      .finally(() => setLoading(false));
-    atualizarBadge();
+    const carregarDados = async () => {
+      try {
+        const [livrosRes, cartRes] = await Promise.all([
+          api.get<Livro[]>('/livros?ativo=true'),
+          carrinhoApi.listar(),
+        ]);
+        setLivros(livrosRes.data);
+        const total = cartRes.data.itens
+          .filter((i) => !i.removido_por_expiracao)
+          .reduce((acc, i) => acc + i.quantidade, 0);
+        setQtdCarrinho(total);
+      } catch {
+        setMensagem('Erro ao carregar o catálogo.');
+        setQtdCarrinho(0);
+      } finally {
+        setLoading(false);
+      }
+    };
+    carregarDados();
   }, []);
 
   const handleAdicionar = async (idLivro: number) => {
@@ -107,52 +109,12 @@ const HomeCatalog: FunctionComponent = () => {
 
   return (
     <div className={styles.homeCatalog}>
-      <div className={styles.navbar}>
-        <div className={styles.brand}>
-          <b className={styles.logo}>Nexo</b>
-          <div className={styles.brandDot} />
-        </div>
-        <div className={styles.navLinks}>
-          <div className={styles.navItemCatalog}>
-            <div className={styles.catlogo}>catálogo</div>
-            <div className={styles.activeLine} />
-          </div>
-          <div className={styles.navItemPhilosophy}><div className={styles.filosofia}>filosofia</div></div>
-          <div className={styles.navItemPhilosophy}><div className={styles.filosofia}>ciência</div></div>
-          <div className={styles.navItemPhilosophy}><div className={styles.filosofia}>arte</div></div>
-          <div className={styles.navItemPhilosophy}><div className={styles.filosofia}>história</div></div>
-        </div>
-        <div className={styles.navActions}>
-          <div className={styles.searchBar}>
-            <span className={styles.searchIcon} />
-            <input className={styles.searchInput} type="text"
-              data-testid="buscar-livros"
-              placeholder="Buscar títulos, autores, editoras..."
-              value={searchTerm}
-              onChange={(e) => { setSearchTerm(e.target.value); setPagina(1); }} />
-          </div>
-          <div className={styles.userMenu} ref={menuRef} role="button" tabIndex={0}
-            aria-expanded={isUserMenuOpen}
-            onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsUserMenuOpen(!isUserMenuOpen); }
-            }}>
-            <span className={styles.userRoundIcon} />
-            <div className={styles.userName}>{user?.nome || 'Usuário'}</div>
-            {isUserMenuOpen && (
-              <div className={styles.userDropdown}>
-                <Link to="/perfil" onClick={(e) => e.stopPropagation()}>Perfil</Link>
-                <div className={styles.userDropdownItem}
-                  onClick={(e) => { e.stopPropagation(); logout(); }}>Sair</div>
-              </div>
-            )}
-          </div>
-          <Link to="/carrinho" className={styles.cartBtn} style={{ textDecoration: 'none' }}>
-            <span className={styles.shoppingBagIcon} />
-            <div className={styles.badge} data-testid="badge-carrinho"><b>{qtdCarrinho}</b></div>
-          </Link>
-        </div>
-      </div>
+      <Navbar
+        activeItem="catalogo"
+        searchValue={searchTerm}
+        onSearchChange={(value) => { setSearchTerm(value); setPagina(1); }}
+        cartBadge={qtdCarrinho}
+      />
 
       <div className={styles.heroBanner}>
         <div className={styles.heroContent}>

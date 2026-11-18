@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, type FunctionComponent } from 'react';
 import {
   CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from 'recharts';
-import api from '../../services/api';
+import { analiseApi } from '../../services/api';
 import TabelaValores from './TabelaValores';
 import { brl, rotuloMes, type Serie } from './formatadores';
 import styles from './VendasPorCategoria.module.css';
@@ -32,7 +32,7 @@ const VendasPorCategoria: FunctionComponent = () => {
   const [erro, setErro] = useState('');
 
   useEffect(() => {
-    api.get<Categoria[]>('/analise/categorias')
+    analiseApi.categorias()
       .then((r) => setCategorias(r.data))
       .catch(() => setErro('Não foi possível carregar as categorias.'));
   }, []);
@@ -47,10 +47,12 @@ const VendasPorCategoria: FunctionComponent = () => {
     if (!selecionadas.length) return setErro('Selecione ao menos uma categoria.');
     setCarregando(true);
     try {
-      const params = new URLSearchParams({ data_inicio: dataInicio, data_fim: dataFim });
-      selecionadas.forEach((id) => params.append('categorias', String(id)));
-      const r = await api.get<Resultado>(`/analise/vendas-por-categoria?${params}`);
-      setResultado(r.data);
+      const r = await analiseApi.vendasPorCategoria({
+        data_inicio: dataInicio,
+        data_fim: dataFim,
+        categorias: selecionadas,
+      });
+      setResultado(r.data as Resultado);
     } catch (e: any) {
       setResultado(null);
       setErro(e?.response?.data?.detail || 'Erro ao consultar o histórico de vendas.');
