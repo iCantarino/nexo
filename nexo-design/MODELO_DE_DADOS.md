@@ -425,12 +425,24 @@ Comentário e nota de estrelas (1 a 5) que um cliente registra sobre um livro,
 exibidos na página de detalhe do produto, e utilizados como insumo de feedback
 para o motor de recomendação por IA (RNF0044-3).
 
-### 2.12 INTERACAO_CHATBOT / RECOMENDACAO_IA (RNF0044 / Recomendação Personalizada)
+### 2.12 INTERACAO_CHATBOT / RECOMENDACAO_IA / PREFERENCIA_CLIENTE (RNF0044 / Recomendação Personalizada)
 `INTERACAO_CHATBOT` registra o histórico de conversas do cliente com o assistente
 de IA. `RECOMENDACAO_IA` registra as sugestões geradas para cada cliente/livro,
 com um `score` de relevância e a `origem` da recomendação
 (`HISTORICO_COMPRA`, `PREFERENCIA`, `CHATBOT`, `FEEDBACK`), alimentando o
 treinamento contínuo do modelo (RNF0044-3).
+
+### 2.13 Análise de vendas por categoria (RF0055 / RNF0043 / RNF0011 / RN0071-74)
+Não há tabela própria: a análise é calculada sobre `PEDIDO`, `ITEM_PEDIDO`,
+`LIVRO_CATEGORIA` e `CATEGORIA`. Somente pedidos `ENTREGUE` entram no cálculo; o valor
+é a soma de `ITEM_PEDIDO.valor_total_item` (em reais, sem frete) e o mês vem de
+`PEDIDO.data_pedido` (formato `AAAA-MM`). Um livro com várias categorias conta em cada
+uma delas. A view `vw_vendas_por_categoria_mes` expõe essa agregação e os índices
+`idx_pedido_status_data (status, data_pedido)` e
+`idx_livrocat_categoria_livro (id_categoria, id_livro)` sustentam o tempo de resposta
+de até 1 segundo. Meses/categorias sem venda são preenchidos com R$ 0,00 pela API (RN0073).
+Alterações em bancos já existentes: `bdd/migrations/001_analise_vendas_entregue.sql`
+(`npm run migrate`); massa de teste: `bdd/seeds/` (`npm run seed:analise`).
 
 ---
 
@@ -445,6 +457,8 @@ treinamento contínuo do modelo (RNF0044-3).
 | `cupom.tipo` | PROMOCIONAL, TROCA |
 | `troca.status` | SOLICITADA, ACEITA, NEGADA, ITEM_ENVIADO, ITEM_RECEBIDO, PROCESSADA |
 | `recomendacao_ia.origem` | HISTORICO_COMPRA, PREFERENCIA, CHATBOT, FEEDBACK |
+| `preferencia_cliente.origem` | EXPLICITO, IMPLICITO |
+| `interacao_chatbot.feedback` | UTIL, NAO_UTIL |
 
 O DDL correspondente a este modelo está disponível em `bdd/schema.sql`, pronto
 para execução em MySQL 8+.

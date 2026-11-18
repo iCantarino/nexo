@@ -187,9 +187,16 @@ RN0062	Valor de custo	Para todo item deve haver um valor de custo.
 RNF0064	Data de entrada	Não deve ser permitido que itens sejam registrados sem que uma data de entrada seja registrada.
 		
 GRUPO: ANÁLISE
-RN0071	Granularidade do período	O agrupamento dos valores de venda no gráfico gerencial deve ser feito por mês, considerando a soma de todas as vendas aprovadas de cada categoria dentro do respectivo mês.
+RN0071	Granularidade do período	O agrupamento dos valores de venda no gráfico gerencial deve ser feito por mês, considerando a soma do valor dos itens das compras ENTREGUES de cada categoria dentro do respectivo mês. O mês de uma venda é o da data da compra (pedido.data_pedido); o frete não entra no valor.
 RN0072	Período mínimo e máximo de análise	O intervalo entre a data de início e a data de fim informado pelo administrador deve ser de no mínimo 1 mês e no máximo 24 meses.
 RN0073	Categorias sem vendas no período	Caso uma categoria selecionada não possua vendas em um determinado mês dentro do período analisado, o valor correspondente deve ser considerado como R$ 0,00, mantendo a linha contínua no gráfico.
-RN0074	Consideração de status para o cálculo	Somente compras com status APROVADA, EM TRÂNSITO/TRANSPORTE ou ENTREGUE devem ser consideradas no cálculo do valor de vendas exibido no gráfico. Compras REPROVADA ou canceladas não devem ser contabilizadas.
+RN0074	Consideração de status para o cálculo	Somente compras com status ENTREGUE devem ser consideradas no cálculo do valor de vendas exibido no gráfico (critério definido na atividade de análise de vendas, que refina a versão anterior da regra, que também incluía APROVADA e EM TRÂNSITO). Compras em qualquer outro status (APROVADA, EM TRÂNSITO, REPROVADA, canceladas etc.) não são contabilizadas e passam a contar quando o status muda para ENTREGUE.
 
+GRUPO: RECOMENDAÇÃO COM IA GENERATIVA (RNF0044)
+RNF0044-1	Integração com IA generativa	O sistema deve integrar uma IA generativa (OpenRouter com modelo openai/gpt-5.6-luna) para oferecer recomendações personalizadas de livros aos clientes com base no histórico de compras e preferências.
+RNF0044-2	Chatbot para clientes	O chatbot é acessível exclusivamente pelo perfil CLIENTE e deve permitir interação em linguagem natural para busca por livros, dúvidas e sugestões de conteúdos relevantes.
+RNF0044-3	Obtenção de preferências	As preferências do cliente são obtidas de forma híbrida: implicitamente por meio de compras com status ENTREGUE e avaliações ≥ 4 estrelas, e explicitamente por tags de interesse cadastradas no perfil.
+RNF0044-4	Avaliação das respostas	Cada resposta do chatbot pode ser avaliada pelo cliente como ÚTIL ou NÃO ÚTIL, registrando-se o feedback na tabela interacao_chatbot.
+RNF0044-5	Ajuste contínuo por feedback	O feedback positivo aumenta o score de recomendação dos livros sugeridos; o negativo o reduz. Novos dados de vendas e feedback são incorporados ao contexto das próximas chamadas (RAG + few-shot), garantindo personalização contínua.
+RNF0044-6	Geração de dataset de treinamento	O sistema deve gerar periodicamente um arquivo JSONL com exemplos de treinamento a partir de interações úteis, vendas entregues e avaliações positivas, viabilizando fine-tuning futuro do modelo.
 

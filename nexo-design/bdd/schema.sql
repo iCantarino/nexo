@@ -258,6 +258,7 @@ CREATE TABLE pedido (
                                   'TROCADO', 'CANCELADO') NOT NULL DEFAULT 'EM_ABERTO',
     valor_total             DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     valor_frete             DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    valor_pix               DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     data_pedido             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     data_processamento      DATETIME NULL,
     data_transporte         DATETIME NULL,
@@ -272,6 +273,9 @@ CREATE TABLE pedido (
 CREATE INDEX idx_pedido_cliente ON pedido (id_cliente);
 CREATE INDEX idx_pedido_status ON pedido (status);
 CREATE INDEX idx_pedido_data ON pedido (data_pedido);
+-- RNF0011 / RF0055: apoia a consulta da análise (status ENTREGUE + período).
+CREATE INDEX idx_pedido_status_data ON pedido (status, data_pedido);
+CREATE INDEX idx_livrocat_categoria_livro ON livro_categoria (id_categoria, id_livro);
 
 CREATE TABLE item_pedido (
     id_item_pedido      INT AUTO_INCREMENT PRIMARY KEY,
@@ -280,6 +284,7 @@ CREATE TABLE item_pedido (
     quantidade          INT NOT NULL CHECK (quantidade > 0),
     valor_unitario      DECIMAL(10,2) NOT NULL,
     valor_total_item    DECIMAL(10,2) NOT NULL,
+    quantidade_trocada  INT NOT NULL DEFAULT 0,
     CONSTRAINT fk_itempedido_pedido FOREIGN KEY (id_pedido)
         REFERENCES pedido (id_pedido) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_itempedido_livro FOREIGN KEY (id_livro)
@@ -345,16 +350,34 @@ CREATE TABLE cupom (
 
 CREATE INDEX idx_cupom_cliente ON cupom (id_cliente);
 
+-- Cupons de catálogo: reutilizáveis, por percentual (sobre os itens) ou valor fixo
+CREATE TABLE cupom_catalogo (
+    id_cupom_catalogo       INT AUTO_INCREMENT PRIMARY KEY,
+    codigo_cupom            VARCHAR(30) NOT NULL UNIQUE,
+    descricao               VARCHAR(150) NOT NULL,
+    tipo                    ENUM('PROMOCIONAL', 'TROCA') NOT NULL,
+    percentual              DECIMAL(5,2) NULL,
+    valor_fixo              DECIMAL(10,2) NULL,
+    apenas_primeira_compra  BOOLEAN NOT NULL DEFAULT FALSE,
+    uso_unico_por_cliente   BOOLEAN NOT NULL DEFAULT FALSE,
+    ativo                   BOOLEAN NOT NULL DEFAULT TRUE,
+    CONSTRAINT chk_catalogo_valor CHECK ((percentual IS NOT NULL) <> (valor_fixo IS NOT NULL))
+) ENGINE=InnoDB;
+
 -- RF0037 / RN0035-36: cupons utilizados no pagamento de um pedido
+-- (id_cupom para cupons do cliente; id_cupom_catalogo para cupons de catálogo)
 CREATE TABLE pedido_cupom (
     id_pedido_cupom     INT AUTO_INCREMENT PRIMARY KEY,
     id_pedido           INT NOT NULL,
-    id_cupom            INT NOT NULL,
+    id_cupom            INT NULL,
+    id_cupom_catalogo   INT NULL,
     valor_utilizado     DECIMAL(10,2) NOT NULL CHECK (valor_utilizado > 0),
     CONSTRAINT fk_pedidocupom_pedido FOREIGN KEY (id_pedido)
         REFERENCES pedido (id_pedido) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_pedidocupom_cupom FOREIGN KEY (id_cupom)
         REFERENCES cupom (id_cupom) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_pedidocupom_catalogo FOREIGN KEY (id_cupom_catalogo)
+        REFERENCES cupom_catalogo (id_cupom_catalogo) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT uq_pedido_cupom UNIQUE (id_pedido, id_cupom)
 ) ENGINE=InnoDB;
 
@@ -375,6 +398,7 @@ CREATE TABLE troca (
                                           'ITEM_RECEBIDO', 'PROCESSADA') NOT NULL DEFAULT 'SOLICITADA',
     motivo                          TEXT NOT NULL,
     retorna_estoque                 BOOLEAN NULL,
+    compra_inteira                  BOOLEAN NOT NULL DEFAULT FALSE,
     data_solicitacao                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     data_autorizacao                DATETIME NULL,
     data_processamento               DATETIME NULL,
@@ -405,6 +429,37 @@ CREATE TABLE item_troca (
 
 CREATE INDEX idx_itemtroca_troca ON item_troca (id_troca);
 
+-- RNF0046: notificações ao cliente (troca autorizada, cupom de troca disponível)
+CREATE TABLE notificacao (
+    id_notificacao  INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente      INT NOT NULL,
+    tipo            VARCHAR(30) NOT NULL,
+    mensagem        VARCHAR(255) NOT NULL,
+    id_pedido       INT NULL,
+    id_troca        INT NULL,
+    lida            BOOLEAN NOT NULL DEFAULT FALSE,
+    data_criacao    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_notificacao_cliente FOREIGN KEY (id_cliente)
+        REFERENCES cliente (id_cliente) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE INDEX idx_notificacao_cliente ON notificacao (id_cliente);
+
+-- RF0053 / RF0054 / RNF0012: baixas e reentradas de estoque ligadas à venda
+CREATE TABLE movimentacao_estoque (
+    id_movimentacao     INT AUTO_INCREMENT PRIMARY KEY,
+    id_livro            INT NOT NULL,
+    tipo                VARCHAR(20) NOT NULL,
+    quantidade          INT NOT NULL CHECK (quantidade > 0),
+    id_pedido           INT NULL,
+    id_troca            INT NULL,
+    data_movimentacao   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_movest_livro FOREIGN KEY (id_livro)
+        REFERENCES livro (id_livro) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE INDEX idx_movest_pedido ON movimentacao_estoque (id_pedido);
+
 -- =====================================================================
 -- 9. AVALIAÇÕES (página de detalhe do livro: comentários e estrelas)
 -- =====================================================================
@@ -434,12 +489,28 @@ CREATE TABLE interacao_chatbot (
     id_cliente          INT NOT NULL,
     mensagem_cliente    TEXT NOT NULL,
     resposta_ia         TEXT NOT NULL,
+    livros_sugeridos    JSON NULL,
+    feedback            ENUM('UTIL', 'NAO_UTIL') NULL,
+    feedback_data       DATETIME NULL,
     data_interacao      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_interacao_cliente FOREIGN KEY (id_cliente)
         REFERENCES cliente (id_cliente) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE INDEX idx_interacao_cliente ON interacao_chatbot (id_cliente);
+
+CREATE TABLE preferencia_cliente (
+    id_preferencia      INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente          INT NOT NULL,
+    categoria           VARCHAR(100) NOT NULL,
+    origem              ENUM('EXPLICITO', 'IMPLICITO') NOT NULL DEFAULT 'EXPLICITO',
+    data_cadastro       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_preferencia_cliente FOREIGN KEY (id_cliente)
+        REFERENCES cliente (id_cliente) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT uq_preferencia_cliente_categoria UNIQUE (id_cliente, categoria, origem)
+) ENGINE=InnoDB;
+
+CREATE INDEX idx_preferencia_cliente ON preferencia_cliente (id_cliente);
 
 CREATE TABLE recomendacao_ia (
     id_recomendacao     INT AUTO_INCREMENT PRIMARY KEY,
@@ -480,8 +551,10 @@ CREATE INDEX idx_log_tabela ON log_auditoria (tabela_afetada, id_registro);
 -- =====================================================================
 -- 12. VIEW DE ANÁLISE GERENCIAL (RF0055-58 / RN0071-74)
 -- =====================================================================
--- Agrupa o valor de vendas por categoria e mês, considerando somente pedidos
--- com status APROVADA, EM_TRANSITO ou ENTREGUE (RN0074).
+-- Agrupa o valor de vendas por categoria e mês (data_pedido), considerando
+-- somente pedidos com status ENTREGUE (critério da atividade de análise de
+-- vendas; refina a RN0074). Mantida em sincronia com
+-- migrations/001_analise_vendas_entregue.sql.
 CREATE OR REPLACE VIEW vw_vendas_por_categoria_mes AS
 SELECT
     c.id_categoria,
@@ -493,7 +566,7 @@ JOIN item_pedido ip ON ip.id_pedido = p.id_pedido
 JOIN livro l ON l.id_livro = ip.id_livro
 JOIN livro_categoria lc ON lc.id_livro = l.id_livro
 JOIN categoria c ON c.id_categoria = lc.id_categoria
-WHERE p.status IN ('APROVADA', 'EM_TRANSITO', 'ENTREGUE')
+WHERE p.status = 'ENTREGUE'
 GROUP BY c.id_categoria, c.nome, DATE_FORMAT(p.data_pedido, '%Y-%m');
 
 SET FOREIGN_KEY_CHECKS = 1;
@@ -519,6 +592,11 @@ INSERT INTO motivo_status_livro (descricao, tipo, automatico) VALUES
     ('Erro de cadastro', 'INATIVACAO', FALSE),
     ('Reposição de estoque', 'ATIVACAO', FALSE),
     ('Reavaliação editorial', 'ATIVACAO', FALSE);
+
+INSERT INTO cupom_catalogo (codigo_cupom, descricao, tipo, percentual, valor_fixo, apenas_primeira_compra, uso_unico_por_cliente) VALUES
+    ('TESTE',          'Cupom de teste: 15% de desconto nos itens',             'PROMOCIONAL', 15.00, NULL,  FALSE, FALSE),
+    ('PRIMEIRACOMPRA', '20% de desconto nos itens da primeira compra',          'PROMOCIONAL', 20.00, NULL,  TRUE,  FALSE),
+    ('TESTETROCA',     'Cupom de troca de teste: R$ 50,00 (uso único/cliente)', 'TROCA',       NULL,  50.00, FALSE, TRUE);
 
 -- Usuário administrador inicial para acesso ao painel administrativo
 -- (senha de exemplo já hasheada — deve ser trocada em produção)
