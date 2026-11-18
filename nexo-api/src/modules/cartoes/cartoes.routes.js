@@ -2,9 +2,17 @@ import { Router } from "express";
 import { z } from "zod";
 import { asyncHandler, HttpError } from "../../utils/asyncHandler.js";
 import { requireCliente } from "../../middlewares/auth.js";
-import { CartaoCredito } from "../../models/index.js";
+import { CartaoCredito, BandeiraCartao } from "../../models/index.js";
 
 const router = Router();
+
+router.get(
+  "/bandeiras",
+  asyncHandler(async (req, res) => {
+    const bandeiras = await BandeiraCartao.findAll();
+    res.json(bandeiras);
+  })
+);
 
 const cartaoSchema = z.object({
   id_bandeira: z.number().int(),
@@ -18,7 +26,10 @@ router.get(
   "/",
   requireCliente,
   asyncHandler(async (req, res) => {
-    const cartoes = await CartaoCredito.findAll({ where: { id_cliente: req.cliente.id_cliente } });
+    const cartoes = await CartaoCredito.findAll({
+      where: { id_cliente: req.cliente.id_cliente },
+      include: [{ model: BandeiraCartao }],
+    });
     res.json(cartoes);
   })
 );

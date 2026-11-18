@@ -12,6 +12,7 @@ export const Troca = sequelize.define("troca", {
   status: { type: DataTypes.STRING(20), defaultValue: "SOLICITADA" },
   motivo: { type: DataTypes.TEXT, allowNull: false },
   retorna_estoque: { type: DataTypes.BOOLEAN, allowNull: true },
+  compra_inteira: { type: DataTypes.BOOLEAN, defaultValue: false }, // RF0040: troca de toda a compra
   data_solicitacao: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   data_autorizacao: { type: DataTypes.DATE, allowNull: true },
   data_processamento: { type: DataTypes.DATE, allowNull: true },

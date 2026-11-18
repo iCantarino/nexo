@@ -9,8 +9,17 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "setup-db": "node scripts/setupDb.js",
+    "migrate:cupons-pix": "node scripts/migrarCuponsPix.js",
+    "migrate:vendas": "node scripts/migrarVendas.js",
+    "migrate": "node scripts/migrar.js",
+    "seed:analise": "node scripts/seedAnalise.js",
+    "ia:treinar": "node scripts/treinarModeloIA.js",
     "test": "node --test tests/unit",
-    "test:functional": "playwright test"
+    "test:functional": "playwright test",
+    "test:analise-ui": "playwright test -c playwright-analise-ui.config.js",
+    "test:compra-ui": "playwright test -c playwright-compra-ui.config.js",
+    "test:vendas-ui": "playwright test -c playwright-vendas-ui.config.js",
+    "test:selenium": "node --test --test-concurrency=1 --test-timeout=240000 tests/selenium/*.test.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -25,6 +34,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.49.1",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.7",
+    "selenium-webdriver": "^4.51.0"
   }
 }

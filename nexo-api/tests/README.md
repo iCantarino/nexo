@@ -109,3 +109,61 @@ tests/functional/clientes-crud.spec.js
 2. **Mostre o log do servidor** em paralelo para evidenciar as chamadas HTTP
 3. **Demonstre a distinção inativar vs excluir**: mostre o `ativo: false` no banco após inativação, e a remoção do registro após exclusão
 4. **Teste manual via Postman/Insomnia** como complemento, usando os mesmos endpoints
+---
+
+# UC Gerenciar Vendas Eletrônicas — rastreabilidade
+
+```bash
+cd nexo-api
+npm run migrate:vendas        # uma vez (idempotente): colunas/tabelas novas, preserva os dados
+npx playwright test tests/functional/vendas-eletronicas.spec.js tests/functional/checkout.spec.js
+```
+
+Parâmetro: `CART_LOCK_MINUTES` (padrão 15) — prazo do bloqueio do carrinho (RN0044/RNF0045).
+Operadora de cartão simulada (RN0028/RN0037): cartão com número terminado em `0000` é **recusado**; os demais são autorizados.
+O nome interno `EM_TRANSITO` é exibido como **EM TRANSPORTE**.
+
+| Roteiro | Cenário (teste em `vendas-eletronicas.spec.js`) | Requisitos |
+|---|---|---|
+| 1 | 01 compra aprovada com um cartão (EM_PROCESSAMENTO -> APROVADA, baixa de estoque) | RF0037, RN0037, RN0038, RF0053 |
+| 2 | 02 dois cartões; R$ 5,00 em um deles é bloqueado | RN0034 |
+| 3 | 03 cupom promocional + cartão < R$ 10,00 permitido; 2 promocionais bloqueados | RN0033, RN0035 |
+| 4 | 04 cupons de troca > compra: cupom `TROCO-` com a diferença; 3º cupom desnecessário recusado | RN0036 |
+| 5 | 05 compra REPROVADA: sem baixa, sem movimentação, cupom preservado | RN0038, RN0028, RF0053 |
+| 6 | 06 expiração do bloqueio: itens removidos, `pode_comprar=false`, compra negada, reinclusão | RN0044, RN0045, RNF0045, RNF0042 |
+| 7 | 07 admin: APROVADA -> EM_TRANSITO -> ENTREGUE (cliente não pode) | RF0038, RN0039, RF0039, RN0040 |
+| 8 | 08 troca de pedido não ENTREGUE bloqueada | RN0043, RN0041 |
+| 9 | 09 troca de um item e da compra inteira | RF0040, RN0041 |
+| 10 | 10 solicitação, visualização, autorização + notificação, recebimento, cupom, reentrada | RF0041-RF0044, RN0042, RF0054, RNF0046 |
+| 11 | 11 cupom de troca gerado usado em nova compra (uso único) | RF0044, RF0037 |
+| — | 12 revalidação de estoque na finalização (ajusta/remove + alerta) | RN0032, RN0031 |
+
+Transversais: RNF0012 (histórico de status e `movimentacao_estoque`), RNF0011 (respostas em milissegundos nos testes).
+Foram retiradas as rotas do cliente `confirmar-recebimento`/`cancelar` e o `PATCH /pedidos/:id/status` genérico: as transições agora seguem o ciclo de vida do DRS.
+Não implementados (fora de escopo): estorno financeiro no cartão e recusa de troca pelo administrador.
+
+---
+
+# Análise de vendas por categoria — gráfico de linhas (RF0055, RNF0043, RNF0011)
+
+Arquivo: `tests/functional/analise-vendas.spec.js` (API) e `tests/ui/analise-ui.spec.js` (tela).
+Critérios: comparação por categoria; só ADMIN; eixo por mês (MM/AAAA); só compras ENTREGUE; valor total em R$.
+A venda é datada pela compra (`pedido.data_pedido`); frete não entra.
+
+| # | Cenário do roteiro | Teste | Requisito |
+|---|---|---|---|
+| 1 | Uma categoria no período; mensal = soma ENTREGUE na base | `01` (compara com SQL direto) | RF0055, RN0071 |
+| 2 | Duas ou mais categorias | `02` | RF0055 |
+| 3 | Gráfico de linhas, R$ por mês | `03` (API) e UI "compara categorias, vê o gráfico de linhas" (`.recharts-line` por categoria) | RNF0043 |
+| 4 | Alterar início/fim muda o resultado | `04` e UI | RF0055 |
+| 5 | Status != ENTREGUE não conta | `05` (6 status diferentes) | RN0074 |
+| 6 | Compra passa a ENTREGUE e entra na consulta seguinte | `06` (compra real + despachar + entregar) | RN0040, RN0074 |
+| 7 | Admin permitido; demais negados | `07` (sem token, cliente, gerente) e UI sem sessão | critério b |
+| 8 | Resposta ≤ 1 s | `08` (24 meses, todas as categorias, 5 medições) | RNF0011 |
+| - | Validações (categoria obrigatória, fim >= início, 1 a 24 meses) | `09` | RN0072, RN0073 |
+
+Execução: `npx playwright test tests/functional/analise-vendas.spec.js` e `npm run test:analise-ui`.
+Os testes de API criam categorias e pedidos de 2020 próprios e os removem ao final.
+
+Testes pela interface com Selenium (mesmos cenários): ver 	ests/selenium/README.md (
+pm run test:selenium).

@@ -15,6 +15,7 @@ import carrinhoRoutes from "./modules/carrinho/carrinho.routes.js";
 import pedidosRoutes from "./modules/pedidos/pedidos.routes.js";
 import cuponsRoutes from "./modules/cupons/cupons.routes.js";
 import trocasRoutes from "./modules/trocas/trocas.routes.js";
+import notificacoesRoutes from "./modules/notificacoes/notificacoes.routes.js";
 import avaliacoesRoutes from "./modules/avaliacoes/avaliacoes.routes.js";
 import chatbotRoutes from "./modules/chatbot/chatbot.routes.js";
 import analiseRoutes from "./modules/analise/analise.routes.js";
@@ -49,6 +50,7 @@ apiRouter.use("/carrinho", carrinhoRoutes);
 apiRouter.use("/pedidos", pedidosRoutes);
 apiRouter.use("/cupons", cuponsRoutes);
 apiRouter.use("/trocas", trocasRoutes);
+apiRouter.use("/notificacoes", notificacoesRoutes);
 apiRouter.use("/chatbot", chatbotRoutes);
 apiRouter.use("/analise", analiseRoutes);
 

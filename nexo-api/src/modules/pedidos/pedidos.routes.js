@@ -15,28 +15,101 @@ import {
   PedidoCartao,
   Cupom,
   PedidoCupom,
+  CartaoCredito,
 } from "../../models/index.js";
+import { arred, buscarNoCatalogo, motivoIndisponivel, valorDoCupom } from "../cupons/cupons.service.js";
+import {
+  carregarItens,
+  expirarItensVencidos,
+  getOrCreateCarrinho,
+  revalidarEstoqueDoCarrinho,
+} from "../carrinho/carrinho.service.js";
+import { baixarEstoque } from "../estoque/estoque.service.js";
+import { validarPagamento } from "./pagamento.service.js";
 
 const router = Router();
 
 const VALOR_MINIMO_POR_CARTAO = 10.0;
+const FRETE_BASE = 5.0;
+const FRETE_POR_ITEM = 2.0;
 
-const TRANSICOES_PERMITIDAS = {
-  EM_PROCESSAMENTO: new Set(["APROVADA", "REPROVADA"]),
-  APROVADA: new Set(["EM_TRANSITO"]),
-  EM_TRANSITO: new Set(["ENTREGUE"]),
-};
+async function registrarStatus(pedido, statusNovo, { transaction, idFuncionario = null } = {}) {
+  const statusAnterior = pedido.status;
+  await pedido.update({ status: statusNovo }, { transaction });
+  await PedidoStatusHistorico.create(
+    { id_pedido: pedido.id_pedido, id_funcionario: idFuncionario, status_anterior: statusAnterior, status_novo: statusNovo },
+    { transaction }
+  );
+}
 
-const finalizarPedidoSchema = z.object({
-  id_endereco_entrega: z.number().int(),
-  cartoes: z
-    .array(z.object({ id_cartao: z.number().int(), valor_pago: z.number().positive() }))
-    .optional()
-    .default([]),
-  codigos_cupom: z.array(z.string()).optional().default([]),
+const enderecoSchema = z.object({
+  nome_identificador: z.string().min(1),
+  tipo: z.enum(["ENTREGA", "COBRANCA", "AMBOS"]),
+  tipo_residencia: z.string().min(1),
+  tipo_logradouro: z.string().min(1),
+  logradouro: z.string().min(1),
+  numero: z.string().min(1),
+  bairro: z.string().min(1),
+  cep: z.string().min(1),
+  cidade: z.string().min(1),
+  estado: z.string().min(1),
+  pais: z.string().min(1),
+  observacoes: z.string().optional().nullable(),
 });
 
-const alterarStatusSchema = z.object({ novo_status: z.string() });
+const cartaoInputSchema = z.object({
+  id_cartao: z.number().int(),
+  valor_pago: z.number().positive(),
+});
+
+const finalizarPedidoSchema = z.object({
+  id_endereco_entrega: z.number().int().optional(),
+  cartoes: z.array(cartaoInputSchema).optional().default([]),
+  pix: z.object({ valor_pago: z.number().positive() }).optional(),
+  codigos_cupom: z.array(z.string()).optional().default([]),
+  // Novo endereço opcional (se não informar id_endereco_entrega, deve enviar novo_endereco)
+  novo_endereco: enderecoSchema.optional(),
+  salvar_endereco_perfil: z.boolean().optional().default(false),
+  // Novo cartão opcional
+  novo_cartao: z.object({
+    id_bandeira: z.number().int(),
+    numero_cartao: z.string().min(1),
+    nome_impresso: z.string().min(1),
+    codigo_seguranca: z.string().min(3).max(4),
+  }).optional(),
+  salvar_cartao_perfil: z.boolean().optional().default(false),
+});
+
+/**
+ * Calcula o valor do frete com base na quantidade de itens e no endereço.
+ * Critério adotado: R$ 5,00 fixo + R$ 2,00 por item.
+ */
+function calcularFrete(qtdeItens, endereco) {
+  return FRETE_BASE + FRETE_POR_ITEM * qtdeItens;
+}
+
+// RF0034: cálculo do frete antes da finalização
+router.post(
+  "/calcular-frete",
+  requireCliente,
+  asyncHandler(async (req, res) => {
+    const { id_endereco_entrega } = z.object({ id_endereco_entrega: z.number().int() }).parse(req.body);
+    const endereco = await Endereco.findByPk(id_endereco_entrega);
+    if (!endereco || endereco.id_cliente !== req.cliente.id_cliente) {
+      throw new HttpError(400, "Endereço de entrega inválido.");
+    }
+
+    const carrinho = await Carrinho.findOne({ where: { id_cliente: req.cliente.id_cliente } });
+    const itens = carrinho
+      ? await ItemCarrinho.findAll({ where: { id_carrinho: carrinho.id_carrinho } })
+      : [];
+    const itensValidos = itens.filter((i) => !i.removido_por_expiracao);
+    const qtdeItens = itensValidos.reduce((acc, i) => acc + i.quantidade, 0);
+    const valorFrete = calcularFrete(qtdeItens, endereco);
+
+    res.json({ valor_frete: valorFrete, qtde_itens: qtdeItens });
+  })
+);
 
 // RF0033/RF0038: finaliza a compra a partir do carrinho, com endereço e
 // pagamento combinado (cartões + cupons). RN0033-37 aplicados nas validações.
@@ -47,6 +120,18 @@ router.post(
     const payload = finalizarPedidoSchema.parse(req.body);
     const cliente = req.cliente;
 
+    // RNF0042: com itens removidos por expiração do bloqueio, a compra fica desabilitada.
+    const carrinhoAtual = await getOrCreateCarrinho(cliente.id_cliente);
+    await expirarItensVencidos(carrinhoAtual);
+    if ((await carregarItens(carrinhoAtual)).some((i) => i.removido_por_expiracao)) {
+      throw new HttpError(409, "Há itens removidos por expiração do bloqueio. Reinclua-os no carrinho para comprar.");
+    }
+    // RN0032: revalida o estoque; havendo mudança, atualiza o carrinho e alerta o usuário.
+    const alertas = await revalidarEstoqueDoCarrinho(carrinhoAtual);
+    if (alertas.length > 0) {
+      return res.status(409).json({ detail: alertas.join(" "), alertas });
+    }
+
     const result = await sequelize.transaction(async (t) => {
       const carrinho = await Carrinho.findOne({ where: { id_cliente: cliente.id_cliente }, transaction: t });
       const todosItens = carrinho
@@ -55,12 +140,26 @@ router.post(
       const itensValidos = todosItens.filter((item) => !item.removido_por_expiracao);
       if (itensValidos.length === 0) throw new HttpError(400, "Carrinho vazio.");
 
-      const endereco = await Endereco.findByPk(payload.id_endereco_entrega, { transaction: t });
+      // Determina o endereço de entrega (existente ou novo)
+      let idEnderecoEntrega = payload.id_endereco_entrega;
+      if (!idEnderecoEntrega && payload.novo_endereco) {
+        const enderecoCriado = await Endereco.create(
+          { id_cliente: cliente.id_cliente, ...payload.novo_endereco },
+          { transaction: t }
+        );
+        idEnderecoEntrega = enderecoCriado.id_endereco;
+        // Se solicitado, o endereço já foi salvo no perfil ao criar acima
+      } else if (!idEnderecoEntrega) {
+        throw new HttpError(400, "Informe um endereço de entrega existente ou cadastre um novo.");
+      }
+
+      const endereco = await Endereco.findByPk(idEnderecoEntrega, { transaction: t });
       if (!endereco || endereco.id_cliente !== cliente.id_cliente) {
         throw new HttpError(400, "Endereço de entrega inválido.");
       }
 
       let valorTotal = 0;
+      let qtdeTotalItens = 0;
       const itensPedidoData = [];
       for (const item of itensValidos) {
         const livro = await Livro.findByPk(item.id_livro, { transaction: t });
@@ -69,6 +168,7 @@ router.post(
         }
         const valorUnitario = Number(livro.valor_venda);
         valorTotal += valorUnitario * item.quantidade;
+        qtdeTotalItens += item.quantidade;
         itensPedidoData.push({
           id_livro: item.id_livro,
           quantidade: item.quantidade,
@@ -77,42 +177,101 @@ router.post(
         });
       }
 
-      let cuponsValidos = [];
-      if (payload.codigos_cupom.length) {
-        cuponsValidos = await Cupom.findAll({
-          where: { codigo_cupom: payload.codigos_cupom, id_cliente: cliente.id_cliente, utilizado: false },
+      const valorFrete = calcularFrete(qtdeTotalItens, endereco);
+      const valorTotalComFrete = arred(valorTotal + valorFrete);
+
+      // Cupons: de catálogo (TESTE, PRIMEIRACOMPRA, TESTETROCA) ou emitidos para o cliente.
+      const codigosCupom = [...new Set(payload.codigos_cupom.map((c) => c.trim().toUpperCase()).filter(Boolean))];
+      const cuponsAplicados = [];
+      for (const codigo of codigosCupom) {
+        const catalogo = await buscarNoCatalogo(codigo, t);
+        if (catalogo) {
+          const motivo = await motivoIndisponivel(catalogo, cliente.id_cliente, t);
+          if (motivo) throw new HttpError(400, motivo);
+          cuponsAplicados.push({
+            codigo_cupom: codigo,
+            tipo: catalogo.tipo,
+            valor: valorDoCupom(catalogo, valorTotal),
+            catalogo,
+            registro: null,
+          });
+          continue;
+        }
+        const registro = await Cupom.findOne({
+          where: { codigo_cupom: codigo, id_cliente: cliente.id_cliente, utilizado: false },
           transaction: t,
         });
-        if (cuponsValidos.length !== payload.codigos_cupom.length) {
-          throw new HttpError(400, "Um ou mais cupons são inválidos ou já utilizados.");
-        }
-        const promocionais = cuponsValidos.filter((c) => c.tipo === "PROMOCIONAL");
-        if (promocionais.length > 1) {
-          throw new HttpError(400, "Apenas um cupom promocional é permitido por compra.");
-        }
+        if (!registro) throw new HttpError(400, `Cupom ${codigo} inválido ou já utilizado.`);
+        cuponsAplicados.push({ codigo_cupom: codigo, tipo: registro.tipo, valor: Number(registro.valor), catalogo: null, registro });
       }
 
-      const valorCupons = cuponsValidos.reduce((acc, c) => acc + Number(c.valor), 0);
-      const valorCartoes = payload.cartoes.reduce((acc, c) => acc + c.valor_pago, 0);
-      const restanteAposCupom = Math.max(valorTotal - valorCupons, 0);
+      // RN0033: apenas um cupom promocional por compra.
+      if (cuponsAplicados.filter((c) => c.tipo === "PROMOCIONAL").length > 1) {
+        throw new HttpError(400, "Apenas um cupom promocional é permitido por compra.");
+      }
+      const valorCupons = arred(cuponsAplicados.reduce((acc, c) => acc + c.valor, 0));
+      // RN0036: não permite usar cupom desnecessário (os demais já cobrem a compra).
+      if (cuponsAplicados.length > 1) {
+        for (const c of cuponsAplicados) {
+          if (arred(valorCupons - c.valor) >= valorTotalComFrete) {
+            throw new HttpError(400, `O cupom ${c.codigo_cupom} é desnecessário: os demais cupons já cobrem a compra.`);
+          }
+        }
+      }
+      const restanteAposCupom = arred(Math.max(valorTotalComFrete - valorCupons, 0));
 
-      for (const cartaoInput of payload.cartoes) {
-        if (cartaoInput.valor_pago < VALOR_MINIMO_POR_CARTAO && restanteAposCupom >= VALOR_MINIMO_POR_CARTAO) {
+      // Cartões já cadastrados: precisam existir, estar ativos e pertencer ao cliente.
+      const cartoesParaPagar = [];
+      for (const c of payload.cartoes) {
+        const cartao = await CartaoCredito.findByPk(c.id_cartao, { transaction: t });
+        if (!cartao || cartao.id_cliente !== cliente.id_cliente || !cartao.ativo) {
+          throw new HttpError(400, "Cartão de crédito inválido.");
+        }
+        cartoesParaPagar.push({ id_cartao: cartao.id_cartao, valor_pago: arred(c.valor_pago) });
+      }
+      const valorPix = payload.pix ? arred(payload.pix.valor_pago) : 0;
+
+      // Novo cartão informado durante a compra: paga o que ainda falta.
+      if (payload.novo_cartao) {
+        const falta = arred(
+          restanteAposCupom - cartoesParaPagar.reduce((acc, c) => acc + c.valor_pago, 0) - valorPix
+        );
+        if (falta <= 0) {
+          throw new HttpError(400, "Os demais meios de pagamento já cobrem o pedido; remova o novo cartão.");
+        }
+        const cartaoCriado = await CartaoCredito.create(
+          { id_cliente: cliente.id_cliente, ...payload.novo_cartao, ativo: true },
+          { transaction: t }
+        );
+        cartoesParaPagar.push({ id_cartao: cartaoCriado.id_cartao, valor_pago: falta });
+      }
+
+      // RN0034/RN0035: mínimo de R$ 10,00 por cartão, exceto quando os cupons deixam menos que isso a pagar.
+      for (const c of cartoesParaPagar) {
+        if (c.valor_pago < VALOR_MINIMO_POR_CARTAO && restanteAposCupom >= VALOR_MINIMO_POR_CARTAO) {
           throw new HttpError(400, "Valor mínimo de R$ 10,00 por cartão, exceto quando cupons cobrem o restante.");
         }
       }
 
-      if (valorCupons + valorCartoes < valorTotal) {
+      // Cartões + PIX devem cobrir exatamente o que sobrou após os cupons.
+      const valorCartoes = arred(cartoesParaPagar.reduce((acc, c) => acc + c.valor_pago, 0));
+      const totalPago = arred(valorCartoes + valorPix);
+      if (totalPago < restanteAposCupom) {
         throw new HttpError(400, "Forma de pagamento não cobre o valor total do pedido.");
+      }
+      if (totalPago > restanteAposCupom) {
+        throw new HttpError(400, "Os valores de pagamento informados superam o total do pedido.");
       }
 
       const pedido = await Pedido.create(
         {
           codigo_pedido: `PED-${randomUUID().slice(0, 10).toUpperCase()}`,
           id_cliente: cliente.id_cliente,
-          id_endereco_entrega: payload.id_endereco_entrega,
+          id_endereco_entrega: idEnderecoEntrega,
           status: "EM_PROCESSAMENTO",
-          valor_total: valorTotal,
+          valor_total: valorTotalComFrete,
+          valor_frete: valorFrete,
+          valor_pix: valorPix,
           data_processamento: new Date(),
         },
         { transaction: t }
@@ -127,19 +286,51 @@ router.post(
         { transaction: t }
       );
 
-      for (const cartaoInput of payload.cartoes) {
+      for (const cartaoInput of cartoesParaPagar) {
         await PedidoCartao.create(
           { id_pedido: pedido.id_pedido, id_cartao: cartaoInput.id_cartao, valor_pago: cartaoInput.valor_pago },
           { transaction: t }
         );
       }
 
+      // RN0037 / RN0038 / RN0028: o pagamento é validado após a finalização (EM_PROCESSAMENTO).
+      // Aprovado -> APROVADA, consome cupons, gera troco e dá baixa no estoque.
+      // Reprovado -> REPROVADA, sem baixa de estoque; cupons preservados e itens desbloqueados.
+      const validacao = await validarPagamento({
+        idCliente: cliente.id_cliente,
+        cuponsAplicados,
+        cartoes: cartoesParaPagar,
+        transaction: t,
+      });
+      let aprovado = validacao.aprovado;
+      let motivoReprovacao = validacao.motivo;
+      if (aprovado && !(await baixarEstoque(pedido.id_pedido, itensValidos, t))) {
+        aprovado = false;
+        motivoReprovacao = "Estoque insuficiente no momento da aprovação.";
+      }
+
+      // Itens desbloqueados: saem do carrinho em qualquer desfecho (o estoque só é baixado se aprovado).
+      for (const item of itensValidos) await item.destroy({ transaction: t });
+
+      if (!aprovado) {
+        await registrarStatus(pedido, "REPROVADA", { transaction: t });
+        await pedido.update({ observacao: String(motivoReprovacao).slice(0, 255) }, { transaction: t });
+        return pedido;
+      }
+      await registrarStatus(pedido, "APROVADA", { transaction: t });
+
       // RN0036: gera cupom de troco se o valor de cupons exceder o total da compra.
-      const diferenca = valorCupons - valorTotal;
-      for (const cupom of cuponsValidos) {
-        await cupom.update({ utilizado: true }, { transaction: t });
+      const diferenca = arred(valorCupons - valorTotalComFrete);
+      for (const cupom of cuponsAplicados) {
+        // Cupons do cliente são consumidos por inteiro; os de catálogo só registram o uso.
+        if (cupom.registro) await cupom.registro.update({ utilizado: true }, { transaction: t });
         await PedidoCupom.create(
-          { id_pedido: pedido.id_pedido, id_cupom: cupom.id_cupom, valor_utilizado: Number(cupom.valor) },
+          {
+            id_pedido: pedido.id_pedido,
+            id_cupom: cupom.registro ? cupom.registro.id_cupom : null,
+            id_cupom_catalogo: cupom.catalogo ? cupom.catalogo.id_cupom_catalogo : null,
+            valor_utilizado: cupom.valor,
+          },
           { transaction: t }
         );
       }
@@ -161,12 +352,6 @@ router.post(
         );
       }
 
-      for (const item of itensValidos) {
-        const livro = await Livro.findByPk(item.id_livro, { transaction: t });
-        await livro.update({ quantidade_estoque: livro.quantidade_estoque - item.quantidade }, { transaction: t });
-        await item.destroy({ transaction: t });
-      }
-
       return pedido;
     });
 
@@ -182,6 +367,7 @@ router.get(
     const pedidos = await Pedido.findAll({
       where: { id_cliente: req.cliente.id_cliente },
       include: [{ model: ItemPedido, as: "itens" }],
+      order: [["id_pedido", "DESC"]],
     });
     res.json(pedidos);
   })
@@ -194,7 +380,11 @@ router.get(
   asyncHandler(async (req, res) => {
     const where = {};
     if (req.query.status_filtro) where.status = req.query.status_filtro;
-    const pedidos = await Pedido.findAll({ where, include: [{ model: ItemPedido, as: "itens" }] });
+    const pedidos = await Pedido.findAll({
+      where,
+      include: [{ model: ItemPedido, as: "itens" }],
+      order: [["id_pedido", "DESC"]],
+    });
     res.json(pedidos);
   })
 );
@@ -209,82 +399,44 @@ router.get(
   })
 );
 
-// RF: cliente confirma recebimento do pedido entregue.
+
+// RF0038 / RN0039: o administrador despacha vendas APROVADAS -> EM_TRANSITO (exibido como "EM TRANSPORTE").
 router.patch(
-  "/:idPedido/confirmar-recebimento",
-  requireCliente,
-  asyncHandler(async (req, res) => {
-    const pedido = await Pedido.findByPk(req.params.idPedido);
-    if (!pedido || pedido.id_cliente !== req.cliente.id_cliente) throw new HttpError(404, "Pedido não encontrado.");
-    if (pedido.status !== "EM_TRANSITO") throw new HttpError(400, "Pedido não está em trânsito.");
-
-    await pedido.update({ status: "ENTREGUE", data_entrega: new Date() });
-    await PedidoStatusHistorico.create({
-      id_pedido: pedido.id_pedido,
-      status_anterior: "EM_TRANSITO",
-      status_novo: "ENTREGUE",
-    });
-    res.json(pedido);
-  })
-);
-
-// RF: cliente cancela pedido ainda não processado/aprovado.
-router.patch(
-  "/:idPedido/cancelar",
-  requireCliente,
-  asyncHandler(async (req, res) => {
-    const pedido = await Pedido.findByPk(req.params.idPedido, { include: [{ model: ItemPedido, as: "itens" }] });
-    if (!pedido || pedido.id_cliente !== req.cliente.id_cliente) throw new HttpError(404, "Pedido não encontrado.");
-    if (!["EM_ABERTO", "EM_PROCESSAMENTO"].includes(pedido.status)) {
-      throw new HttpError(400, "Pedido não pode mais ser cancelado.");
-    }
-
-    const statusAnterior = pedido.status;
-    await pedido.update({ status: "CANCELADO" });
-    await PedidoStatusHistorico.create({
-      id_pedido: pedido.id_pedido,
-      status_anterior: statusAnterior,
-      status_novo: "CANCELADO",
-    });
-
-    for (const item of pedido.itens) {
-      const livro = await Livro.findByPk(item.id_livro);
-      await livro.update({ quantidade_estoque: livro.quantidade_estoque + item.quantidade });
-    }
-
-    res.json(pedido);
-  })
-);
-
-// RF0039/RF0040: EM_PROCESSAMENTO->APROVADA/REPROVADA->EM_TRANSITO->ENTREGUE (admin).
-router.patch(
-  "/:idPedido/status",
+  "/:idPedido/despachar",
   requireFuncionario,
   requirePerfil("ADMIN"),
   asyncHandler(async (req, res) => {
-    const { novo_status } = alterarStatusSchema.parse(req.body);
     const pedido = await Pedido.findByPk(req.params.idPedido);
     if (!pedido) throw new HttpError(404, "Pedido não encontrado.");
-
-    const permitidos = TRANSICOES_PERMITIDAS[pedido.status] ?? new Set();
-    if (!permitidos.has(novo_status)) {
-      throw new HttpError(400, `Transição de '${pedido.status}' para '${novo_status}' não é permitida.`);
+    if (pedido.status !== "APROVADA") {
+      throw new HttpError(400, `Somente vendas APROVADAS podem ser despachadas (status atual: ${pedido.status}).`);
     }
-
-    const statusAnterior = pedido.status;
-    const atualizacoes = { status: novo_status };
-    if (novo_status === "EM_TRANSITO") atualizacoes.data_transporte = new Date();
-    await pedido.update(atualizacoes);
-
-    await PedidoStatusHistorico.create({
-      id_pedido: pedido.id_pedido,
-      id_funcionario: req.funcionario.id_funcionario,
-      status_anterior: statusAnterior,
-      status_novo: novo_status,
+    await sequelize.transaction(async (t) => {
+      await pedido.update({ data_transporte: new Date() }, { transaction: t });
+      await registrarStatus(pedido, "EM_TRANSITO", { transaction: t, idFuncionario: req.funcionario.id_funcionario });
     });
+    res.json(pedido);
+  })
+);
 
+// RF0039 / RN0040: o administrador confirma a entrega: EM_TRANSITO -> ENTREGUE.
+router.patch(
+  "/:idPedido/confirmar-entrega",
+  requireFuncionario,
+  requirePerfil("ADMIN"),
+  asyncHandler(async (req, res) => {
+    const pedido = await Pedido.findByPk(req.params.idPedido);
+    if (!pedido) throw new HttpError(404, "Pedido não encontrado.");
+    if (pedido.status !== "EM_TRANSITO") {
+      throw new HttpError(400, `Somente pedidos EM TRANSPORTE podem ser entregues (status atual: ${pedido.status}).`);
+    }
+    await sequelize.transaction(async (t) => {
+      await pedido.update({ data_entrega: new Date() }, { transaction: t });
+      await registrarStatus(pedido, "ENTREGUE", { transaction: t, idFuncionario: req.funcionario.id_funcionario });
+    });
     res.json(pedido);
   })
 );
 
 export default router;
+

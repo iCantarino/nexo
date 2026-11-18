@@ -2,11 +2,17 @@ import { Router } from "express";
 import { z } from "zod";
 import { asyncHandler, HttpError } from "../../utils/asyncHandler.js";
 import { requireCliente } from "../../middlewares/auth.js";
-import { Carrinho, ItemCarrinho, Livro } from "../../models/index.js";
+import { ItemCarrinho, Livro, Autor } from "../../models/index.js";
+import {
+  MINUTOS_BLOQUEIO,
+  estoqueDisponivel,
+  expirarItensVencidos,
+  getOrCreateCarrinho,
+  novoPrazoBloqueio,
+  renovarPrazoCarrinho,
+} from "./carrinho.service.js";
 
 const router = Router();
-
-const MINUTOS_BLOQUEIO_ITEM = 15; // parâmetro de bloqueio temporário (RN0044)
 
 const itemCreateSchema = z.object({
   id_livro: z.number().int(),
@@ -17,30 +23,27 @@ const itemUpdateSchema = z.object({
   quantidade: z.number().int().positive(),
 });
 
-async function getOrCreateCarrinho(idCliente) {
-  let carrinho = await Carrinho.findOne({ where: { id_cliente: idCliente } });
-  if (!carrinho) {
-    carrinho = await Carrinho.create({ id_cliente: idCliente });
-  }
-  return carrinho;
-}
-
-// RN0044-45: remove itens cujo bloqueio expirou.
-async function expirarItensVencidos(carrinho) {
-  const itens = await ItemCarrinho.findAll({ where: { id_carrinho: carrinho.id_carrinho } });
-  const agora = new Date();
-  for (const item of itens) {
-    if (!item.removido_por_expiracao && item.data_expiracao_bloqueio < agora) {
-      await item.update({ removido_por_expiracao: true });
-    }
-  }
-}
-
+/**
+ * RF0031 / RNF0042: carrinho com os itens ativos e os removidos por expiração do bloqueio.
+ * `pode_comprar` fica false enquanto houver itens expirados (botão "comprar" desabilitado).
+ */
 async function carregarCarrinhoComItens(idCliente) {
   const carrinho = await getOrCreateCarrinho(idCliente);
   await expirarItensVencidos(carrinho);
-  const itens = await ItemCarrinho.findAll({ where: { id_carrinho: carrinho.id_carrinho } });
-  return { ...carrinho.toJSON(), itens: itens.map((i) => i.toJSON()) };
+  const itens = await ItemCarrinho.findAll({
+    where: { id_carrinho: carrinho.id_carrinho },
+    include: [{ model: Livro, as: "livro", include: [{ model: Autor }] }],
+  });
+  const json = itens.map((i) => i.toJSON());
+  const ativos = json.filter((i) => !i.removido_por_expiracao);
+  const expirados = json.filter((i) => i.removido_por_expiracao);
+  return {
+    ...carrinho.toJSON(),
+    itens: json,
+    itens_expirados: expirados,
+    minutos_bloqueio: MINUTOS_BLOQUEIO,
+    pode_comprar: ativos.length > 0 && expirados.length === 0,
+  };
 }
 
 router.get(
@@ -51,7 +54,8 @@ router.get(
   })
 );
 
-// RN0031: valida estoque disponível antes de adicionar ao carrinho.
+// RF0031 / RN0031: valida estoque disponível antes de adicionar ao carrinho.
+// RN0044: bloqueia o item; o prazo é relativo ao último item incluído.
 router.post(
   "/itens",
   requireCliente,
@@ -60,44 +64,92 @@ router.post(
 
     const livro = await Livro.findByPk(payload.id_livro);
     if (!livro || !livro.ativo) throw new HttpError(404, "Livro não encontrado ou inativo.");
-    if (livro.quantidade_estoque < payload.quantidade) {
+
+    const carrinho = await getOrCreateCarrinho(req.cliente.id_cliente);
+    await expirarItensVencidos(carrinho);
+
+    const existente = await ItemCarrinho.findOne({
+      where: { id_carrinho: carrinho.id_carrinho, id_livro: payload.id_livro, removido_por_expiracao: false },
+    });
+    const quantidadeFinal = payload.quantidade + (existente ? existente.quantidade : 0);
+    if ((await estoqueDisponivel(livro, carrinho.id_carrinho)) < quantidadeFinal) {
       throw new HttpError(400, "Quantidade solicitada indisponível em estoque.");
     }
 
-    const carrinho = await getOrCreateCarrinho(req.cliente.id_cliente);
-    await ItemCarrinho.create({
-      id_carrinho: carrinho.id_carrinho,
-      id_livro: payload.id_livro,
-      quantidade: payload.quantidade,
-      data_expiracao_bloqueio: new Date(Date.now() + MINUTOS_BLOQUEIO_ITEM * 60 * 1000),
-    });
+    if (existente) {
+      await existente.update({ quantidade: quantidadeFinal });
+    } else {
+      await ItemCarrinho.create({
+        id_carrinho: carrinho.id_carrinho,
+        id_livro: payload.id_livro,
+        quantidade: payload.quantidade,
+        data_expiracao_bloqueio: novoPrazoBloqueio(),
+      });
+    }
+    await renovarPrazoCarrinho(carrinho);
 
     res.status(201).json(await carregarCarrinhoComItens(req.cliente.id_cliente));
   })
 );
 
+// RF0032: altera a quantidade de um item já adicionado.
 router.patch(
   "/itens/:idItemCarrinho",
   requireCliente,
   asyncHandler(async (req, res) => {
     const payload = itemUpdateSchema.parse(req.body);
     const carrinho = await getOrCreateCarrinho(req.cliente.id_cliente);
+    await expirarItensVencidos(carrinho);
     const item = await ItemCarrinho.findByPk(req.params.idItemCarrinho);
     if (!item || item.id_carrinho !== carrinho.id_carrinho) {
       throw new HttpError(404, "Item não encontrado no carrinho.");
     }
+    if (item.removido_por_expiracao) {
+      throw new HttpError(409, "O bloqueio deste item expirou; reinclua-o no carrinho.");
+    }
 
     const livro = await Livro.findByPk(item.id_livro);
-    if (livro.quantidade_estoque < payload.quantidade) {
+    if ((await estoqueDisponivel(livro, carrinho.id_carrinho)) < payload.quantidade) {
       throw new HttpError(400, "Quantidade solicitada indisponível em estoque.");
     }
 
-    await item.update({
-      quantidade: payload.quantidade,
-      data_expiracao_bloqueio: new Date(Date.now() + MINUTOS_BLOQUEIO_ITEM * 60 * 1000),
-    });
+    await item.update({ quantidade: payload.quantidade });
+    await renovarPrazoCarrinho(carrinho);
 
     res.json(await carregarCarrinhoComItens(req.cliente.id_cliente));
+  })
+);
+
+// RNF0042: itens removidos por expiração voltam ao carrinho (se ainda houver estoque), reabilitando a compra.
+router.post(
+  "/reincluir-expirados",
+  requireCliente,
+  asyncHandler(async (req, res) => {
+    const carrinho = await getOrCreateCarrinho(req.cliente.id_cliente);
+    await expirarItensVencidos(carrinho);
+    const expirados = await ItemCarrinho.findAll({
+      where: { id_carrinho: carrinho.id_carrinho, removido_por_expiracao: true },
+    });
+
+    const alertas = [];
+    for (const item of expirados) {
+      const livro = await Livro.findByPk(item.id_livro);
+      const disponivel = livro && livro.ativo ? await estoqueDisponivel(livro, carrinho.id_carrinho) : 0;
+      const titulo = livro ? livro.titulo : `#${item.id_livro}`;
+      if (disponivel <= 0) {
+        await item.destroy();
+        alertas.push(`'${titulo}' não está mais disponível e foi removido do carrinho.`);
+        continue;
+      }
+      const quantidade = Math.min(item.quantidade, disponivel);
+      if (quantidade < item.quantidade) {
+        alertas.push(`A quantidade de '${titulo}' foi ajustada para ${quantidade} (estoque disponível).`);
+      }
+      await item.update({ quantidade, removido_por_expiracao: false, notificado_expiracao: false });
+    }
+    await renovarPrazoCarrinho(carrinho);
+
+    res.json({ ...(await carregarCarrinhoComItens(req.cliente.id_cliente)), alertas });
   })
 );
 

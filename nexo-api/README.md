@@ -73,6 +73,22 @@ Isso executa `nexo-design/bdd/schema.sql`, criando o banco `nexo_db`, todas as
 tabelas, a view `vw_vendas_por_categoria_mes` e os seeds de domínio (bandeiras,
 categorias, grupos de precificação, motivos de status, usuário admin inicial).
 
+#### Reproduzir o banco em outra máquina (migrations + massa de teste)
+
+Todos os scripts SQL ficam versionados em `nexo-design/bdd/` e são idempotentes:
+
+```powershell
+npm install
+npm run setup-db        # cria nexo_db a partir do schema.sql (já com view e índices da análise)
+npm run migrate         # aplica migrations pendentes (nexo-design/bdd/migrations); atualiza bancos antigos
+npm run seed:analise    # massa de teste da análise de vendas (nexo-design/bdd/seeds) + senha do admin
+```
+
+- `migrate` registra o que já foi aplicado na tabela `schema_migracoes`; rodar de novo não altera nada.
+- `seed:analise` usa chaves fixas (`SEED-ANL-*`), então gera os mesmos dados em qualquer máquina.
+  Define a senha do admin inicial `admin@nexo.com` como `admin123` (ou `ADMIN_SEED_SENHA` do `.env`).
+- Via Docker, o `schema.sql` já cria tudo; rode `npm run seed:analise` depois para a massa de teste.
+
 ### 4. Rodar a API
 
 ```powershell
@@ -113,6 +129,15 @@ requisições HTTP, validando a integração completa com o banco MySQL.
 
 ```powershell
 npm run test:functional
+```
+
+Se a porta 8000 estiver ocupada por outro serviço, defina `TEST_API_PORT` (ex.: `$env:TEST_API_PORT='8010'`).
+
+Análise de vendas por categoria (gráfico de linhas):
+
+```powershell
+npx playwright test tests/functional/analise-vendas.spec.js   # API: cenários 1 a 8 do roteiro + validações
+npm run test:analise-ui                                       # UI headless (requer Chrome e `npm run seed:analise`)
 ```
 
 ## Integração com o front-end (nexo-ui)

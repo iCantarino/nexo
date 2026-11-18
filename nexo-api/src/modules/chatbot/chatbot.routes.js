@@ -4,67 +4,20 @@ import { z } from "zod";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { requireCliente } from "../../middlewares/auth.js";
 import {
-  InteracaoChatbot,
-  RecomendacaoIA,
-  Livro,
-  Categoria,
-  LivroCategoria,
-  Avaliacao,
-  ItemPedido,
-  Pedido,
-} from "../../models/index.js";
+  gerarRespostaIA,
+  registrarInteracao,
+  registrarFeedback,
+  gerarRecomendacoesPerfil,
+  construirPerfilLeitura,
+} from "./chatbot.service.js";
+import { Livro, InteracaoChatbot } from "../../models/index.js";
 
 const router = Router();
 
 const mensagemSchema = z.object({ mensagem: z.string().min(1) });
+const feedbackSchema = z.object({ feedback: z.enum(["UTIL", "NAO_UTIL"]) });
 
-/** Deriva categorias preferidas a partir do histórico de compras e avaliações. */
-async function categoriasPreferidas(idCliente) {
-  // Livros comprados pelo cliente (via pedidos -> itens de pedido).
-  const pedidos = await Pedido.findAll({ where: { id_cliente: idCliente }, attributes: ["id_pedido"] });
-  const idsPedidos = pedidos.map((p) => p.id_pedido);
-  const itensComprados = idsPedidos.length
-    ? await ItemPedido.findAll({ where: { id_pedido: { [Op.in]: idsPedidos } }, attributes: ["id_livro"] })
-    : [];
-  const livroIdsComprados = itensComprados.map((i) => i.id_livro);
-
-  // Livros bem avaliados (>=4 estrelas) pelo cliente.
-  const avaliacoesBoas = await Avaliacao.findAll({
-    where: { id_cliente: idCliente, estrelas: { [Op.gte]: 4 } },
-    attributes: ["id_livro"],
-  });
-  const livroIdsAvaliados = avaliacoesBoas.map((a) => a.id_livro);
-
-  const livroIds = Array.from(new Set([...livroIdsComprados, ...livroIdsAvaliados]));
-  if (!livroIds.length) return [];
-
-  const categoriasRelacionadas = await LivroCategoria.findAll({
-    where: { id_livro: { [Op.in]: livroIds } },
-    attributes: ["id_categoria"],
-  });
-  return Array.from(new Set(categoriasRelacionadas.map((c) => c.id_categoria)));
-}
-
-/** Ponto de extensão: plugue aqui a chamada a um modelo de IA generativa. */
-async function gerarRespostaIA(mensagem, idCliente) {
-  const categorias = await categoriasPreferidas(idCliente);
-  const include = categorias.length ? [{ model: Categoria, where: { id_categoria: { [Op.in]: categorias } } }] : [];
-  const livros = await Livro.findAll({ where: { ativo: true }, include, limit: 5 });
-
-  if (!livros.length) {
-    return {
-      resposta:
-        "Olá! Ainda não tenho histórico suficiente sobre você, mas posso sugerir os títulos mais bem avaliados do catálogo.",
-      livrosIds: [],
-    };
-  }
-  const titulos = livros.map((l) => l.titulo).join(", ");
-  return {
-    resposta: `Com base no seu perfil de leitura, recomendo: ${titulos}.`,
-    livrosIds: livros.map((l) => l.id_livro),
-  };
-}
-
+// RNF0044-2: interação via chatbot
 router.post(
   "/mensagem",
   requireCliente,
@@ -72,58 +25,65 @@ router.post(
     const { mensagem } = mensagemSchema.parse(req.body);
     const { resposta, livrosIds } = await gerarRespostaIA(mensagem, req.cliente.id_cliente);
 
-    await InteracaoChatbot.create({
-      id_cliente: req.cliente.id_cliente,
-      mensagem_cliente: mensagem,
-      resposta_ia: resposta,
+    const interacao = await registrarInteracao(req.cliente.id_cliente, mensagem, resposta, livrosIds);
+
+    const livros = await Livro.findAll({
+      where: { id_livro: { [Op.in]: livrosIds } },
+      attributes: ["id_livro", "titulo", "valor_venda"],
     });
 
-    for (const idLivro of livrosIds) {
-      await RecomendacaoIA.create({
-        id_cliente: req.cliente.id_cliente,
-        id_livro: idLivro,
-        score: 0.8,
-        origem: "CHATBOT",
-      });
-    }
-
-    res.json({ resposta, livros_recomendados: livrosIds });
+    res.json({
+      id_interacao: interacao.id_interacao,
+      resposta,
+      livros_recomendados: livros,
+    });
   })
 );
 
+// Histórico de conversas do cliente
 router.get(
   "/historico",
   requireCliente,
   asyncHandler(async (req, res) => {
     const historico = await InteracaoChatbot.findAll({
       where: { id_cliente: req.cliente.id_cliente },
-      order: [["data_interacao", "DESC"]],
+      order: [["data_interacao", "ASC"]],
     });
     res.json(historico);
   })
 );
 
-// RNF0044-1: recomendações personalizadas com base em histórico e preferências.
+// RNF0044-3: avaliação da resposta como útil ou não útil
+router.post(
+  "/mensagem/:idInteracao/feedback",
+  requireCliente,
+  asyncHandler(async (req, res) => {
+    const { idInteracao } = req.params;
+    const { feedback } = feedbackSchema.parse(req.body);
+    const interacao = await registrarFeedback(Number(idInteracao), req.cliente.id_cliente, feedback);
+    res.json(interacao);
+  })
+);
+
+// Perfil de leitura do cliente
+router.get(
+  "/perfil-leitura",
+  requireCliente,
+  asyncHandler(async (req, res) => {
+    const perfil = await construirPerfilLeitura(req.cliente.id_cliente);
+    res.json(perfil);
+  })
+);
+
+// RNF0044-1: recomendações personalizadas
 router.get(
   "/recomendacoes",
   requireCliente,
   asyncHandler(async (req, res) => {
-    const categorias = await categoriasPreferidas(req.cliente.id_cliente);
-    const include = categorias.length ? [{ model: Categoria, where: { id_categoria: { [Op.in]: categorias } } }] : [];
-    const livros = await Livro.findAll({ where: { ativo: true }, include, limit: 10 });
-
-    const recomendacoes = [];
-    for (const livro of livros) {
-      const rec = await RecomendacaoIA.create({
-        id_cliente: req.cliente.id_cliente,
-        id_livro: livro.id_livro,
-        score: 0.75,
-        origem: "HISTORICO_COMPRA",
-      });
-      recomendacoes.push(rec);
-    }
-    res.json(recomendacoes);
+    const { perfil, recomendacoes } = await gerarRecomendacoesPerfil(req.cliente.id_cliente, 5);
+    res.json({ perfil, recomendacoes });
   })
 );
 
 export default router;
+

@@ -26,6 +26,16 @@ export const env = {
     nodeEnv: required("NODE_ENV", "development"),
     port: Number(required("APP_PORT", "8000")),
   },
+  // RN0044 / RNF0045: prazo (em minutos) de bloqueio dos itens no carrinho, contado a partir do último item incluído.
+  carrinho: {
+    minutosBloqueio: Number(required("CART_LOCK_MINUTES", "15")),
+  },
+  // RNF0044: configuração do provedor de IA generativa (OpenRouter)
+  ia: {
+    openRouterApiKey: required("OPENROUTER_API_KEY"),
+    openRouterModel: required("OPENROUTER_MODEL", "openai/gpt-5.6-luna"),
+    openRouterUrl: required("OPENROUTER_URL", "https://openrouter.ai/api/v1/chat/completions"),
+  },
   corsOrigins: required("CORS_ORIGINS", "http://localhost:5173")
     .split(",")
     .map((origin) => origin.trim())

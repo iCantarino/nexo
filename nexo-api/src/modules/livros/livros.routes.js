@@ -4,7 +4,7 @@ import { Op } from "sequelize";
 import { z } from "zod";
 import { asyncHandler, HttpError } from "../../utils/asyncHandler.js";
 import { requireFuncionario, requirePerfil } from "../../middlewares/auth.js";
-import { Livro, Categoria, GrupoPrecificacao } from "../../models/index.js";
+import { Livro, Categoria, GrupoPrecificacao, Autor } from "../../models/index.js";
 
 const router = Router();
 
@@ -51,7 +51,7 @@ router.get(
     if (id_autor) where.id_autor = Number(id_autor);
     if (ativo !== undefined) where.ativo = ativo === "true";
 
-    const include = [{ model: Categoria, through: { attributes: [] } }];
+    const include = [{ model: Categoria, through: { attributes: [] } }, { model: Autor }];
     if (id_categoria) {
       include[0].where = { id_categoria: Number(id_categoria) };
     }

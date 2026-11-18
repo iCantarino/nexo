@@ -22,6 +22,7 @@ export const Pedido = sequelize.define("pedido", {
   status: { type: DataTypes.STRING(30), defaultValue: "EM_ABERTO" },
   valor_total: { type: DataTypes.DECIMAL(10, 2), defaultValue: 0 },
   valor_frete: { type: DataTypes.DECIMAL(10, 2), defaultValue: 0 },
+  valor_pix: { type: DataTypes.DECIMAL(10, 2), defaultValue: 0 },
   data_pedido: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   data_processamento: { type: DataTypes.DATE, allowNull: true },
   data_transporte: { type: DataTypes.DATE, allowNull: true },
@@ -36,6 +37,7 @@ export const ItemPedido = sequelize.define("item_pedido", {
   quantidade: { type: DataTypes.INTEGER, allowNull: false },
   valor_unitario: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
   valor_total_item: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
+  quantidade_trocada: { type: DataTypes.INTEGER, defaultValue: 0 }, // RN0042: itens já TROCADO
 });
 
 export const PedidoStatusHistorico = sequelize.define("pedido_status_historico", {
@@ -69,6 +71,20 @@ export const Cupom = sequelize.define("cupom", {
 export const PedidoCupom = sequelize.define("pedido_cupom", {
   id_pedido_cupom: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   id_pedido: { type: DataTypes.INTEGER, allowNull: false },
-  id_cupom: { type: DataTypes.INTEGER, allowNull: false },
+  id_cupom: { type: DataTypes.INTEGER, allowNull: true },
+  id_cupom_catalogo: { type: DataTypes.INTEGER, allowNull: true },
   valor_utilizado: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
+});
+
+// Cupons reutilizáveis: percentual sobre os itens ou valor fixo.
+export const CupomCatalogo = sequelize.define("cupom_catalogo", {
+  id_cupom_catalogo: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  codigo_cupom: { type: DataTypes.STRING(30), unique: true, allowNull: false },
+  descricao: { type: DataTypes.STRING(150), allowNull: false },
+  tipo: { type: DataTypes.STRING(20), allowNull: false }, // PROMOCIONAL | TROCA
+  percentual: { type: DataTypes.DECIMAL(5, 2), allowNull: true },
+  valor_fixo: { type: DataTypes.DECIMAL(10, 2), allowNull: true },
+  apenas_primeira_compra: { type: DataTypes.BOOLEAN, defaultValue: false },
+  uso_unico_por_cliente: { type: DataTypes.BOOLEAN, defaultValue: false },
+  ativo: { type: DataTypes.BOOLEAN, defaultValue: true },
 });

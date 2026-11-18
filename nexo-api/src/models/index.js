@@ -19,12 +19,14 @@ import {
   PedidoCartao,
   Cupom,
   PedidoCupom,
+  CupomCatalogo,
   STATUS_PEDIDO,
 } from "./pedido.js";
 import { Troca, ItemTroca, STATUS_TROCA } from "./troca.js";
 import { Avaliacao } from "./avaliacao.js";
-import { InteracaoChatbot, RecomendacaoIA } from "./ia.js";
+import { InteracaoChatbot, RecomendacaoIA, PreferenciaCliente } from "./ia.js";
 import { LogAuditoria } from "./auditoria.js";
+import { Notificacao, MovimentacaoEstoque } from "./notificacao.js";
 
 // --- Cliente e dependências ---
 Cliente.hasMany(Endereco, { foreignKey: "id_cliente", as: "enderecos" });
@@ -75,6 +77,7 @@ Cupom.belongsTo(Pedido, { foreignKey: "id_pedido_origem", as: "pedido_origem" })
 Pedido.hasMany(PedidoCupom, { foreignKey: "id_pedido", as: "cupons_utilizados" });
 PedidoCupom.belongsTo(Pedido, { foreignKey: "id_pedido" });
 PedidoCupom.belongsTo(Cupom, { foreignKey: "id_cupom" });
+PedidoCupom.belongsTo(CupomCatalogo, { foreignKey: "id_cupom_catalogo" });
 
 // --- Troca ---
 Troca.belongsTo(Pedido, { foreignKey: "id_pedido" });
@@ -86,6 +89,12 @@ Troca.hasMany(ItemTroca, { foreignKey: "id_troca", as: "itens" });
 ItemTroca.belongsTo(Troca, { foreignKey: "id_troca" });
 ItemTroca.belongsTo(ItemPedido, { foreignKey: "id_item_pedido" });
 
+Pedido.hasMany(Troca, { foreignKey: "id_pedido", as: "trocas" });
+
+// --- Notificação e movimentação de estoque ---
+Notificacao.belongsTo(Cliente, { foreignKey: "id_cliente" });
+MovimentacaoEstoque.belongsTo(Livro, { foreignKey: "id_livro" });
+
 // --- Avaliação ---
 Avaliacao.belongsTo(Livro, { foreignKey: "id_livro" });
 Avaliacao.belongsTo(Cliente, { foreignKey: "id_cliente" });
@@ -94,6 +103,8 @@ Avaliacao.belongsTo(Cliente, { foreignKey: "id_cliente" });
 InteracaoChatbot.belongsTo(Cliente, { foreignKey: "id_cliente" });
 RecomendacaoIA.belongsTo(Cliente, { foreignKey: "id_cliente" });
 RecomendacaoIA.belongsTo(Livro, { foreignKey: "id_livro" });
+PreferenciaCliente.belongsTo(Cliente, { foreignKey: "id_cliente" });
+Cliente.hasMany(PreferenciaCliente, { foreignKey: "id_cliente", as: "preferencias" });
 
 // --- Auditoria ---
 LogAuditoria.belongsTo(Funcionario, { foreignKey: "id_funcionario" });
@@ -122,6 +133,7 @@ export {
   PedidoCartao,
   Cupom,
   PedidoCupom,
+  CupomCatalogo,
   STATUS_PEDIDO,
   Troca,
   ItemTroca,
@@ -129,5 +141,8 @@ export {
   Avaliacao,
   InteracaoChatbot,
   RecomendacaoIA,
+  PreferenciaCliente,
   LogAuditoria,
+  Notificacao,
+  MovimentacaoEstoque,
 };
