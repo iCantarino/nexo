@@ -9,6 +9,16 @@ interface User {
   email?: string;
 }
 
+function decodeToken(token: string): { sub?: string; tipo?: string } | null {
+  try {
+    const payload = token.split('.')[1];
+    const decoded = JSON.parse(atob(payload));
+    return decoded;
+  } catch {
+    return null;
+  }
+}
+
 interface AuthContextType {
   user: User | null;
   token: string | null;
@@ -37,6 +47,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
+  const buildUser = (token: string, email: string, nome?: string, perfil?: string): User => {
+    const decoded = decodeToken(token);
+    return {
+      id: Number(decoded?.sub || 0),
+      tipo: decoded?.tipo === 'funcionario' ? 'funcionario' : 'cliente',
+      perfil,
+      email,
+      nome,
+    };
+  };
+
   const login = async (email: string, senha: string): Promise<{ success: boolean; isAdmin: boolean; error?: string }> => {
     try {
       // Tentar login como funcionário primeiro
@@ -44,13 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const response = await authApi.loginFuncionario(email, senha);
         const { access_token, perfil, nome } = response.data;
         
-        const userData: User = {
-          id: 0, // Será preenchido ao buscar perfil
-          tipo: 'funcionario',
-          perfil,
-          email,
-          nome,
-        };
+        const userData: User = buildUser(access_token, email, nome);
 
         setToken(access_token);
         setUser(userData);
@@ -64,12 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const response = await authApi.loginCliente(email, senha);
           const { access_token, perfil, nome } = response.data;
           
-          const userData: User = {
-            id: 0,
-            tipo: 'cliente',
-            perfil,
-            nome,
-          };
+          const userData: User = buildUser(access_token, email, nome, perfil);
 
           setToken(access_token);
           setUser(userData);

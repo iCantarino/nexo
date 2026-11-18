@@ -8,6 +8,10 @@ import CadastroPublico from './pages/cadastro/cadastropublico';
 // Páginas do cliente
 import HomeCatalog from './pages/home/home';
 import Profile from './pages/perfil/perfil';
+import ShoppingCart from './pages/carrinho/carrinho';
+import Checkout from './pages/checkout/checkout';
+import MyOrders from './pages/pedidos/pedidos';
+import AiChatbot from './pages/ai-chatbot/aichatbot';
 
 // Páginas do admin
 import AdminDashboard from './pages/admin-dashboard/admindashboard';
@@ -106,6 +110,40 @@ function App() {
             <Profile />
           </ProtectedClientRoute>
         } 
+      />
+      <Route 
+        path="/carrinho" 
+        element={
+          <ProtectedClientRoute>
+            <ShoppingCart />
+          </ProtectedClientRoute>
+        } 
+      />
+      <Route 
+        path="/checkout" 
+        element={
+          <ProtectedClientRoute>
+            <Checkout />
+          </ProtectedClientRoute>
+        } 
+      />
+
+      <Route
+        path="/pedidos"
+        element={
+          <ProtectedClientRoute>
+            <MyOrders />
+          </ProtectedClientRoute>
+        }
+      />
+
+      <Route
+        path="/ai-chatbot"
+        element={
+          <ProtectedClientRoute>
+            <AiChatbot />
+          </ProtectedClientRoute>
+        }
       />
 
       {/* Rotas do admin */}

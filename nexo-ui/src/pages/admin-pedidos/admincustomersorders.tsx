@@ -1,245 +1,73 @@
-import { useState, useRef, useEffect, type FunctionComponent } from 'react';
+import { useEffect, useState, type FunctionComponent } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import styles from './AdminCustomerOrders.module.css';
+import { pedidosApi, rotuloStatus } from '../../services/api';
+import type { Pedido } from '../../services/api';
 
+const FILTROS = ['', 'EM_PROCESSAMENTO', 'APROVADA', 'REPROVADA', 'EM_TRANSITO', 'ENTREGUE', 'EM_TROCA', 'TROCA_AUTORIZADA', 'TROCADO'];
+const card = { background: '#fff', border: '1px solid #e2e8f0', borderRadius: 8, padding: 14, marginBottom: 10 } as const;
+const btn = { cursor: 'pointer', padding: '6px 12px', borderRadius: 6, background: '#0f172a', color: '#fff', fontSize: 13 } as const;
+const brl = (v: string) => `R$ ${Number(v).toFixed(2).replace('.', ',')}`;
 
+/**
+ * Administrador: consulta os pedidos, despacha vendas APROVADAS (-> EM TRANSPORTE, RF0038/RN0039)
+ * e confirma a entrega (-> ENTREGUE, RF0039/RN0040).
+ */
 const AdminCustomersOrders: FunctionComponent = () => {
-  const { user, logout } = useAuth();
-  const [menuPerfilAberto, setMenuPerfilAberto] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const { logout } = useAuth();
+  const [pedidos, setPedidos] = useState<Pedido[]>([]);
+  const [filtro, setFiltro] = useState('');
+  const [mensagem, setMensagem] = useState('');
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setMenuPerfilAberto(false);
-      }
+  const carregar = async (f = filtro) => {
+    try {
+      setPedidos((await pedidosApi.adminTodos(f || undefined)).data);
+    } catch {
+      setMensagem('Erro ao carregar os pedidos.');
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  };
+  useEffect(() => { carregar(); }, []);
+
+  const executar = async (acao: () => Promise<unknown>, ok: string) => {
+    try { await acao(); setMensagem(ok); carregar(); }
+    catch (e: any) { setMensagem(e.response?.data?.detail || 'Operação não permitida.'); }
+  };
 
   return (
-    		<div className={styles.adminCustomersOrders}>
-      			<div className={styles.sidebar}>
-        				<div className={styles.brand}>
-          					<b className={styles.logo}>Nexo</b>
-          					<div className={styles.brandDot} />
-          					<div className={styles.adminTag}>
-            						<b className={styles.logo}>ADMIN</b>
-          					</div>
-        				</div>
-        				<div className={styles.navList}>
-          					<Link to="/admin-dashboard" className={styles.navItemDashboard}>
-            						<div className={styles.iconWrapper}>
-              							<img src="/images/icons/layout-grid.svg" className={styles.layoutGridIcon} alt="" />
-            						</div>
-            						<div className={styles.dashboard}>Dashboard</div>
-          					</Link>
-          					<Link to="/admin-usuarios" className={styles.navItemDashboard}>
-            						<div className={styles.iconWrapper}>
-              							<img src="/images/icons/users.svg" className={styles.layoutGridIcon} alt="" />
-            						</div>
-            						<div className={styles.clientes}>Clientes</div>
-          					</Link>
-          					<Link to="/admin-pedidos" className={styles.navItemPedidos}>
-            						<div className={styles.iconWrapper}>
-              							<img src="/images/icons/shopping-bag.svg" className={styles.layoutGridIcon} alt="" />
-            						</div>
-            						<div className={styles.dashboard}>Pedidos</div>
-          					</Link>
-          					<Link to="/admin-trocas" className={styles.navItemDashboard}>
-            						<div className={styles.iconWrapper}>
-              							<img src="/images/icons/arrow-right-left.svg" className={styles.layoutGridIcon} alt="" />
-            						</div>
-            						<div className={styles.dashboard}>Trocas</div>
-          					</Link>
-          					<Link to="/admin-analise" className={styles.navItemDashboard}>
-            						<div className={styles.iconWrapper}>
-              							<img src="/images/icons/chart-line.svg" className={styles.layoutGridIcon} alt="" />
-            						</div>
-            						<div className={styles.dashboard}>Análises</div>
-          					</Link>
-        				</div>
-        				<div className={styles.sidebarFooter}>
-          					<div className={styles.line} />
-          					<div className={styles.userProfile} onClick={() => setMenuPerfilAberto(!menuPerfilAberto)} style={{ cursor: 'pointer', position: 'relative' }} ref={menuRef}>
-            						<div className={styles.avatar}>
-              							<b className={styles.logo}>{(user as any)?.nome?.charAt(0)?.toUpperCase() || 'A'}</b>
-            						</div>
-            						<div className={styles.userInfo}>
-              							<div className={styles.arthurSchopenhauer}>{(user as any)?.nome || 'Administrador'}</div>
-              							<div className={styles.curadorMaster}>{(user as any)?.perfil || 'ADMIN'}</div>
-            						</div>
-            						{menuPerfilAberto && (
-              							<div style={{ position: 'absolute', bottom: '100%', left: 0, right: 0, backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '8px', zIndex: 50, boxShadow: '0 -4px 6px rgba(0,0,0,0.1)' }}>
-                							<div onClick={logout} style={{ cursor: 'pointer', padding: '8px 12px', borderRadius: '6px', color: '#ef4444', fontWeight: 500 }}>
-                  								Sair
-                							</div>
-              							</div>
-            						)}
-          					</div>
-        				</div>
-      			</div>
-      			<div className={styles.contentArea}>
-        				<div className={styles.header}>
-          					<div className={styles.headerTitles}>
-            						<b className={styles.logo}>{`Clientes & Histórico de Pedidos`}</b>
-            						<div className={styles.gestoDePerfis}>Gestão de perfis e consulta de transações da plataforma.</div>
-          					</div>
-          					<div className={styles.headerActions}>
-            						<div className={styles.notificationBell}>
-              							<div className={styles.iconWrapper6}>
-                								<img className={styles.badgeAlertIcon} alt="" />
-              							</div>
-            						</div>
-            						<div className={styles.adminBadge}>
-              							<div className={styles.liveIndicator} />
-              							<div className={styles.sessoAtiva}>Sessão Ativa</div>
-            						</div>
-          					</div>
-        				</div>
-        				<div className={styles.workspace}>
-          					<div className={styles.customersListPanel}>
-            						<div className={styles.panelHeader}>
-              							<b className={styles.logo}>Diretório de Clientes</b>
-              							<div className={styles.searchBar}>
-                								<div className={styles.iconWrapper7}>
-                  									<img className={styles.searchIcon} alt="" />
-                								</div>
-                								<div className={styles.buscarPorNome}>Buscar por nome, e-mail, CPF...</div>
-              							</div>
-            						</div>
-            						<div className={styles.tableContainer}>
-              							<div className={styles.tableHeader}>
-                								<b className={styles.nome}>NOME</b>
-                								<b className={styles.nome}>E-MAIL</b>
-                								<b className={styles.cpf}>CPF</b>
-                								<b className={styles.status}>STATUS</b>
-                								<b className={styles.pedidos2}>PEDIDOS</b>
-                								<b className={styles.ltimaCompra}>ÚLTIMA COMPRA</b>
-              							</div>
-              							<div className={styles.tableBody}>
-                								<div className={styles.row0}>
-                  									<div className={styles.marianaLLima}>Mariana L. Lima</div>
-                  									<div className={styles.marianalimacuriouscom}>mariana.lima@curious.com</div>
-                  									<div className={styles.cpf}>123.456.789-00</div>
-                  									<div className={styles.badgeStatus}>
-                    										<div className={styles.frame}>
-                      											<b className={styles.logo}>Ativo</b>
-                    										</div>
-                  									</div>
-                  									<div className={styles.div2}>14</div>
-                  									<div className={styles.ltimaCompra}>12 Fev 2026</div>
-                								</div>
-                								<div className={styles.row1}>
-                  									<div className={styles.marianaLLima}>Julian Krause</div>
-                  									<div className={styles.marianalimacuriouscom}>julian.k@thermodynamics.org</div>
-                  									<div className={styles.cpf}>987.654.321-11</div>
-                  									<div className={styles.badgeStatus}>
-                    										<div className={styles.frame}>
-                      											<b className={styles.logo}>Ativo</b>
-                    										</div>
-                  									</div>
-                  									<div className={styles.div2}>8</div>
-                  									<div className={styles.ltimaCompra}>28 Jan 2026</div>
-                								</div>
-                								<div className={styles.row1}>
-                  									<div className={styles.marianaLLima}>Erich Auerbach</div>
-                  									<div className={styles.marianalimacuriouscom}>auerbach.mimesis@classic.edu</div>
-                  									<div className={styles.cpf}>456.789.123-22</div>
-                  									<div className={styles.badgeStatus3}>
-                    										<div className={styles.frame3}>
-                      											<b className={styles.logo}>Inativo</b>
-                    										</div>
-                  									</div>
-                  									<div className={styles.div2}>23</div>
-                  									<div className={styles.ltimaCompra}>15 Dez 2025</div>
-                								</div>
-                								<div className={styles.row1}>
-                  									<div className={styles.marianaLLima}>Oscar Wilde</div>
-                  									<div className={styles.marianalimacuriouscom}>dorian@aestheticism.com</div>
-                  									<div className={styles.cpf}>321.654.987-99</div>
-                  									<div className={styles.badgeStatus}>
-                    										<div className={styles.frame}>
-                      											<b className={styles.logo}>Ativo</b>
-                    										</div>
-                  									</div>
-                  									<div className={styles.div2}>5</div>
-                  									<div className={styles.ltimaCompra}>10 Jan 2026</div>
-                								</div>
-                								<div className={styles.row1}>
-                  									<div className={styles.marianaLLima}>Douglas Hofstadter</div>
-                  									<div className={styles.marianalimacuriouscom}>geb@braintree.net</div>
-                  									<div className={styles.cpf}>789.123.456-55</div>
-                  									<div className={styles.badgeStatus}>
-                    										<div className={styles.frame}>
-                      											<b className={styles.logo}>Ativo</b>
-                    										</div>
-                  									</div>
-                  									<div className={styles.div2}>19</div>
-                  									<div className={styles.ltimaCompra}>05 Fev 2026</div>
-                								</div>
-              							</div>
-            						</div>
-          					</div>
-          					<div className={styles.orderHistoryPanel}>
-            						<div className={styles.selectedCustomerHeader}>
-              							<b className={styles.clienteSelecionado}>CLIENTE SELECIONADO</b>
-              							<b className={styles.marianaLLima2}>Mariana L. Lima</b>
-              							<div className={styles.marianalimacuriouscom2}>mariana.lima@curious.com</div>
-            						</div>
-            						<div className={styles.line} />
-            						<div className={styles.ordersSubHeader}>
-              							<b className={styles.logo}>Histórico de Compras</b>
-              							<div className={styles.registros}>3 registros</div>
-            						</div>
-            						<div className={styles.ordersMiniList}>
-              							<div className={styles.miniOrder0}>
-                								<div className={styles.panelHeader}>
-                  									<b className={styles.logo}>NX-2981A</b>
-                  									<div className={styles.frame6}>
-                    										<b className={styles.logo}>Em Trânsito</b>
-                  									</div>
-                								</div>
-                								<div className={styles.aOrdemDo}>A Ordem do Tempo + 1 outro</div>
-                								<div className={styles.orderBottom}>
-                  									<div className={styles.logo}>12 Fev 2026</div>
-                  									<b className={styles.r4240}>R$ 42,40</b>
-                								</div>
-              							</div>
-              							<div className={styles.miniOrder0}>
-                								<div className={styles.panelHeader}>
-                  									<b className={styles.logo}>NX-1928B</b>
-                  									<div className={styles.frame7}>
-                    										<b className={styles.logo}>Entregue</b>
-                  									</div>
-                								</div>
-                								<div className={styles.aOrdemDo}>Mimesis (Edição Rara)</div>
-                								<div className={styles.orderBottom}>
-                  									<div className={styles.logo}>29 Set 2025</div>
-                  									<b className={styles.r4240}>R$ 53,99</b>
-                								</div>
-              							</div>
-              							<div className={styles.miniOrder0}>
-                								<div className={styles.panelHeader}>
-                  									<b className={styles.logo}>NX-1042C</b>
-                  									<div className={styles.frame7}>
-                    										<b className={styles.logo}>Entregue</b>
-                  									</div>
-                								</div>
-                								<div className={styles.aOrdemDo}>Além do Bem e do Mal</div>
-                								<div className={styles.orderBottom}>
-                  									<div className={styles.logo}>15 Mai 2025</div>
-                  									<b className={styles.r4240}>R$ 29,99</b>
-                								</div>
-              							</div>
-            						</div>
-          					</div>
-        				</div>
-      			</div>
-    		</div>);
+    <div style={{ maxWidth: 1000, margin: '0 auto', padding: 24, fontFamily: 'sans-serif' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+        <b style={{ fontSize: 22 }}>Pedidos</b>
+        <div style={{ fontSize: 14 }}>
+          <Link to="/admin-dashboard" style={{ marginRight: 12 }}>Dashboard</Link>
+          <Link to="/admin-trocas" style={{ marginRight: 12 }}>Trocas</Link>
+          <span onClick={logout} style={{ cursor: 'pointer', textDecoration: 'underline' }}>Sair</span>
+        </div>
+      </div>
+      {mensagem && <div style={{ ...card, background: '#fef3c7' }}>{mensagem}</div>}
+      <select value={filtro} data-testid="filtro-status" style={{ marginBottom: 12, padding: 6 }}
+        onChange={(e) => { setFiltro(e.target.value); carregar(e.target.value); }}>
+        {FILTROS.map((f) => <option key={f} value={f}>{f ? rotuloStatus(f) : 'Todos os status'}</option>)}
+      </select>
+      {pedidos.length === 0 && <div style={{ ...card, color: '#94a3b8' }}>Nenhum pedido encontrado.</div>}
+      {pedidos.map((p) => (
+        <div key={p.id_pedido} style={card} data-testid={`admin-pedido-${p.id_pedido}`}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <b>{p.codigo_pedido} — cliente #{p.id_cliente}</b>
+            <b>{rotuloStatus(p.status)}</b>
+          </div>
+          <div style={{ fontSize: 13, color: '#475569', margin: '6px 0' }}>
+            {new Date(p.data_pedido).toLocaleString('pt-BR')} — {brl(p.valor_total)} — {p.itens?.length ?? 0} item(ns)
+          </div>
+          {p.status === 'APROVADA' && (
+            <span style={btn} role="button" onClick={() => executar(() => pedidosApi.despachar(p.id_pedido), 'Pedido despachado: EM TRANSPORTE.')}>Despachar</span>
+          )}
+          {p.status === 'EM_TRANSITO' && (
+            <span style={btn} role="button" onClick={() => executar(() => pedidosApi.confirmarEntrega(p.id_pedido), 'Entrega confirmada.')}>Confirmar entrega</span>
+          )}
+        </div>
+      ))}
+    </div>
+  );
 };
 
-export default AdminCustomersOrders ;
-
+export default AdminCustomersOrders;
